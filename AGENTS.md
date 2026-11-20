@@ -10,6 +10,7 @@
 - Visual style: **pixel art**, with a **512 × 352 pixel** target screen resolution and **16 × 16 pixel** tiles. A full viewport at this resolution spans **32 × 22 tiles**; this does not define the total map size.
 - The player moves around the map and manages the placement of objects in the room to make the connection work.
 - Player movement is grid-based: the player jumps from one tile to another. Allowed directions, controls, jump timing/animation and collision rules remain undecided.
+- Input decisions: Space (action `Player/Confirm`) is the shared confirm/activate key, since there is no jump mechanic. Esc (`Player/Back`) opens the back-to-menu prompt outside the menu. Movement is WASD/arrows.
 - The core gameplay is rearranging objects that affect the connection: some block it, others extend its reach, and additional effects may be defined later.
 - The game should have several levels and many gameplay variants through different room layouts, object arrangements and combinations of connection effects.
 - Exact connection rules, object effects, player controls, interaction mechanics and level completion conditions remain undecided. Ask the user before implementing those details; do not treat this concept as an implemented feature.
@@ -42,6 +43,9 @@
 | Release builds | Tag-triggered desktop builds and GitHub releases | [.github/RELEASING.md](.github/RELEASING.md) (temporary location; `.agents/` writes blocked) |
 | Unity MCP | CoplayDev editor package and connection prerequisites | [.github/UNITY_MCP.md](.github/UNITY_MCP.md) (temporary location; `.agents/` writes blocked) |
 | Map grid | Level grid prefab and terrain tilemap | [.github/MAP_GRID.md](.github/MAP_GRID.md) (temporary location; `.agents/` writes blocked) |
+| Player movement | Grid-based player prefab, sprite and input | [Claude outputs/PLAYER_MOVEMENT.md](Claude%20outputs/PLAYER_MOVEMENT.md) (temporary location; `.agents/` and `.github/` writes blocked) |
+| Level select | Menu scene, level plates, Select input action | [Claude outputs/LEVEL_SELECT.md](Claude%20outputs/LEVEL_SELECT.md) (temporary location; `.agents/` and `.github/` writes blocked) |
+| Game manager | Persistent manager, Esc back-to-menu prompt, shared input actions | [Claude outputs/GAME_MANAGER.md](Claude%20outputs/GAME_MANAGER.md) (temporary location; `.agents/` and `.github/` writes blocked) |
 
 # Verification
 - Verify compilation and relevant behavior through CLI/MCP; read console errors without clearing the user's console. Run checks appropriate to the change.
