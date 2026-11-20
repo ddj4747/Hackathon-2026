@@ -1,0 +1,157 @@
+name: Build and release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build ${{ matrix.platform }}
+    runs-on: ubuntu-22.04
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      # Avoid concurrent activation of a single Unity license.
+      max-parallel: 1
+      matrix:
+        include:
+          - platform: windows-x64
+            target: StandaloneWindows64
+            extension: zip
+          - platform: linux-x64
+            target: StandaloneLinux64
+            extension: tar.gz
+          - platform: macos
+            target: StandaloneOSX
+            extension: tar.gz
+
+    steps:
+      - name: Check out tagged source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
+          persist-credentials: false
+
+      - name: Validate release tag and Unity credentials
+        shell: bash
+        env:
+          TAG: ${{ github.ref_name }}
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          if [[ ! "$TAG" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+            echo '::error::Use a release tag such as v1.0.0 (vMAJOR.MINOR.PATCH).'
+            exit 1
+          fi
+          if [[ -z "$UNITY_EMAIL" || -z "$UNITY_PASSWORD" ]]; then
+            echo '::error::Set the UNITY_EMAIL and UNITY_PASSWORD repository secrets.'
+            exit 1
+          fi
+          if [[ -z "$UNITY_LICENSE" && -z "$UNITY_SERIAL" ]]; then
+            echo '::error::Set UNITY_LICENSE (Personal) or UNITY_SERIAL (Pro) as a repository secret.'
+            exit 1
+          fi
+
+      - name: Cache Unity Library
+        uses: actions/cache@v4
+        with:
+          path: Library
+          key: Unity-${{ runner.os }}-${{ matrix.target }}-${{ hashFiles('ProjectSettings/ProjectVersion.txt') }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Unity-${{ runner.os }}-${{ matrix.target }}-${{ hashFiles('ProjectSettings/ProjectVersion.txt') }}-
+
+      # Desktop settings currently use Mono, allowing Linux cross-builds.
+      # IL2CPP requires compatible native runners/toolchains.
+      - name: Build Unity player
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+        with:
+          projectPath: .
+          unityVersion: auto
+          targetPlatform: ${{ matrix.target }}
+          buildsPath: build
+          buildName: Hackathon2026
+          versioning: Tag
+
+      - name: Package player
+        shell: bash
+        env:
+          TAG: ${{ github.ref_name }}
+          PLATFORM: ${{ matrix.platform }}
+          TARGET: ${{ matrix.target }}
+          EXTENSION: ${{ matrix.extension }}
+        run: |
+          set -euo pipefail
+          output="$GITHUB_WORKSPACE/build/$TARGET"
+          if [[ ! -d "$output" ]] || [[ -z "$(find "$output" -mindepth 1 -print -quit)" ]]; then
+            echo "::error::Unity build output is missing: $output"
+            exit 1
+          fi
+          mkdir -p dist
+          archive="$GITHUB_WORKSPACE/dist/Hackathon2026-$TAG-$PLATFORM.$EXTENSION"
+          if [[ "$EXTENSION" == zip ]]; then
+            (cd "$output" && zip -r "$archive" .)
+          else
+            # Preserve executable permissions and macOS bundle symlinks.
+            tar -czf "$archive" -C "$output" .
+          fi
+
+      - name: Upload packaged player
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-${{ matrix.platform }}
+          path: dist/*
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
+
+  release:
+    name: Publish GitHub release
+    needs: build
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Download all packaged players
+        uses: actions/download-artifact@v4
+        with:
+          pattern: release-*
+          merge-multiple: true
+          path: dist
+
+      - name: Create checksums and publish release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          cd dist
+          files=("Hackathon2026-$TAG-windows-x64.zip" "Hackathon2026-$TAG-linux-x64.tar.gz" "Hackathon2026-$TAG-macos.tar.gz")
+          for file in "${files[@]}"; do
+            test -s "$file"
+          done
+          sha256sum "${files[@]}" > SHA256SUMS.txt
+          if ! gh release view "$TAG" >/dev/null 2>&1; then
+            gh release create "$TAG" --verify-tag --draft --title "$TAG" --generate-notes
+          fi
+          gh release upload "$TAG" "${files[@]}" SHA256SUMS.txt --clobber
+          gh release edit "$TAG" --draft=false
