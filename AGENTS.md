@@ -4,6 +4,14 @@
 - Cinemachine **3.1.7**, Unity Pipeline **1.0.0**, DOTween (free) installed under `Assets/Plugins/Demigiant/DOTween`.
 - Check the version file and `Packages/manifest.json` before changing dependencies. Do not upgrade Unity or packages without asking.
 
+# Game concept (planned)
+- A **2D top-down game** about establishing a connection between two antennas.
+- Visual style: **pixel art**, with a **512 × 352 pixel** target screen resolution and **16 × 16 pixel** tiles. A full viewport at this resolution spans **32 × 22 tiles**; this does not define the total map size.
+- The player moves around the map and manages the placement of objects in the room to make the connection work.
+- The core gameplay is rearranging objects that affect the connection: some block it, others extend its reach, and additional effects may be defined later.
+- The game should have several levels and many gameplay variants through different room layouts, object arrangements and combinations of connection effects.
+- Exact connection rules, object effects, player controls, interaction mechanics and level completion conditions remain undecided. Ask the user before implementing those details; do not treat this concept as an implemented feature.
+
 # Unity interaction
 - **Computer/screen control is forbidden.** Do not use GUI automation, browser UI automation, mouse/keyboard control, or screen capture. Use commands and APIs only, with **Unity CLI first**, or **Unity MCP** when available.
 - CLI currently: `C:/Users/adamb/Downloads/unity-windows-x64.exe`. Quote the executable path in shell commands.
