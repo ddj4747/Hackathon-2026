@@ -18,6 +18,9 @@ public sealed class SignalEmitter : MonoBehaviour
     private Vector2 lastOrigin;
     private int lastRange;
 
+    internal bool IsEmittingOn(Grid targetGrid) => isActiveAndEnabled && grid == targetGrid &&
+        manager != null && resetVersion == manager.ResetVersion;
+
     private void OnEnable() => gridScene = default;
     private void OnTransformParentChanged() => gridScene = default;
 

@@ -49,6 +49,7 @@
 | Connection manager | Scene-scoped signal quality. `Assets/Prefabs/ConnectionManager.prefab` exposes the same instance through `ConnectionManagerHost.Manager`. | [.agents/connection-manager.md](.agents/connection-manager.md) |
 | Repeater | Signal supply and directional coverage | [.agents/repeater.md](.agents/repeater.md) |
 | Signal emitter | Starting signal source and circular coverage | [.agents/signal-emitter.md](.agents/signal-emitter.md) |
+| Signal receiver | Signal detection and connection event | [.agents/signal-receiver.md](.agents/signal-receiver.md) |
 | Cables | Fixed paths, endpoint adapters and wire artwork | [.agents/cables.md](.agents/cables.md) |
 | Player movement | Grid-based player prefab, sprite and input | [.agents/player-movement.md](.agents/player-movement.md) |
 | Level select | Menu scene and level plates | [.agents/level-select.md](.agents/level-select.md) |

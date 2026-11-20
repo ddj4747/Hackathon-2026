@@ -13,6 +13,7 @@
 ## Behavior and rules
 
 - While enabled, an emitter supplies quality 1 to its own cell and a full circular range using the repeater's rounded radius rule. Disabling, moving, changing its range, or resetting signals updates coverage.
+- An enabled emitter can supply an adjacent [wire network](cables.md) through an open wire port facing its cell.
 - Uses its nearest parent Grid, or the only Grid in its scene. With multiple grids, parent it under the intended Grid.
 
 ## Public interfaces and dependencies
@@ -22,5 +23,5 @@
 
 ## Setup and verification
 
-- Place `SignalEmitter.prefab` under the level Grid, or paint the emitter from `Signal Palette` onto a Tilemap under the Grid. Set the range on the prefab; its tinted sprite is a placeholder.
+- Place an emitter prefab under the level Grid, or paint a green emitter from `Signal Palette` onto a Tilemap under the Grid. Four sprite orientations share the same circular signal behavior. Set the range on the prefab.
 - Unity MCP verified circular range, activation of a repeater chain, empty cells and shutdown when the source is removed. In Play mode, a painted emitter activated a neighboring repeater and removing its tile removed the signal; the edit-mode preview was also checked.

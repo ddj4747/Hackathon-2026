@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5880267050249090525}
   - component: {fileID: 1417491748301314770}
   - component: {fileID: 6242552019518909470}
+  - component: {fileID: 804386101644414504}
   m_Layer: 0
   m_Name: Repeater
   m_TagString: Untagged
@@ -46,9 +47,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55be409a03a97d3468daf954994d9e40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Antenna
-  isSignalSupplied: 1
   range: 3
   sectorAngle: 360
+  startAngle: 0
 --- !u!212 &1417491748301314770
 SpriteRenderer:
   serializedVersion: 3
@@ -123,3 +124,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RepeaterVisual
   unsuppliedSprite: {fileID: -399274458, guid: 1aa6542943f63084ab67a9d5924d6b14, type: 3}
   suppliedSprite: {fileID: 1446551667, guid: 1aa6542943f63084ab67a9d5924d6b14, type: 3}
+--- !u!114 &804386101644414504
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5722818782990642730}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fe306fc6a1143e7bc14753c682f3c45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Pushable
+  grid: {fileID: 0}

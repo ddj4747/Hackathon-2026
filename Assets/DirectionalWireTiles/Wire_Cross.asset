@@ -15,3 +15,4 @@ MonoBehaviour:
   connections: 15
   inactiveSprite: {fileID: 859731240, guid: b0677c87f330a0b46a134d982c7e4bbb, type: 3}
   activeSprite: {fileID: 2074589692, guid: b0677c87f330a0b46a134d982c7e4bbb, type: 3}
+  movablePrefab: {fileID: 50290237519916043, guid: 6f24543af4095ba4882797eb64f8933d, type: 3}

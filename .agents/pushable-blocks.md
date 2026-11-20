@@ -20,7 +20,7 @@
 
 ## Public interfaces and dependencies
 - `Pushable.GetAt(cell)`, `Pushable.TryBeginChain(startCell, direction, list)`, `Cell`, `SetPushProgress(t)` (animated by the player each frame); `Solid.IsAt(cell)`; `PushSettings.Instance.maxChainLength`.
-- Uses the scene's `Grid` (`MapGrid`), found automatically if the `grid` field is empty.
+- Uses the assigned `Grid`, or the nearest parent Grid, falling back to a scene Grid when empty. Directional wire pieces and repeaters also use `Pushable`; see [Cables](cables.md) and [Repeater](repeater.md).
 
 ## Setup and verification
 - Add `PushableBlock.prefab` to a level (position anywhere; it snaps to the nearest cell centre), or add `Pushable` to any other object.

@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 258e6c1b86ed41e4f9570669cb2f9ccb, type: 3}
   m_Name: SignalEmitter
   m_EditorClassIdentifier: Assembly-CSharp::PrefabTile
-  previewSprite: {fileID: -399274458, guid: 1aa6542943f63084ab67a9d5924d6b14, type: 3}
-  previewColor: {r: 1, g: 0.75, b: 0.25, a: 1}
+  previewSprite: {fileID: 714420813, guid: e854f80332a558c4a9a04392bcf372a8, type: 3}
+  previewColor: {r: 1, g: 1, b: 1, a: 1}
   prefab: {fileID: 7022689393576959386, guid: 362dbf8b7b44fad428d6482cb0ccd1c7, type: 3}
