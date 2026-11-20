@@ -17,7 +17,7 @@
 - Inspector fields on `LevelSelectPlate`: `Level Number` (text on the plate), `Scene Asset` (scene picker; its path is baked into a hidden `scenePath` in `OnValidate` so it works in builds), plus colours and highlight scale.
 - On returning from a level, the plate whose scene matches `GameManager.ReturnedFromScenePath` teleports the player onto itself in `Start` (before the camera's first placement), then clears the marker. A level with no matching plate leaves the player at the scene's start position.
 - A scene must be in the build's scene list to be loadable; otherwise the plate logs an error.
-- The number is a legacy `TextMesh` with the built-in font, sorted above the player (order 20). Temporary look.
+- The number is a legacy `TextMesh` with `nokiafc22`, sorted above the plate (order 2) but below blocks (5) and the player (10), so the player covers the number; font and pixel rules in [PIXEL_PERFECT_AND_FONT.md](PIXEL_PERFECT_AND_FONT.md).
 
 ## Public interfaces and dependencies
 - `LevelSelectPlate` uses `Grid`, `PlayerGridMovement` ([PLAYER_MOVEMENT.md](PLAYER_MOVEMENT.md), `TeleportToCell`), `GameManager` and the project-wide actions (`InputSystem.actions`, action `Player/Confirm`, constant `GameManager.ConfirmActionPath`).

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -5,6 +6,8 @@ using UnityEngine.InputSystem;
 /// Grid-based player movement. While a direction key is held the player keeps stepping
 /// from tile to tile at <see cref="tilesPerSecond"/>. The player always finishes the tile
 /// it is travelling to, so it never rests between cells.
+/// Walking into a <see cref="Pushable"/> shoves it (and any pushables lined up behind it) one cell ahead;
+/// if that is not possible, or the target cell is <see cref="Solid"/>, the player stays put.
 /// Controls (not final): WASD or arrow keys, 4 directions, the most recently pressed key wins.
 /// </summary>
 [DisallowMultipleComponent]
@@ -20,9 +23,16 @@ public class PlayerGridMovement : MonoBehaviour
     private Vector3Int targetCell;
     private float stepProgress = 1f;   // 0..1 between currentCell and targetCell; 1 = standing still
     private Vector3Int lastHeldDirection;
+    private readonly List<Pushable> pushed = new List<Pushable>();   // chain being shoved during the current step
 
     public Vector3Int CurrentCell => currentCell;
     public bool IsMoving => stepProgress < 1f;
+
+    /// <summary>True while the current step is shoving at least one <see cref="Pushable"/>.</summary>
+    public bool IsPushing => IsMoving && pushed.Count > 0;
+
+    /// <summary>Direction of the last step actually started (not changed by blocked or queued input). Starts facing up.</summary>
+    public Vector3Int Facing { get; private set; } = Vector3Int.up;
 
     private void Awake()
     {
@@ -56,6 +66,7 @@ public class PlayerGridMovement : MonoBehaviour
         if (grid == null)
             return;
 
+        FinishPush();
         currentCell = cell;
         targetCell = cell;
         stepProgress = 1f;
@@ -82,8 +93,8 @@ public class PlayerGridMovement : MonoBehaviour
     {
         Vector3Int input = ReadDirection();
 
-        if (!IsMoving && input != Vector3Int.zero)
-            BeginStep(input);
+        if (!IsMoving && input != Vector3Int.zero && TryBeginStep(input))
+            stepProgress = 0f;
 
         if (!IsMoving)
             return;
@@ -95,10 +106,11 @@ public class PlayerGridMovement : MonoBehaviour
         {
             currentCell = targetCell;
             stepProgress -= 1f;
+            FinishPush();
 
-            if (input != Vector3Int.zero)
+            if (input != Vector3Int.zero && TryBeginStep(input))
             {
-                targetCell = currentCell + input;
+                // Step started; leftover progress is carried into it.
             }
             else
             {
@@ -110,12 +122,36 @@ public class PlayerGridMovement : MonoBehaviour
         Vector3 from = CellCenter(currentCell);
         Vector3 to = CellCenter(targetCell);
         transform.position = IsMoving ? Vector3.Lerp(from, to, stepProgress) : from;
+
+        // The shoved block moves in lock-step with the player, one cell ahead.
+        float pushProgress = IsMoving ? stepProgress : 1f;
+        for (int i = 0; i < pushed.Count; i++)
+            pushed[i].SetPushProgress(pushProgress);
     }
 
-    private void BeginStep(Vector3Int direction)
+    /// <summary>
+    /// Sets the next target cell. Pushables standing there are shoved along as a chain;
+    /// returns false (no step) when the cell is solid or the chain cannot move.
+    /// </summary>
+    private bool TryBeginStep(Vector3Int direction)
     {
-        targetCell = currentCell + direction;
-        stepProgress = 0f;
+        Vector3Int target = currentCell + direction;
+
+        if (Solid.IsAt(target))
+            return false;
+        if (!Pushable.TryBeginChain(target, direction, pushed))
+            return false;
+
+        targetCell = target;
+        Facing = direction;   // turn only when the step really starts
+        return true;
+    }
+
+    private void FinishPush()
+    {
+        for (int i = 0; i < pushed.Count; i++)
+            pushed[i].SetPushProgress(1f);
+        pushed.Clear();
     }
 
     private Vector3 CellCenter(Vector3Int cell)

@@ -10,7 +10,7 @@
 - Visual style: **pixel art**, with a **512 × 352 pixel** target screen resolution and **16 × 16 pixel** tiles. A full viewport at this resolution spans **32 × 22 tiles**; this does not define the total map size.
 - The player moves around the map and manages the placement of objects in the room to make the connection work.
 - Player movement is grid-based: the player jumps from one tile to another. Allowed directions, controls, jump timing/animation and collision rules remain undecided.
-- Input decisions: Space (action `Player/Confirm`) is the shared confirm/activate key, since there is no jump mechanic. Movement is WASD/arrows. Leaving a level is done by walking into a `LevelExit` hole, not by a key.
+- Input decisions: Space (action `Player/Confirm`) is the shared confirm/activate key, since there is no jump mechanic. Movement is WASD/arrows. R (action `Player/Restart`) restarts the current level. Leaving a level is done by walking into a `LevelExit` hole, not by a key.
 - The core gameplay is rearranging objects that affect the connection: some block it, others extend its reach, and additional effects may be defined later.
 - The game should have several levels and many gameplay variants through different room layouts, object arrangements and combinations of connection effects.
 - Exact connection rules, object effects, player controls, interaction mechanics and level completion conditions remain undecided. Ask the user before implementing those details; do not treat this concept as an implemented feature.
@@ -45,8 +45,10 @@
 | Map grid | Level grid prefab and terrain tilemap | [.github/MAP_GRID.md](.github/MAP_GRID.md) (temporary location; `.agents/` writes blocked) |
 | Player movement | Grid-based player prefab, sprite and input | [Claude outputs/PLAYER_MOVEMENT.md](Claude%20outputs/PLAYER_MOVEMENT.md) (temporary location; `.agents/` and `.github/` writes blocked) |
 | Level select | Menu scene, level plates, Select input action | [Claude outputs/LEVEL_SELECT.md](Claude%20outputs/LEVEL_SELECT.md) (temporary location; `.agents/` and `.github/` writes blocked) |
-| Game manager | Persistent manager, return to menu, shared Confirm action | [Claude outputs/GAME_MANAGER.md](Claude%20outputs/GAME_MANAGER.md) (temporary location; `.agents/` and `.github/` writes blocked) |
+| Game manager | Persistent manager, return to menu, level restart + loading screen, shared Confirm action | [Claude outputs/GAME_MANAGER.md](Claude%20outputs/GAME_MANAGER.md) (temporary location; `.agents/` and `.github/` writes blocked) |
 | Level exit | Trigger hole in level walls that returns to the menu | [Claude outputs/LEVEL_EXIT.md](Claude%20outputs/LEVEL_EXIT.md) (temporary location; `.agents/` and `.github/` writes blocked) |
+| Pixel-perfect rendering and font | PixelPerfectCamera settings, project font `nokiafc22`, TextMesh pixel rules | [Claude outputs/PIXEL_PERFECT_AND_FONT.md](Claude%20outputs/PIXEL_PERFECT_AND_FONT.md) (temporary location; `.agents/` and `.github/` writes blocked) |
+| Pushable blocks | `Pushable`/`Solid` components, chain pushing, global `PushSettings`, block prefab | [Claude outputs/PUSHABLE_BLOCKS.md](Claude%20outputs/PUSHABLE_BLOCKS.md) (temporary location; `.agents/` and `.github/` writes blocked) |
 
 # Verification
 - Verify compilation and relevant behavior through CLI/MCP; read console errors without clearing the user's console. Run checks appropriate to the change.
