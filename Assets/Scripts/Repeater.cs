@@ -3,18 +3,21 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 [DisallowMultipleComponent]
-public sealed class Antenna : MonoBehaviour
+public sealed class Repeater : MonoBehaviour
 {
-    [SerializeField, Tooltip("Whether this antenna supplies signal to its coverage area.")]
+    [SerializeField, Tooltip("Whether this repeater supplies signal to its coverage area.")]
     private bool isSignalSupplied = true;
 
     public bool IsSignalSupplied => isActiveAndEnabled && isSignalSupplied;
 
-    [SerializeField, Min(0), Tooltip("Radius in grid cells measured from this antenna's position.")]
+    [SerializeField, Min(0), Tooltip("Radius in grid cells measured from this repeater's position.")]
     private int range = 3;
 
-    [SerializeField, Range(0f, 360f), Tooltip("Coverage angle in degrees, centered on local +X.")]
+    [SerializeField, Range(0f, 360f), Tooltip("Coverage sector width in degrees.")]
     private float sectorAngle = 360f;
+
+    [SerializeField, Range(0f, 360f), Tooltip("Start of the coverage sector in degrees counterclockwise from local +X.")]
+    private float startAngle;
 
     private readonly List<Vector3Int> coveredCells = new();
     private Grid grid;
@@ -51,7 +54,7 @@ public sealed class Antenna : MonoBehaviour
             gridScene = scene;
             grid = FindGrid(scene);
             if (grid == null)
-                Debug.LogWarning("Antenna needs a parent Grid or exactly one Grid in its scene.", this);
+                Debug.LogWarning("Repeater needs a parent Grid or exactly one Grid in its scene.", this);
         }
 
         if (grid == null || !scene.isLoaded)
@@ -118,7 +121,7 @@ public sealed class Antenna : MonoBehaviour
         if (parentGrid != null)
             return parentGrid;
 
-        // Root-level antennas can use the level's grid when it is unambiguous.
+        // Root-level repeaters can use the level's grid when it is unambiguous.
         Grid sceneGrid = null;
         foreach (var root in scene.GetRootGameObjects())
         {
@@ -139,7 +142,9 @@ public sealed class Antenna : MonoBehaviour
         if (angle <= 0f || angle >= 360f)
             return Vector2.right;
 
-        var direction = (Vector2)grid.transform.InverseTransformDirection(transform.right);
+        var centerAngle = (Mathf.Repeat(startAngle, 360f) + angle * 0.5f) * Mathf.Deg2Rad;
+        var localDirection = new Vector3(Mathf.Cos(centerAngle), Mathf.Sin(centerAngle), 0f);
+        var direction = (Vector2)grid.transform.InverseTransformDirection(transform.TransformDirection(localDirection));
         return direction.sqrMagnitude > 0f ? direction.normalized : Vector2.right;
     }
 

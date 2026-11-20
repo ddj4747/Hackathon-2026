@@ -7,7 +7,7 @@
 ## Entry files
 
 - `Assets/Prefabs/MapGrid.prefab`
-- `Assets/Scenes/SampleScene.unity` contains a linked instance.
+- `Assets/Scenes/SampleScene.unity` contains a linked instance and a separate sample `RepeaterTilemap` child; see [Repeater](repeater.md).
 
 ## Behavior and rules
 

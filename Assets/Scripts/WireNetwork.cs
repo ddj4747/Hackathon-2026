@@ -31,14 +31,14 @@ public sealed class WireNetwork : MonoBehaviour
 
         if (grid != null && gameObject.scene.isLoaded)
         {
-            var antennaCells = new HashSet<Vector3Int>();
+            var repeaterCells = new HashSet<Vector3Int>();
             foreach (var root in gameObject.scene.GetRootGameObjects())
-                foreach (var antenna in root.GetComponentsInChildren<Antenna>())
+                foreach (var repeater in root.GetComponentsInChildren<Repeater>())
                 {
-                    if (!antenna.IsSignalSupplied) continue;
-                    var parentGrid = antenna.GetComponentInParent<Grid>();
+                    if (!repeater.IsSignalSupplied) continue;
+                    var parentGrid = repeater.GetComponentInParent<Grid>();
                     if (parentGrid != null && parentGrid != grid) continue;
-                    antennaCells.Add(tilemap.WorldToCell(antenna.transform.position));
+                    repeaterCells.Add(tilemap.WorldToCell(repeater.transform.position));
                 }
 
             var queue = new Queue<Vector3Int>();
@@ -46,7 +46,7 @@ public sealed class WireNetwork : MonoBehaviour
                 foreach (var step in Steps)
                 {
                     var end = pair.Key + step;
-                    if (!wires.ContainsKey(end) && antennaCells.Contains(end) && HasPort(pair.Key, pair.Value, step))
+                    if (!wires.ContainsKey(end) && repeaterCells.Contains(end) && HasPort(pair.Key, pair.Value, step))
                     {
                         if (nextPowered.Add(pair.Key)) queue.Enqueue(pair.Key);
                         break;

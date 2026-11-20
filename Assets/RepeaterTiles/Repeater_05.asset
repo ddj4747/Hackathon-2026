@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b13e2a8c530a68b468b54bf139a023f7, type: 3}
+  m_Name: Repeater_05
+  m_EditorClassIdentifier: Assembly-CSharp::RepeaterTile
+  previewSprite: {fileID: 858427236, guid: 1aa6542943f63084ab67a9d5924d6b14, type: 3}
+  repeaterPrefab: {fileID: 3891363932226642804, guid: ad7cec4c1ccb13745b427da230e66042, type: 3}
