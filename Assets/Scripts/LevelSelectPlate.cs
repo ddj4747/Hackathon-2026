@@ -65,7 +65,22 @@ public class LevelSelectPlate : MonoBehaviour
         transform.position = center;
 
         player = FindAnyObjectByType<PlayerGridMovement>();
+        PlaceReturningPlayer();
         SetVisual(false, instant: true);
+    }
+
+    // Coming back from this plate's level through an exit: start the menu with the player standing on it.
+    private void PlaceReturningPlayer()
+    {
+        GameManager manager = GameManager.Instance;
+        if (manager == null || player == null || string.IsNullOrEmpty(scenePath))
+            return;
+
+        if (manager.ReturnedFromScenePath != scenePath)
+            return;
+
+        player.TeleportToCell(cell);
+        manager.ClearReturn();
     }
 
     private void OnEnable()

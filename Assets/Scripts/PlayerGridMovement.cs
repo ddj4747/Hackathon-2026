@@ -28,6 +28,39 @@ public class PlayerGridMovement : MonoBehaviour
     {
         if (grid == null)
             grid = FindAnyObjectByType<Grid>();
+
+        EnsurePhysics();
+    }
+
+    /// <summary>
+    /// Trigger events (level exits) need a Rigidbody2D and a collider on the player. The prefab has both;
+    /// this only fills them in if they were removed. The body is kinematic: movement is driven by this script.
+    /// </summary>
+    private void EnsurePhysics()
+    {
+        Rigidbody2D body = GetComponent<Rigidbody2D>();
+        if (body == null)
+            body = gameObject.AddComponent<Rigidbody2D>();
+        body.bodyType = RigidbodyType2D.Kinematic;
+        body.gravityScale = 0f;
+
+        if (GetComponent<Collider2D>() == null)
+            gameObject.AddComponent<BoxCollider2D>().size = Vector2.one * 0.5f;
+    }
+
+    /// <summary>Instantly places the player at the centre of a cell and cancels any step in progress.</summary>
+    public void TeleportToCell(Vector3Int cell)
+    {
+        if (grid == null)
+            grid = FindAnyObjectByType<Grid>();
+        if (grid == null)
+            return;
+
+        currentCell = cell;
+        targetCell = cell;
+        stepProgress = 1f;
+        lastHeldDirection = Vector3Int.zero;
+        transform.position = CellCenter(cell);
     }
 
     private void Start()
