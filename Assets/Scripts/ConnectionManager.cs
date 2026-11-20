@@ -10,6 +10,9 @@ public sealed class ConnectionManager
     private readonly Dictionary<Vector3Int, List<float>> signalsByCell = new();
 
     private readonly Dictionary<object, (Vector3Int a, Vector3Int b)> cableLinks = new();
+    private readonly Dictionary<Repeater, (Vector3Int center, List<Vector3Int> coverage)> repeaters = new();
+    private readonly HashSet<Repeater> poweredRepeaters = new();
+    private readonly HashSet<Vector3Int> repeaterSignalCells = new();
 
     internal event Action<Vector3Int> SignalChanged;
     internal event Action SignalsCleared;
@@ -19,6 +22,7 @@ public sealed class ConnectionManager
         {
             var cells = new HashSet<Vector3Int>(signalsByCell.Keys);
             foreach (var link in cableLinks.Values) { cells.Add(link.a); cells.Add(link.b); }
+            cells.UnionWith(repeaterSignalCells);
             return cells;
         }
     }
@@ -60,13 +64,67 @@ public sealed class ConnectionManager
         var strongest = 0f;
         var found = false;
         foreach (var reachable in ConnectedCells(cell))
+        {
             if (signalsByCell.TryGetValue(reachable, out var signals))
                 foreach (var signal in signals)
                 {
                     strongest = found ? Mathf.Max(strongest, signal) : signal;
                     found = true;
                 }
+            if (repeaterSignalCells.Contains(reachable))
+            {
+                strongest = found ? Mathf.Max(strongest, 1f) : 1f;
+                found = true;
+            }
+        }
         return strongest;
+    }
+
+    internal bool IsRepeaterPowered(Repeater repeater) => poweredRepeaters.Contains(repeater);
+
+    internal void SetRepeater(Repeater repeater, Vector3Int center, List<Vector3Int> coverage)
+    {
+        var affected = AllSignalCells();
+        repeaters[repeater] = (center, new List<Vector3Int>(coverage));
+        RecalculateRepeaters(affected);
+    }
+
+    internal void RemoveRepeater(Repeater repeater)
+    {
+        if (!repeaters.ContainsKey(repeater)) return;
+        var affected = AllSignalCells();
+        repeaters.Remove(repeater);
+        RecalculateRepeaters(affected);
+    }
+
+    private HashSet<Vector3Int> AllSignalCells() => new(SignalCells);
+
+    // Start from external contributions, then expand only from reachable repeaters.
+    // Recomputing from scratch prevents a loop of repeaters from powering itself.
+    private void RecalculateRepeaters(HashSet<Vector3Int> affected)
+    {
+        poweredRepeaters.Clear();
+        repeaterSignalCells.Clear();
+        var pending = new Queue<Repeater>();
+        foreach (var pair in repeaters)
+            if (GetSignalQuality(pair.Value.center) > 0f && poweredRepeaters.Add(pair.Key))
+                pending.Enqueue(pair.Key);
+
+        while (pending.Count > 0)
+        {
+            var repeater = pending.Dequeue();
+            foreach (var cell in repeaters[repeater].coverage)
+            {
+                repeaterSignalCells.Add(cell);
+                var connected = ConnectedCells(cell);
+                foreach (var pair in repeaters)
+                    if (connected.Contains(pair.Value.center) && poweredRepeaters.Add(pair.Key))
+                        pending.Enqueue(pair.Key);
+            }
+        }
+
+        affected.UnionWith(SignalCells);
+        foreach (var cell in affected) SignalChanged?.Invoke(cell);
     }
 
     private HashSet<Vector3Int> ConnectedCells(Vector3Int cell)
@@ -91,22 +149,18 @@ public sealed class ConnectionManager
 
     internal void SetCableLink(object owner, Vector3Int a, Vector3Int b)
     {
+        var affected = AllSignalCells();
         RemoveCableLink(owner);
         cableLinks[owner] = (a, b);
-        NotifyConnected(a);
+        RecalculateRepeaters(affected);
     }
 
     internal void RemoveCableLink(object owner)
     {
         if (!cableLinks.TryGetValue(owner, out var link)) return;
-        var affected = ConnectedCells(link.a);
+        var affected = AllSignalCells();
         cableLinks.Remove(owner);
-        foreach (var cell in affected) SignalChanged?.Invoke(cell);
-    }
-
-    private void NotifyConnected(Vector3Int cell)
-    {
-        foreach (var affected in ConnectedCells(cell)) SignalChanged?.Invoke(affected);
+        RecalculateRepeaters(affected);
     }
 
     public float GetSignalQuality(Vector3 worldPosition, GridLayout grid)
@@ -114,11 +168,22 @@ public sealed class ConnectionManager
         return GetSignalQuality(grid.WorldToCell(worldPosition));
     }
 
+    public bool HasSignal(Vector3Int cell)
+    {
+        return GetSignalQuality(cell) > 0f;
+    }
+
+    public bool HasSignal(Vector3 worldPosition, GridLayout grid)
+    {
+        return HasSignal(grid.WorldToCell(worldPosition));
+    }
+
     public void AddSignal(Vector3Int cell, float quality)
     {
         if (float.IsNaN(quality) || float.IsInfinity(quality))
             throw new ArgumentOutOfRangeException(nameof(quality), "Signal quality must be finite.");
 
+        var affected = AllSignalCells();
         if (!signalsByCell.TryGetValue(cell, out var signals))
         {
             signals = new List<float>();
@@ -126,24 +191,28 @@ public sealed class ConnectionManager
         }
 
         signals.Add(quality);
-        NotifyConnected(cell);
+        RecalculateRepeaters(affected);
     }
 
     public bool RemoveSignal(Vector3Int cell, float quality)
     {
+        var affected = AllSignalCells();
         if (!signalsByCell.TryGetValue(cell, out var signals) || !signals.Remove(quality))
             return false;
 
         if (signals.Count == 0)
             signalsByCell.Remove(cell);
 
-        NotifyConnected(cell);
+        RecalculateRepeaters(affected);
         return true;
     }
 
     private void ClearSignals()
     {
         signalsByCell.Clear();
+        repeaters.Clear();
+        poweredRepeaters.Clear();
+        repeaterSignalCells.Clear();
         ResetVersion++;
         SignalsCleared?.Invoke();
     }

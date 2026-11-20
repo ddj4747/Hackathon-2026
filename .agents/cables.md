@@ -33,9 +33,9 @@
 
 - Parent the prefab under the level Grid. Set the path to the intended absolute Grid cells and move its adapter children into the first and last cells. The default path connects (0,0) and (1,0) when the prefab is at the Grid origin.
 - Paint the desired 16-pixel `WireTiles` on the prefab's `Cable artwork` Tilemap to match the route. The tilemap is initially empty; the path and artwork are configured separately. Sprites use point filtering and 16 pixels per unit.
-- `SampleScene` contains a `WireTilemap` under `MapGrid`, with four horizontal tiles adjacent to the root repeater. In Play mode that repeater's `Is Signal Supplied` toggle controls their power.
+- `SampleScene` contains a `WireTilemap` under `MapGrid` with a modified sample layout.
 - Unity CLI verified compilation, strongest-signal propagation in both directions, source removal in a loop, link removal and prefab adapter enable/disable behavior. Visual placement remains a level-authoring step.
 - Unity CLI also verified propagation through the three example cables and removal when the test toggle is turned off.
 - Parent `WireTilemap` beneath the scene Grid and paint `DirectionalWireTiles` on it. The prefab contains four horizontal sample tiles; place a supplied repeater on the adjacent cell to the left or right. The Inspector's `Is Power Supplied` shows whether any tile is powered in Play mode.
 - Select `Wire Palette` in Unity's Tile Palette window and paint onto the `WireTilemap` object. Unity recognizes the palette and its 11 distinct directional tile assets.
-- Unity MCP verified repeater placement and direction, matching and mismatched neighboring tiles, power removal, blue/green sprites, and the sample scene's repeater-to-wire supply.
+- Unity MCP previously verified repeater placement and direction, matching and mismatched neighboring tiles, power removal, and blue/green sprites.

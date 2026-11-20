@@ -1,4 +1,4 @@
-﻿# Project
+# Project
 - Unity **6000.5.0f1** (Unity 6.5). Source: `ProjectSettings/ProjectVersion.txt`.
 - 2D project; URP **17.5.0**, Input System **1.19.0**.
 - Cinemachine **3.1.7**, Unity Pipeline **1.0.0**, DOTween (free) installed under `Assets/Plugins/Demigiant/DOTween`.
@@ -9,12 +9,14 @@
 - The tileset will use a **dual-grid** layout. A rectangular Unity Grid prefab provides the map grid. Dual-grid tile mapping and rendering setup remain undecided.
 - Visual style: **pixel art**, with a **512 Ã— 352 pixel** target screen resolution and **16 Ã— 16 pixel** tiles. A full viewport at this resolution spans **32 Ã— 22 tiles**; this does not define the total map size.
 - The player moves around the map and manages the placement of objects in the room to make the connection work.
-- Player movement is grid-based: the player jumps from one tile to another. Allowed directions, controls, jump timing/animation and collision rules remain undecided.
+- Player movement is grid-based: the player moves from one tile to another. Additional movement timing and collision rules remain undecided.
+- Input decisions: Space (action `Player/Confirm`) is the shared confirm/activate key, since there is no jump mechanic. Movement is WASD/arrows. R (action `Player/Restart`) restarts the current level. Leaving a level is done by walking into a `LevelExit` hole, not by a key.
 - The core gameplay is rearranging objects that affect the connection: some block it, others extend its reach, and additional effects may be defined later.
 - When signal is supplied, the basic repeater contributes signal quality `1` to its own tile and a stepped circular sector measured from its exact position. The sector uses a rounded boundary of Range + 0.4 grid units, limited to Range cells in each direction. Its width and start angle are configurable; the start is measured counterclockwise from local +X, and coverage extends counterclockwise from there. A tile overlay shows which cells have a positive signal.
+- Signal emitters provide the starting signal in a configurable circular range. Repeaters activate when signal reaches their cell and stop when disconnected from a source.
 - A repeater uses its nearest parent Grid or the only Grid in its scene. With multiple grids, parent the repeater under the one it should use.
 - The game should have several levels and many gameplay variants through different room layouts, object arrangements and combinations of connection effects.
-- Connection rules beyond basic repeater coverage, other object effects, player controls, interaction mechanics and level completion conditions remain undecided. Ask the user before implementing those details; do not treat this concept as an implemented feature.
+- Connection rules beyond basic repeater coverage, other object effects, additional interaction mechanics and level completion conditions remain undecided. Ask the user before implementing those details; do not treat this concept as an implemented feature.
 
 # Unity interaction
 - **Computer/screen control is forbidden.** Do not use GUI automation, browser UI automation, mouse/keyboard control, or screen capture. Use commands and APIs only, with **Unity CLI first**, or **Unity MCP** when available.
@@ -46,7 +48,16 @@
 | Map grid | Level grid prefab and terrain tilemap | [.agents/map-grid.md](.agents/map-grid.md) |
 | Connection manager | Scene-scoped signal quality. `Assets/Prefabs/ConnectionManager.prefab` exposes the same instance through `ConnectionManagerHost.Manager`. | [.agents/connection-manager.md](.agents/connection-manager.md) |
 | Repeater | Signal supply and directional coverage | [.agents/repeater.md](.agents/repeater.md) |
+| Signal emitter | Starting signal source and circular coverage | [.agents/signal-emitter.md](.agents/signal-emitter.md) |
 | Cables | Fixed paths, endpoint adapters and wire artwork | [.agents/cables.md](.agents/cables.md) |
+| Player movement | Grid-based player prefab, sprite and input | [.agents/player-movement.md](.agents/player-movement.md) |
+| Level select | Menu scene and level plates | [.agents/level-select.md](.agents/level-select.md) |
+| Game manager | Persistent manager, level exit and restart | [.agents/GAME_MANAGER.md](.agents/GAME_MANAGER.md) |
+| Level exit | Trigger hole returning to the menu | [.agents/level-exit.md](.agents/level-exit.md) |
+| Pixel-perfect rendering and font | Camera decisions and project font | [.agents/pixel-perfect-and-font.md](.agents/pixel-perfect-and-font.md) |
+| Pushable blocks | Pushable and solid components, chain pushing and settings | [.agents/pushable-blocks.md](.agents/pushable-blocks.md) |
+| GameObject tile palette | Placeholder floor and wall prefabs and grid snapping | [.agents/tile-palette.md](.agents/tile-palette.md) |
+
 
 # Verification
 - Verify compilation and relevant behavior through CLI/MCP; read console errors without clearing the user's console. Run checks appropriate to the change.

@@ -5,10 +5,7 @@ using UnityEngine.SceneManagement;
 [DisallowMultipleComponent]
 public sealed class Repeater : MonoBehaviour
 {
-    [SerializeField, Tooltip("Whether this repeater supplies signal to its coverage area.")]
-    private bool isSignalSupplied = true;
-
-    public bool IsSignalSupplied => isActiveAndEnabled && isSignalSupplied;
+    public bool IsSignalSupplied => isActiveAndEnabled && manager != null && manager.IsRepeaterPowered(this);
 
     [SerializeField, Min(0), Tooltip("Radius in grid cells measured from this repeater's position.")]
     private int range = 3;
@@ -42,12 +39,6 @@ public sealed class Repeater : MonoBehaviour
 
     private void Update()
     {
-        if (!isSignalSupplied)
-        {
-            RemoveCoverage();
-            return;
-        }
-
         var scene = gameObject.scene;
         if (scene.isLoaded && scene != gridScene)
         {
@@ -85,7 +76,10 @@ public sealed class Repeater : MonoBehaviour
 
         AddCoverage(center);
         if (angle <= 0f)
+        {
+            manager.SetRepeater(this, center, coveredCells);
             return;
+        }
 
         // Round the boundary outward to create the intended stepped pixel-circle.
         var roundedRadius = radius + 0.4f;
@@ -113,6 +107,7 @@ public sealed class Repeater : MonoBehaviour
                 AddCoverage(cell);
             }
         }
+        manager.SetRepeater(this, center, coveredCells);
     }
 
     private Grid FindGrid(Scene scene)
@@ -150,7 +145,6 @@ public sealed class Repeater : MonoBehaviour
 
     private void AddCoverage(Vector3Int cell)
     {
-        manager.AddSignal(cell, 1f);
         coveredCells.Add(cell);
     }
 
@@ -163,8 +157,7 @@ public sealed class Repeater : MonoBehaviour
     {
         if (manager != null && resetVersion == manager.ResetVersion)
         {
-            foreach (var cell in coveredCells)
-                manager.RemoveSignal(cell, 1f);
+            manager.RemoveRepeater(this);
         }
 
         coveredCells.Clear();

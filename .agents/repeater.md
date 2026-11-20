@@ -2,29 +2,29 @@
 
 ## Status
 
-- Repeaters contribute coverage to the scene's connection manager. Their supplied state is controlled by an Inspector toggle; cable-to-repeater supply is not implemented.
+- Repeaters contribute coverage when signal reaches their cell. A [signal emitter](signal-emitter.md) can provide the starting signal.
 - Fifteen visual variants each use the top-row blue sprite when unsupplied and the matching bottom-row green sprite when supplied.
 
 ## Entry files
 
 - `Assets/Scripts/Repeater.cs`, `Assets/Scripts/RepeaterVisual.cs`, `Assets/Prefabs/Repeater.prefab`
 - `Assets/Resources/Repeaters.png`, `Assets/Prefabs/Repeaters/`, `Assets/RepeaterTiles/`
-- `Assets/Scripts/RepeaterTile.cs`, `Assets/TilePalettes/Repeater Palette.prefab`, `Assets/Prefabs/RepeaterTilemap.prefab`
+- `Assets/Scripts/RepeaterTile.cs`, `Assets/TilePalettes/Signal Palette.prefab`, `Assets/Prefabs/RepeaterTilemap.prefab`
 - [Connection manager](connection-manager.md), [Cables](cables.md), [Map grid](map-grid.md)
 
 ## Behavior and rules
 
-- `Is Signal Supplied` defaults to true. When off, the repeater removes its signal contributions; when on, it supplies quality 1 to its own cell and configured sector. Changes take effect during Play mode.
+- A repeater supplied by a positive signal contributes quality 1 to its own cell and configured sector. It stops contributing if its source is lost. Cycles cannot supply themselves without an external source.
 - Range, sector angle, start angle, position and local +X facing determine the coverage described in the root project instructions. The start angle defaults to 0 degrees and the sector extends counterclockwise. Grid lookup uses the nearest parent Grid or the only Grid in the scene.
 - In Play mode the visual follows `IsSignalSupplied`; blue is unsupplied and green is supplied. In edit mode tiles preview blue. A painted repeater tile instantiates its matching functional prefab.
 
 ## Public interfaces and dependencies
 
 - Coverage uses the scene-scoped `ConnectionManager`. Sector angle, start angle and range are serialized on the repeater.
-- `IsSignalSupplied` exposes whether the repeater is enabled and supplies signal; [wire tilemaps](cables.md) use it for adjacent open-port adapters. Wire tilemaps do not supply repeaters.
+- `IsSignalSupplied` exposes whether the repeater is enabled and receives signal; [wire tilemaps](cables.md) use it for adjacent open-port adapters. Wire tilemaps do not supply repeaters.
 
 ## Setup and verification
 
-- Select `Repeater Palette` and paint on a Tilemap beneath the level Grid. `RepeaterTilemap` contains a sample row of all 15 variants; `SampleScene` has an instance at cells x=-7 through 7, y=-4.
-- Standalone variants can also be placed under a Grid. Set `Is Signal Supplied` on a prefab to control its supply; tile-created instances can be inspected in Play mode.
-- Unity CLI verified palette references, edit previews, all 15 instantiated prefabs and both sprite mappings, plus automatic changes when toggling supply in Play mode. Unity MCP verified sector boundaries, start-angle changes, wraparound, rotation, and zero- and full-width coverage.
+- Select `Signal Palette` and paint on a Tilemap beneath the level Grid. It contains the 15 repeater variants and an emitter tile. `RepeaterTilemap` contains a sample row of all 15 variants; `SampleScene` contains a modified instance with six repeater tiles.
+- Standalone variants can also be placed under a Grid. Place a signal emitter so that its coverage reaches a repeater's cell; tile-created instances can be inspected in Play mode.
+- Unity CLI previously verified palette references, edit previews, all 15 instantiated prefabs and both sprite mappings. Unity MCP verified sector boundaries, start-angle changes, wraparound, rotation, and zero- and full-width coverage. Unity MCP also verified signal activation, chaining and shutdown without a source.
