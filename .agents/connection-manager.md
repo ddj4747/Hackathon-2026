@@ -13,6 +13,7 @@
 
 - Each cell stores a list of finite signal qualities. Its quality is the largest value, or `0` for an empty cell.
 - Adding the same value twice creates two contributions. Removal matches one stored value exactly and reports whether it was found.
+- Cable-linked cells share the strongest directly contributed signal throughout their connected component. Links do not themselves add contributions, so loops cannot sustain a signal after its source is removed. See [Cables](cables.md).
 - Unloading a scene clears and drops its manager. Starting a new play session starts with fresh managers.
 
 ## Public interfaces and dependencies
@@ -24,3 +25,4 @@
 ## Setup and verification
 
 - Verified maximum selection, duplicate removal, empty cells, world-to-cell lookup, scene isolation and global reset in Unity.
+- Verified cable propagation, competing sources, disconnection and source removal in a loop with Unity CLI.

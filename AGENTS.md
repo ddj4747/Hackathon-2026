@@ -11,7 +11,7 @@
 - The player moves around the map and manages the placement of objects in the room to make the connection work.
 - Player movement is grid-based: the player jumps from one tile to another. Allowed directions, controls, jump timing/animation and collision rules remain undecided.
 - The core gameplay is rearranging objects that affect the connection: some block it, others extend its reach, and additional effects may be defined later.
-- The basic antenna contributes signal quality `1` to its own tile and a stepped circular sector measured from its exact position. The sector uses a rounded boundary of Range + 0.4 grid units, limited to Range cells in each direction. Its angle is configurable, and its local +X axis aims the sector. A tile overlay shows which cells have a positive signal.
+- When signal is supplied, the basic antenna contributes signal quality `1` to its own tile and a stepped circular sector measured from its exact position. The sector uses a rounded boundary of Range + 0.4 grid units, limited to Range cells in each direction. Its angle is configurable, and its local +X axis aims the sector. A tile overlay shows which cells have a positive signal.
 - An antenna uses its nearest parent Grid or the only Grid in its scene. With multiple grids, parent the antenna under the one it should use.
 - The game should have several levels and many gameplay variants through different room layouts, object arrangements and combinations of connection effects.
 - Connection rules beyond basic antenna coverage, other object effects, player controls, interaction mechanics and level completion conditions remain undecided. Ask the user before implementing those details; do not treat this concept as an implemented feature.
@@ -45,6 +45,8 @@
 | Unity MCP | CoplayDev editor package and connection prerequisites | [.agents/unity-mcp.md](.agents/unity-mcp.md) |
 | Map grid | Level grid prefab and terrain tilemap | [.agents/map-grid.md](.agents/map-grid.md) |
 | Connection manager | Scene-scoped signal quality. `Assets/Prefabs/ConnectionManager.prefab` exposes the same instance through `ConnectionManagerHost.Manager`. | [.agents/connection-manager.md](.agents/connection-manager.md) |
+| Antenna | Signal supply and directional coverage | [.agents/antenna.md](.agents/antenna.md) |
+| Cables | Fixed paths, endpoint adapters and wire artwork | [.agents/cables.md](.agents/cables.md) |
 
 # Verification
 - Verify compilation and relevant behavior through CLI/MCP; read console errors without clearing the user's console. Run checks appropriate to the change.

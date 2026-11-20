@@ -5,6 +5,11 @@ using UnityEngine.SceneManagement;
 [DisallowMultipleComponent]
 public sealed class Antenna : MonoBehaviour
 {
+    [SerializeField, Tooltip("Whether this antenna supplies signal to its coverage area.")]
+    private bool isSignalSupplied = true;
+
+    public bool IsSignalSupplied => isActiveAndEnabled && isSignalSupplied;
+
     [SerializeField, Min(0), Tooltip("Radius in grid cells measured from this antenna's position.")]
     private int range = 3;
 
@@ -34,6 +39,12 @@ public sealed class Antenna : MonoBehaviour
 
     private void Update()
     {
+        if (!isSignalSupplied)
+        {
+            RemoveCoverage();
+            return;
+        }
+
         var scene = gameObject.scene;
         if (scene.isLoaded && scene != gridScene)
         {
@@ -56,7 +67,7 @@ public sealed class Antenna : MonoBehaviour
         var radius = Mathf.Max(0, range);
         var angle = Mathf.Clamp(sectorAngle, 0f, 360f);
         var direction = GetDirection(angle);
-        if (manager == sceneManager && lastCenter == center && lastOrigin.Equals(origin) && lastRange == radius &&
+        if (manager == sceneManager && resetVersion == sceneManager.ResetVersion && lastCenter == center && lastOrigin.Equals(origin) && lastRange == radius &&
             lastAngle == angle && lastDirection == direction)
             return;
 
