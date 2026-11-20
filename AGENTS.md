@@ -1,4 +1,4 @@
-# Project
+﻿# Project
 - Unity **6000.5.0f1** (Unity 6.5). Source: `ProjectSettings/ProjectVersion.txt`.
 - 2D project; URP **17.5.0**, Input System **1.19.0**.
 - Cinemachine **3.1.7**, Unity Pipeline **1.0.0**, DOTween (free) installed under `Assets/Plugins/Demigiant/DOTween`.
@@ -7,12 +7,14 @@
 # Game concept (planned)
 - A **2D top-down game** about establishing a connection between two antennas.
 - The tileset will use a **dual-grid** layout. A rectangular Unity Grid prefab provides the map grid. Dual-grid tile mapping and rendering setup remain undecided.
-- Visual style: **pixel art**, with a **512 × 352 pixel** target screen resolution and **16 × 16 pixel** tiles. A full viewport at this resolution spans **32 × 22 tiles**; this does not define the total map size.
+- Visual style: **pixel art**, with a **512 Ã— 352 pixel** target screen resolution and **16 Ã— 16 pixel** tiles. A full viewport at this resolution spans **32 Ã— 22 tiles**; this does not define the total map size.
 - The player moves around the map and manages the placement of objects in the room to make the connection work.
 - Player movement is grid-based: the player jumps from one tile to another. Allowed directions, controls, jump timing/animation and collision rules remain undecided.
 - The core gameplay is rearranging objects that affect the connection: some block it, others extend its reach, and additional effects may be defined later.
+- The basic antenna contributes signal quality `1` to its own tile and a stepped circular sector measured from its exact position. The sector uses a rounded boundary of Range + 0.4 grid units, limited to Range cells in each direction. Its angle is configurable, and its local +X axis aims the sector. A tile overlay shows which cells have a positive signal.
+- An antenna uses its nearest parent Grid or the only Grid in its scene. With multiple grids, parent the antenna under the one it should use.
 - The game should have several levels and many gameplay variants through different room layouts, object arrangements and combinations of connection effects.
-- Exact connection rules, object effects, player controls, interaction mechanics and level completion conditions remain undecided. Ask the user before implementing those details; do not treat this concept as an implemented feature.
+- Connection rules beyond basic antenna coverage, other object effects, player controls, interaction mechanics and level completion conditions remain undecided. Ask the user before implementing those details; do not treat this concept as an implemented feature.
 
 # Unity interaction
 - **Computer/screen control is forbidden.** Do not use GUI automation, browser UI automation, mouse/keyboard control, or screen capture. Use commands and APIs only, with **Unity CLI first**, or **Unity MCP** when available.
@@ -39,9 +41,10 @@
 # Module index
 | Module | Scope | Note |
 | --- | --- | --- |
-| Release builds | Tag-triggered desktop builds and GitHub releases | [.github/RELEASING.md](.github/RELEASING.md) (temporary location; `.agents/` writes blocked) |
-| Unity MCP | CoplayDev editor package and connection prerequisites | [.github/UNITY_MCP.md](.github/UNITY_MCP.md) (temporary location; `.agents/` writes blocked) |
-| Map grid | Level grid prefab and terrain tilemap | [.github/MAP_GRID.md](.github/MAP_GRID.md) (temporary location; `.agents/` writes blocked) |
+| Release builds | Tag-triggered desktop builds and GitHub releases | [.agents/release-builds.md](.agents/release-builds.md) |
+| Unity MCP | CoplayDev editor package and connection prerequisites | [.agents/unity-mcp.md](.agents/unity-mcp.md) |
+| Map grid | Level grid prefab and terrain tilemap | [.agents/map-grid.md](.agents/map-grid.md) |
+| Connection manager | Scene-scoped signal quality. `Assets/Prefabs/ConnectionManager.prefab` exposes the same instance through `ConnectionManagerHost.Manager`. | [.agents/connection-manager.md](.agents/connection-manager.md) |
 
 # Verification
 - Verify compilation and relevant behavior through CLI/MCP; read console errors without clearing the user's console. Run checks appropriate to the change.
