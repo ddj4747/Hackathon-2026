@@ -6,8 +6,10 @@
 
 # Game concept (planned)
 - A **2D top-down game** about establishing a connection between two antennas.
+- The tileset will use a **dual-grid** layout. A rectangular Unity Grid prefab provides the map grid. Dual-grid tile mapping and rendering setup remain undecided.
 - Visual style: **pixel art**, with a **512 × 352 pixel** target screen resolution and **16 × 16 pixel** tiles. A full viewport at this resolution spans **32 × 22 tiles**; this does not define the total map size.
 - The player moves around the map and manages the placement of objects in the room to make the connection work.
+- Player movement is grid-based: the player jumps from one tile to another. Allowed directions, controls, jump timing/animation and collision rules remain undecided.
 - The core gameplay is rearranging objects that affect the connection: some block it, others extend its reach, and additional effects may be defined later.
 - The game should have several levels and many gameplay variants through different room layouts, object arrangements and combinations of connection effects.
 - Exact connection rules, object effects, player controls, interaction mechanics and level completion conditions remain undecided. Ask the user before implementing those details; do not treat this concept as an implemented feature.
@@ -17,6 +19,7 @@
 - CLI currently: `C:/Users/adamb/Downloads/unity-windows-x64.exe`. Quote the executable path in shell commands.
 - Run `unity status --json`; target this project's absolute path with `--project-path` on editor commands. Discover commands with `unity commands --grep <term>` or command help.
 - Pipeline enables CLI/MCP access. MCP client registration is not yet verified; do not assume MCP is connected.
+- CoplayDev MCP for Unity **10.3.0** is installed separately as `com.coplaydev.unity-mcp`, pinned to Git tag `v10.3.0`. Package installation does not prove a connected MCP client.
 - Edit C# and Markdown directly. Use Unity APIs through CLI/MCP for scenes, prefabs, components and serialized assets; preserve `.meta` files and GUIDs.
 - If a tool fails, inspect its error and the relevant logs. Report blockers; never switch to computer/screen control or request access to it.
 
@@ -37,6 +40,8 @@
 | Module | Scope | Note |
 | --- | --- | --- |
 | Release builds | Tag-triggered desktop builds and GitHub releases | [.github/RELEASING.md](.github/RELEASING.md) (temporary location; `.agents/` writes blocked) |
+| Unity MCP | CoplayDev editor package and connection prerequisites | [.github/UNITY_MCP.md](.github/UNITY_MCP.md) (temporary location; `.agents/` writes blocked) |
+| Map grid | Level grid prefab and terrain tilemap | [.github/MAP_GRID.md](.github/MAP_GRID.md) (temporary location; `.agents/` writes blocked) |
 
 # Verification
 - Verify compilation and relevant behavior through CLI/MCP; read console errors without clearing the user's console. Run checks appropriate to the change.
