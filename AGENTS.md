@@ -46,7 +46,7 @@
 # Module index
 | Module | Scope | Note |
 | --- | --- | --- |
-| Release builds | Tag-triggered desktop builds and GitHub releases | [.agents/release-builds.md](.agents/release-builds.md) |
+| Release builds | Tag-triggered desktop builds and GitHub releases, and the WebGL build workflow | [.agents/release-builds.md](.agents/release-builds.md) |
 | Unity MCP | CoplayDev editor package and connection prerequisites | [.agents/unity-mcp.md](.agents/unity-mcp.md) |
 | Map grid | Level grid prefab and terrain tilemap | [.agents/map-grid.md](.agents/map-grid.md) |
 | Dual grid | Floor, wall and animated water rendering on a half-cell-shifted tilemap (`MapGrid/Ground`); terrain paint tiles | [Claude outputs/DUAL_GRID.md](Claude%20outputs/DUAL_GRID.md) (temporary location; `.agents/` writes blocked) |
