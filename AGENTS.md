@@ -6,7 +6,7 @@
 
 # Game concept (planned)
 - A **2D top-down game** about establishing a connection between two antennas.
-- The tileset will use a **dual-grid** layout. A rectangular Unity Grid prefab provides the map grid. Dual-grid tile mapping and rendering setup remain undecided.
+- Only the **floor, walls and water** use a **dual-grid** layout (see the Dual grid module); everything else stays on the normal rectangular Unity Grid prefab (`MapGrid`).
 - Visual style: **pixel art**, with a **512 × 352 pixel** target screen resolution and **16 × 16 pixel** tiles. A full viewport at this resolution spans **32 × 22 tiles**; this does not define the total map size.
 - The player moves around the map and manages the placement of objects in the room to make the connection work.
 - Player movement is grid-based: the player jumps from one tile to another. Allowed directions, controls, jump timing/animation and collision rules remain undecided.
@@ -43,6 +43,7 @@
 | Release builds | Tag-triggered desktop builds and GitHub releases | [.github/RELEASING.md](.github/RELEASING.md) (temporary location; `.agents/` writes blocked) |
 | Unity MCP | CoplayDev editor package and connection prerequisites | [.github/UNITY_MCP.md](.github/UNITY_MCP.md) (temporary location; `.agents/` writes blocked) |
 | Map grid | Level grid prefab and terrain tilemap | [.github/MAP_GRID.md](.github/MAP_GRID.md) (temporary location; `.agents/` writes blocked) |
+| Dual grid | Floor, wall and animated water rendering on a half-size display grid; terrain paint tiles | [Claude outputs/DUAL_GRID.md](Claude%20outputs/DUAL_GRID.md) (temporary location; `.agents/` and `.github/` writes blocked) |
 | Player movement | Grid-based player prefab, sprite and input | [Claude outputs/PLAYER_MOVEMENT.md](Claude%20outputs/PLAYER_MOVEMENT.md) (temporary location; `.agents/` and `.github/` writes blocked) |
 | Level select | Menu scene, level plates, Select input action | [Claude outputs/LEVEL_SELECT.md](Claude%20outputs/LEVEL_SELECT.md) (temporary location; `.agents/` and `.github/` writes blocked) |
 | Game manager | Persistent manager, return to menu, level restart + loading screen, shared Confirm action | [Claude outputs/GAME_MANAGER.md](Claude%20outputs/GAME_MANAGER.md) (temporary location; `.agents/` and `.github/` writes blocked) |
