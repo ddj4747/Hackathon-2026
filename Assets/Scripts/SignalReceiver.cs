@@ -8,6 +8,8 @@ using UnityEngine.SceneManagement;
 public sealed class SignalReceiver : MonoBehaviour
 {
     [SerializeField] private SignalType signalType;
+    [SerializeField, Tooltip("Sprite shown while this receiver is supplied.")]
+    private Sprite suppliedSprite;
     public SignalType Type => signalType;
 
     [SerializeField] private UnityEvent onSignalReceived = new();
@@ -19,14 +21,23 @@ public sealed class SignalReceiver : MonoBehaviour
 
     private Grid grid;
     private Scene gridScene;
+    private SpriteRenderer spriteRenderer;
+    private Sprite unsuppliedSprite;
 
-    private void OnEnable() => gridScene = default;
+    private void OnEnable()
+    {
+        gridScene = default;
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null) unsuppliedSprite = spriteRenderer.sprite;
+    }
     private void OnTransformParentChanged() => gridScene = default;
 
     private void Update()
     {
-        SignalTypeVisual.Apply(GetComponent<SpriteRenderer>(), signalType);
+        SignalTypeVisual.Apply(spriteRenderer, signalType);
         if (Application.IsPlaying(gameObject)) UpdateSignal();
+        if (spriteRenderer != null && suppliedSprite != null)
+            spriteRenderer.sprite = Application.IsPlaying(gameObject) && IsSignalSupplied ? suppliedSprite : unsuppliedSprite;
     }
 
     private void UpdateSignal()
@@ -59,7 +70,8 @@ public sealed class SignalReceiver : MonoBehaviour
     private void OnDisable()
     {
         IsSignalSupplied = false;
-        SignalTypeVisual.Restore(GetComponent<SpriteRenderer>());
+        if (spriteRenderer != null && suppliedSprite != null) spriteRenderer.sprite = unsuppliedSprite;
+        SignalTypeVisual.Restore(spriteRenderer);
     }
 
     private bool HasWireSignal(Scene scene)

@@ -45,6 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec6ea1ffe685c8b4291f4dd4cf45dcf2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SignalReceiver
+  signalType: 0
+  suppliedSprite: {fileID: 417768062, guid: e854f80332a558c4a9a04392bcf372a8, type: 3}
   onSignalReceived:
     m_PersistentCalls:
       m_Calls: []
