@@ -328,8 +328,8 @@ MonoBehaviour:
   waterColor: {r: 0.16078432, g: 0.21176471, b: 0.43529412, a: 1}
   floorTile: {fileID: 11400000, guid: a26644a827374887a6f5b4f9010ad525, type: 2}
   waterTile: {fileID: 11400000, guid: e798e7498f0947f28caa97e6fcc00acd, type: 2}
+  wallTile: {fileID: 11400000, guid: ddc2bff09843465585789593b0f77f17, type: 2}
   sortingOrder: -10
-  margin: 3
   frameDuration: 0.15
   stillFrameHold: 4
   showGuideInEditor: 1
