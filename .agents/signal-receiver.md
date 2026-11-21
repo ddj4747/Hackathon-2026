@@ -11,6 +11,7 @@
 - While enabled, it checks for positive matching-type floor signal at its cell or a matching-type powered wire with an open port facing its adjacent cell. It invokes the received or lost event once on each corresponding transition; it does not report loss while either input remains supplied. It logs `Signal receiver connected.` on acquisition and `Signal receiver disconnected.` on loss. Disabling resets its state without invoking the loss event.
 - In Play mode, the configured supplied sprite replaces the receiver's normal sprite while signal is present and is restored on signal loss or disable. Original receivers and collectors use the matching green emitter artwork; Red uses the existing Red signal shader on that artwork. Edit-mode previews remain unsupplied.
 - Uses its nearest parent Grid, or the only Grid in its scene. With multiple grids, parent it under the intended Grid.
+- The static `SignalReceiver.SuppliedChanged(receiver, supplied)` event fires on every supplied-state change and when a supplied receiver is disabled. `LaserEmitter` uses it to hold all lasers off while any Red receiver is supplied (see [Laser](laser.md)).
 - Receivers and collectors participate in the active level's completion check; see [Game manager](GAME_MANAGER.md).
 
 ## Public interfaces and dependencies
@@ -28,6 +29,7 @@
 - Unity MCP verified the collector palette tile's prefab and sprite references, and one event and console log for each acquisition and loss in an isolated preview scene.
 - Unity CLI verified all four collector palette tiles reference their matching prefabs and sprites.
 - Unity CLI Play-mode checks verified sprite changes, matching-type isolation, loss, disable and re-enable for all 18 receiver and collector prefabs, including the red bridge controller. The Level-1 collector inherits its supplied sprite.
+- Unity MCP preview-scene checks verified the combined supplied-state notification, disable-time sprite restoration, re-enable and loss behavior after merging.
 
 - Unity MCP preview-scene checks invoked receiver updates and verified matching-type reception, isolation and recovery after a jammer is removed.
 

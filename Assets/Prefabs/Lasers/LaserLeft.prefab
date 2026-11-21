@@ -112,8 +112,10 @@ MonoBehaviour:
   activeEmitter: {fileID: -2359077323403331396, guid: 1c4170ff3f25d1145a095ea956a5ec3c, type: 3}
   inactiveEmitter: {fileID: -1139409982227485632, guid: 1c4170ff3f25d1145a095ea956a5ec3c, type: 3}
   beamSprite: {fileID: 6007540951689309739, guid: 1c4170ff3f25d1145a095ea956a5ec3c, type: 3}
+  verticalBeamTile: {fileID: 11400000, guid: 75a71a344f5a44a09425ea7afdf4fadc, type: 2}
+  horizontalBeamTile: {fileID: 11400000, guid: 5f3db733768d4dc0a23fd9b6b7f96dea, type: 2}
   beamParticles: {fileID: 6039045772242412178}
-  beamMaterial: {fileID: 2100000, guid: b41fd627312d9214cb33a85d8b7bf77b, type: 2}
+  beamMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   fadeDuration: 0.2
 --- !u!114 &6727410001743873182
 MonoBehaviour:

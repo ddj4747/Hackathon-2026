@@ -53,8 +53,8 @@ public class TutorialHints : MonoBehaviour
     [SerializeField] private Color shadowColor = new Color(0.1f, 0.1f, 0.15f, 0.9f);
     [Tooltip("Letter height in game pixels (a tile is 16). 8 = the font's native pixel size.")]
     [SerializeField, Range(3f, 16f)] private float size = 6f;
-    [Tooltip("Sorting order: above the floor and signal overlay (1), below blocks and repeaters.")]
-    [SerializeField] private int sortingOrder = 2;
+    [Tooltip("Sorting order of the shadow (text is +1): above the dual-grid floor (-10), below every object (wires, bridges and the signal overlay start at 1).")]
+    [SerializeField] private int sortingOrder = -8;
     [Tooltip("Typewriter speed in characters per second; 0 shows the text at once.")]
     [SerializeField, Min(0f)] private float charactersPerSecond = 0f;
     [SerializeField, Min(0.01f)] private float fadeTime = 0.3f;

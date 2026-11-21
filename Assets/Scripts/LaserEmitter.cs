@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 /// <summary>A wall-mounted, switchable laser along a cardinal grid direction.</summary>
 [DisallowMultipleComponent]
@@ -13,7 +14,9 @@ public sealed class LaserEmitter : MonoBehaviour
     [SerializeField, Tooltip("Whether the laser is firing.")] private bool isOn = true;
     [SerializeField] private Sprite activeEmitter;
     [SerializeField] private Sprite inactiveEmitter;
-    [SerializeField] private Sprite beamSprite;
+    [SerializeField, Tooltip("Fallback ray sprite when no beam tile is assigned.")] private Sprite beamSprite;
+    [SerializeField, Tooltip("Palette tile whose sprite draws Up and Down rays.")] private Tile verticalBeamTile;
+    [SerializeField, Tooltip("Palette tile whose sprite draws Left and Right rays.")] private Tile horizontalBeamTile;
     [SerializeField, Tooltip("Pixel sparks emitted along the active beam.")] private ParticleSystem beamParticles;
     [SerializeField, Tooltip("HDR sprite material used by URP Bloom.")] private Material beamMaterial;
     [SerializeField, Min(0f), Tooltip("Beam fade duration in seconds; gameplay switches immediately.")] private float fadeDuration = 0.2f;
@@ -33,6 +36,9 @@ public sealed class LaserEmitter : MonoBehaviour
     private ParticleSystem wallParticles;
     private float wallParticleAccumulator;
     private float beamParticleAccumulator;
+    private static readonly HashSet<SignalReceiver> SuppliedRedReceivers = new();
+    private bool redWireHeld;
+    private bool stateBeforeRedWire;
 
     /// <summary>Switch the beam on or off without disabling the emitter GameObject.</summary>
     public bool IsOn
@@ -51,7 +57,24 @@ public sealed class LaserEmitter : MonoBehaviour
     public void SetOn(bool value) => IsOn = value;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-    private static void ResetStatics() => All.Clear();
+    private static void ResetStatics()
+    {
+        All.Clear();
+        SuppliedRedReceivers.Clear();
+        SignalReceiver.SuppliedChanged -= OnReceiverSuppliedChanged;
+        SignalReceiver.SuppliedChanged += OnReceiverSuppliedChanged;
+    }
+
+    // While any Red receiver is supplied, every laser is held off; each one returns to its earlier state afterwards.
+    private static void OnReceiverSuppliedChanged(SignalReceiver receiver, bool supplied)
+    {
+        if (receiver == null || receiver.Type != SignalType.Red) return;
+        if (supplied) SuppliedRedReceivers.Add(receiver);
+        else SuppliedRedReceivers.Remove(receiver);
+        var held = SuppliedRedReceivers.Count > 0;
+        foreach (var laser in All)
+            if (laser != null) laser.ApplyRedHold(held);
+    }
 
     private void Awake()
     {
@@ -82,6 +105,7 @@ public sealed class LaserEmitter : MonoBehaviour
     {
         if (!All.Contains(this)) All.Add(this);
         lastRefreshFrame = -1;
+        if (SuppliedRedReceivers.Count > 0) ApplyRedHold(true);
     }
 
     private void OnDisable()
@@ -109,6 +133,24 @@ public sealed class LaserEmitter : MonoBehaviour
                 SpawnDestructionParticles(item);
                 item.DestroyInLaser();
             }
+        }
+    }
+
+    private void ApplyRedHold(bool held)
+    {
+        if (held)
+        {
+            if (!redWireHeld)
+            {
+                redWireHeld = true;
+                stateBeforeRedWire = isOn;
+            }
+            IsOn = false;
+        }
+        else if (redWireHeld)
+        {
+            redWireHeld = false;
+            IsOn = stateBeforeRedWire;
         }
     }
 
@@ -211,7 +253,6 @@ public sealed class LaserEmitter : MonoBehaviour
             if (foundWall)
             {
                 warnedMissingWall = false;
-                cells.Add(origin);
                 foreach (var cell in nextCells) cells.Add(cell);
                 DrawBeam(origin, step);
                 return;
@@ -228,8 +269,10 @@ public sealed class LaserEmitter : MonoBehaviour
 
     private void DrawBeam(Vector3Int origin, Vector3Int step)
     {
-        // The nozzle occupies the back quarter of its cell. Fill the rest up to the cell edge.
-        int count = nextCells.Count + 1;
+        // The ray starts in the cell after the emitter and fills every cell up to the wall.
+        int count = nextCells.Count;
+        var beamTile = step.x != 0 ? horizontalBeamTile : verticalBeamTile;
+        var sprite = beamTile != null && beamTile.sprite != null ? beamTile.sprite : beamSprite;
         for (int i = 0; i < count; i++)
         {
             if (i == segments.Count)
@@ -241,21 +284,18 @@ public sealed class LaserEmitter : MonoBehaviour
             }
             var renderer = segments[i];
             renderer.gameObject.SetActive(true);
-            renderer.sprite = beamSprite;
+            renderer.sprite = sprite;
             if (beamMaterial != null) renderer.sharedMaterial = beamMaterial;
             var color = renderer.color;
             color.a = beamOpacity;
             renderer.color = color;
             renderer.sortingLayerID = emitterRenderer.sortingLayerID;
             renderer.sortingOrder = emitterRenderer.sortingOrder - 1;
-            var center = grid.GetCellCenterWorld(i == 0 ? origin : nextCells[i - 1]);
+            var center = grid.GetCellCenterWorld(nextCells[i]);
             center.z = transform.position.z;
-            if (i == 0) center += (grid.CellToWorld(step) - grid.CellToWorld(Vector3Int.zero)) * 0.125f;
             renderer.transform.position = center;
             renderer.transform.rotation = grid.transform.rotation;
-            renderer.transform.localScale = i == 0
-                ? (step.x != 0 ? new Vector3(0.75f, 1f, 1f) : new Vector3(1f, 0.75f, 1f))
-                : Vector3.one;
+            renderer.transform.localScale = Vector3.one;
         }
         HideSegmentsFrom(count);
         FadeBeam(true);
@@ -303,7 +343,7 @@ public sealed class LaserEmitter : MonoBehaviour
     {
         if (beamParticles == null) return;
         Vector3 cellStep = grid.CellToWorld(step) - grid.CellToWorld(Vector3Int.zero);
-        Vector3 start = grid.GetCellCenterWorld(origin) + cellStep * 0.25f;
+        Vector3 start = grid.GetCellCenterWorld(origin) + cellStep * 0.5f;
         Vector3 end = grid.GetCellCenterWorld(origin + step * (nextCells.Count + 1)) - cellStep * 0.5f;
         start.z = end.z = transform.position.z;
         beamParticles.transform.position = (start + end) * 0.5f;
