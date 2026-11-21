@@ -13,6 +13,7 @@
 
 ## Behavior and rules
 - A plate snaps to the grid cell it is placed on. It highlights (yellow tint, grows 1.3x) while the player's centre is inside its cell.
+- The menu has a centered two-row plate layout and a starting position below it. Its dual-grid floor forms an 18 × 12 room; automatic walls around the floor keep the player inside.
 - Confirm (Space, gamepad south) loads the plate's scene, only while the player stands still on that plate.
 - Inspector fields on `LevelSelectPlate`: `Level Number` (text on the plate), `Scene Asset` (scene picker; its path is baked into a hidden `scenePath` in `OnValidate` so it works in builds), plus colours and highlight scale.
 - On returning from a level, the plate whose scene matches `GameManager.ReturnedFromScenePath` teleports the player onto itself in `Start`, then clears the marker. A level with no matching plate leaves the player at the scene's start position.
@@ -26,3 +27,4 @@
 ## Setup and verification
 - New level plate: drag `LevelPlate.prefab` into a scene with `MapGrid` and `Player`, set `Level Number`, assign `Scene Asset`, and add that scene to the build's scene list.
 - Unity MCP verified all five scene paths on the saved Menu scene; selection through player input has not been tested for the new assignments.
+- The room and plate positions were saved through Unity CLI; walking against the boundary has not yet been tested in Play mode.
