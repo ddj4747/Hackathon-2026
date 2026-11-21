@@ -17,6 +17,7 @@
 - Font importer: Font Size 16, Rendering Mode Smooth (Unity defaults). Size 8 + Hinted Raster was tried first and the editor logged `Failed to load ... nokiafc22.ttf`; cause not confirmed, so it was reverted. Use only multiples of 8 for the font size (8, 16, ...); other sizes give fractional advances and blur.
 - `TextMesh` rule: world units per font pixel = `characterSize * 0.1`. With font size 16 and `characterSize` 0.3125 one font pixel is 1/8 unit (a glyph pixel is 2 screen pixels; native 8 px design doubled) . Font Style must stay Normal (bold/italic are synthesized and break pixel alignment).
 - All game text must use `nokiafc22.ttf` (assign `Resources/nokiafc22` font and its material, same size/characterSize values). At size 16 digits are 12 px wide ("1" is 8 px), so numbers of any length have an even pixel width and stay centred on the tile.
+- Levels 0, 1 and 2 have editable `TextMesh` children under a `Tutorial Text` root. They introduce directional repeaters, antennas and wires, and enhancers respectively. Edit each child's Text field in the scene; these are always-visible, non-interactive labels.
 
 ## Public interfaces and dependencies
 - `LevelSelectPlate` only sets `TextMesh.text`; font settings live in the prefab ([LEVEL_SELECT.md](level-select.md)).

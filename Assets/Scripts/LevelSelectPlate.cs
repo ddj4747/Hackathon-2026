@@ -34,11 +34,8 @@ public class LevelSelectPlate : MonoBehaviour
     [Header("Look")]
     [SerializeField] private SpriteRenderer plateRenderer;
     [SerializeField] private TextMesh numberLabel;
-    [SerializeField] private Color normalColor = new Color(0.62f, 0.68f, 0.85f, 1f);
+    [SerializeField] private Color normalColor = Color.white;
     [SerializeField] private Color highlightColor = new Color(1f, 0.85f, 0.2f, 1f);
-    [Tooltip("The plate grows by this factor while highlighted, so it stays visible around the player.")]
-    [SerializeField, Min(1f)] private float highlightScale = 1.3f;
-    [SerializeField, Min(0.1f)] private float scaleSpeed = 14f;
 
     private Grid grid;
     private PlayerGridMovement player;
@@ -76,7 +73,7 @@ public class LevelSelectPlate : MonoBehaviour
 
         player = FindAnyObjectByType<PlayerGridMovement>();
         PlaceReturningPlayer();
-        SetVisual(false, instant: true);
+        SetVisual(false);
     }
 
     // Coming back from this plate's level through an exit: start the menu with the player standing on it.
@@ -122,22 +119,16 @@ public class LevelSelectPlate : MonoBehaviour
 
         // Highlighted as soon as the player's centre is inside this cell (i.e. halfway through the step onto it).
         bool onPlate = player != null && grid.WorldToCell(player.transform.position) == cell;
-        SetVisual(onPlate, instant: false);
+        SetVisual(onPlate);
     }
 
-    private void SetVisual(bool highlighted, bool instant)
+    private void SetVisual(bool highlighted)
     {
         IsHighlighted = highlighted;
         if (plateRenderer == null)
             return;
 
         plateRenderer.color = highlighted ? highlightColor : normalColor;
-
-        Vector3 target = Vector3.one * (highlighted ? highlightScale : 1f);
-        Transform t = plateRenderer.transform;
-        t.localScale = instant
-            ? target
-            : Vector3.Lerp(t.localScale, target, 1f - Mathf.Exp(-scaleSpeed * Time.deltaTime));
     }
 
     private void OnSelect(InputAction.CallbackContext context)
