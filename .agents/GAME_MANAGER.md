@@ -28,4 +28,5 @@
 ## Setup and verification
 - `Menu` is in the build's scene list (index 0). Walk into a `LevelExit` in a level to return; press R in a level to restart it.
 - Unity preview-scene checks verified setting and clearing a temporary progress key and adding/removing a temporary scene from the Inspector list; the Inspector control has not been tested interactively.
-- Unity CLI preview-scene checks verified completion requires at least one receiver and all receivers to be enabled and supplied, including inactive and disabled cases. End-to-end saving has not been checked in Play mode.
+- Unity CLI preview-scene checks verified completion requires at least one receiver and all receivers to be enabled and supplied, including inactive and disabled cases. A Play-mode check supplied both receivers in `Level3`, verified that completion was saved and unlocked menu plates 5 and 6, and restored the prior saved state.
+- A further Play-mode check placed temporary emitters on the two `Level3` receivers, let normal updates save completion, and returned through `ReturnToMenu`; the saved result and both unlocked plates persisted in the menu. The test restored the prior saved state and did not solve the puzzle through player input.
