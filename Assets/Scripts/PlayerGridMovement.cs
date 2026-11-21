@@ -213,6 +213,16 @@ public class PlayerGridMovement : MonoBehaviour
             return;   // no new steps until the undo has landed
         }
 
+        // An exit in a wall may close while the player is stepping into it.
+        if (stepProgress < 1f && DualGridLayer.IsWall(grid, targetCell) && !LevelExit.IsOpenAt(grid, targetCell))
+        {
+            FinishPush();
+            targetCell = currentCell;
+            stepProgress = 1f;
+            transform.position = CellCenter(currentCell);
+            return;
+        }
+
         // A beam can be switched on while a step is already in progress.
         if (stepProgress < 1f && LaserEmitter.IsBeamAt(grid, targetCell))
         {

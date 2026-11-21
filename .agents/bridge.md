@@ -8,6 +8,7 @@
 - `Assets/Prefabs/Bridge.prefab` (`walkable` off) and `Assets/Prefabs/BridgeWalkable.prefab` (`walkable` on), sorting order 1, `GridSnap`
 - `Assets/EntityTiles/BridgeTile.asset` and `BridgeWalkableTile.asset`: `PrefabTile` assets, placed at cells (8,-8) and (9,-8) of `Assets/TilePalettes/Signal Palette.prefab`
 - `Assets/Sprites/Bridge.png`: placeholder 16 x 16 plank sprite
+- `Assets/Prefabs/RedBridgeController.prefab` and `Assets/Scripts/SignalBridgeController.cs`: red signal receiver controlling a selected bridge.
 - Integration: `DualGridLayer.IsBlocked` (used by `Solid.IsBlocked`, the player and pushing)
 
 ## Behavior and rules
@@ -22,7 +23,9 @@
 
 ## Known limits
 - Closing a bridge while the player or a pushable stands on it is not handled: they stay in place and the cell blocks entering again.
-- Nothing is connected to the bool yet; toggle it from the Inspector or your own script.
+- Assign a directly placed bridge instance to the controller; painted bridge tiles are instantiated only at runtime and cannot be assigned as scene references. The controller sets the assigned bridge closed when signal is lost or the controller is disabled. Other walkable bridges in the same group can still keep the group open.
 
 ## Setup and verification
 - Paint Bridge tiles from the Signal Palette over water cells, tick `walkable` on one of them in Play mode and check that the player can walk over all touching bridges.
+
+- Unity MCP checked the red controller turns its assigned bridge on with supply and off on signal loss or controller disable in an isolated preview scene; not tested in Play mode.
