@@ -26,3 +26,4 @@
 - Unity MCP preview-scene checks invoked receiver updates and verified matching-type reception, isolation and recovery after a jammer is removed.
 
 - `Assets/Scenes/SignalTypesTest.unity` contains both types; Unity MCP verified its receiver paths with isolated update calls.
+- Can be placed in a wall cell (as in Level0): `SignalObstacles` does not treat the dual-grid wall in an emitter's or receiver's own cell as blocking. Other walls, blocks and jammers still block. Unity MCP verified in a temporary scene: emitter and receiver on wall cells at both ends of a floor strip, repeater between; the receiver cell got signal and a plain wall cell beyond it stayed blocked.

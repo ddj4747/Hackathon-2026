@@ -28,7 +28,7 @@
 ## Public interfaces and dependencies
 
 - Coverage uses the scene-scoped `ConnectionManager`. Signal type, sector angle, start angle, range and the straight-line option are serialized on the repeater. Original is the default. The Red type uses `Assets/Resources/RedSignal.shader` on its sprite.
-- `IsSignalSupplied` exposes whether the repeater is enabled and receives signal; [wire tilemaps](cables.md) use it for adjacent open-port adapters. Wire tilemaps do not supply repeaters.
+- `IsSignalSupplied` exposes whether the repeater is enabled and receives signal; [wire tilemaps](cables.md) use it for adjacent open-port adapters. In Play mode a matching-type wire also supplies a repeater next to its open port when the wire is fed by an emitter or by another supplied repeater; see [Cables](cables.md).
 
 ## Setup and verification
 

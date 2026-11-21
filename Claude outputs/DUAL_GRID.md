@@ -6,7 +6,7 @@
 - Rule from the user: never assemble one tile from pieces of others. A corner combination with no tile is left empty and reported.
 - The tilesets cover all 81 combinations (checked against the art; no duplicates). If art changes, context menu `Log missing tiles` on `Ground` lists any gaps.
 - Walls and water block the player and pushed objects: `DualGridLayer.IsBlocked(grid, cell)` is true for Wall (including unpainted cells) and Water, and is checked through `Solid.IsBlocked` by `PlayerGridMovement` and `Pushable.TryBeginChain` (nothing can be pushed onto them either). A layer with no painted tiles blocks nothing, so unpainted levels stay walkable. No Unity colliders are involved. Not yet verified in Play mode.
-- Once terrain is painted, logical wall cells (including unpainted cells) block wireless signal. A completely empty layer does not block signal; see [Connection manager](../.agents/connection-manager.md).
+- Once terrain is painted, logical wall cells (including unpainted cells) block wireless signal. A wall cell holding an emitter or receiver does not block (inputs/outputs mounted in walls). A completely empty layer does not block signal; see [Connection manager](../.agents/connection-manager.md).
 
 ## Entry files
 - `Assets/Scripts/DualGridLayer.cs`: the component (on the `Ground` Tilemap).
