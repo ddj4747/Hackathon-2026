@@ -53,6 +53,7 @@
 | Connection manager | Scene-scoped signal quality. `Assets/Prefabs/ConnectionManager.prefab` exposes the same instance through `ConnectionManagerHost.Manager`. | [.agents/connection-manager.md](.agents/connection-manager.md) |
 | Repeater | Signal supply and directional coverage | [.agents/repeater.md](.agents/repeater.md) |
 | Repeater enhancer | Pushable adjacent repeater range modifier | [.agents/repeater-enhancer.md](.agents/repeater-enhancer.md) |
+| Signal antenna | Range-zero repeater for feeding wires | [.agents/signal-antenna.md](.agents/signal-antenna.md) |
 | Signal emitter | Starting signal source and circular coverage | [.agents/signal-emitter.md](.agents/signal-emitter.md) |
 | Signal receiver | Receiver and collector signal detection and events | [.agents/signal-receiver.md](.agents/signal-receiver.md) |
 | Signal jammer | Circular wireless signal blocking | [.agents/signal-jammer.md](.agents/signal-jammer.md) |

@@ -3,12 +3,12 @@
 ## Status
 
 - Repeaters contribute coverage when signal reaches their cell. A [signal emitter](signal-emitter.md) can provide the starting signal.
-- Fifteen visual variants each use the top-row blue sprite when unsupplied and the matching bottom-row green sprite when supplied.
+- Fifteen visual variants each use the top-row unsupplied sprite and matching bottom-row supplied sprite, with separate Original and Red artwork.
 
 ## Entry files
 
 - `Assets/Scripts/Repeater.cs`, `Assets/Scripts/RepeaterVisual.cs`, `Assets/Prefabs/Repeater.prefab`
-- `Assets/Resources/Repeaters.png`, `Assets/Prefabs/Repeaters/`, `Assets/Prefabs/RedSignalVariants/`, `Assets/RepeaterTiles/` and `Assets/RepeaterTiles/Red/`
+- `Assets/Resources/Repeaters.png`, `Assets/Resources/RedRepeaters.png`, `Assets/Prefabs/Repeaters/`, `Assets/Prefabs/RedSignalVariants/`, `Assets/RepeaterTiles/` and `Assets/RepeaterTiles/Red/`
 - `Assets/Scripts/RepeaterTile.cs`, `Assets/TilePalettes/Signal Palette.prefab`, `Assets/Prefabs/RepeaterTilemap.prefab`
 - [Connection manager](connection-manager.md), [Cables](cables.md), [Map grid](map-grid.md)
 
@@ -18,7 +18,7 @@
 - Walls and marked objects obstruct its line of sight; the hover overlay shows the unobstructed potential coverage. See [Connection manager](connection-manager.md).
 - Range, sector angle, start angle, position and local +X facing determine the coverage described in the root project instructions. The start angle defaults to 0 degrees and the sector extends counterclockwise. Grid lookup uses the nearest parent Grid or the only Grid in the scene.
 - Variants `Repeater_04` through `Repeater_15` use a one-cell-wide line along the center of their former 90-degree sector. The line extends Range cells, rotates with the prefab, and is extended by adjacent enhancers. Other repeater prefabs retain sector coverage.
-- In Play mode the visual follows `IsSignalSupplied`; blue is unsupplied and green is supplied. In edit mode Original tiles preview blue and Red tiles use a red tint. A painted repeater tile instantiates its matching functional prefab.
+- In Play mode the visual follows `IsSignalSupplied`; Original uses blue when unsupplied and green when supplied, while Red uses purple and red. Red artwork replaces `#257179` with `#5D275D`, `#38B764` with `#B13E53`, and `#A7F070` with `#EF7D57`. Edit-mode tiles preview the matching unsupplied artwork. A painted repeater tile instantiates its matching functional prefab.
 - The player can push standalone and painted repeaters using the existing push and chain rules. Coverage and supply are recalculated from the repeater's moving position. See [Pushable blocks](pushable-blocks.md).
 - Adjacent pushable [enhancers](repeater-enhancer.md) increase the repeater range by one each; diagonal cells do not count.
 - Prefab ranges (normal and Red): circular `Repeater_01`-`03` = 2, 3, 4; line variants `Repeater_04`-`15` = 3, 4, 5 per direction (04-06, 07-09, 10-12, 13-15). Base `Repeater.prefab` stays 3.
@@ -27,7 +27,7 @@
 
 ## Public interfaces and dependencies
 
-- Coverage uses the scene-scoped `ConnectionManager`. Signal type, sector angle, start angle, range and the straight-line option are serialized on the repeater. Original is the default. The Red type uses `Assets/Resources/RedSignal.shader` on its sprite.
+- Coverage uses the scene-scoped `ConnectionManager`. Signal type, sector angle, start angle, range and the straight-line option are serialized on the repeater. Original is the default. Red repeaters resolve matching sprite names from `Assets/Resources/RedRepeaters.png`, falling back to the shared Red shader when no matching artwork exists.
 - `IsSignalSupplied` exposes whether the repeater is enabled and receives signal; [wire tilemaps](cables.md) use it for adjacent open-port adapters. In Play mode a matching-type wire also supplies a repeater next to its open port when the wire is fed by an emitter or by another supplied repeater; see [Cables](cables.md).
 
 ## Setup and verification

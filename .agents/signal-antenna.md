@@ -19,3 +19,4 @@
 ## Setup and verification
 - Paint the antenna tile from `Signal Palette` on a Tilemap under the level Grid, or place the prefab under the Grid, next to an open wire port.
 - Unity MCP, temporary edit-mode scene with manually invoked updates: antenna supplied by an emitter 2 cells away; coverage 1 cell with an enhancer adjacent (a plain range-0 repeater there got 5 cells); adjacent `WireTilemap` powered; a repeater 3 cells from the antenna and outside the emitter range stayed unsupplied (supplied when a normal repeater replaced the antenna); emitter off unpowered both. Not verified in Play mode or visually.
+- Unity MCP preview-scene check verified the Red antenna uses the Red shader fallback, while the Original antenna keeps its normal material and a Red repeater uses its matching artwork.

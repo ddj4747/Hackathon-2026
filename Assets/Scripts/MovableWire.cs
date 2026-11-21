@@ -44,8 +44,8 @@ public sealed class MovableWire : MonoBehaviour
     {
         if (spriteRenderer != null && Tile != null)
         {
-            spriteRenderer.sprite = supplied ? Tile.ActiveSprite : Tile.InactiveSprite;
-            SignalTypeVisual.Apply(spriteRenderer, Type);
+            SignalTypeVisual.Restore(spriteRenderer);
+            spriteRenderer.sprite = Tile.SpriteFor(supplied, Type);
         }
     }
 

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Tilemaps;
+using System.Collections.Generic;
 
 [ExecuteAlways]
 [DisallowMultipleComponent]
@@ -11,6 +12,7 @@ public sealed class RepeaterVisual : MonoBehaviour
 
     private Repeater repeater;
     private SpriteRenderer spriteRenderer;
+    private static Dictionary<string, Sprite> redSprites;
 
     private void OnEnable()
     {
@@ -25,11 +27,28 @@ public sealed class RepeaterVisual : MonoBehaviour
 
     private void Refresh()
     {
-        SignalTypeVisual.Apply(spriteRenderer, repeater.Type);
         bool playing = Application.IsPlaying(gameObject);
         // In the editor the Tilemap draws its preview; in Play mode the prefab draws itself.
         spriteRenderer.enabled = playing || GetComponentInParent<Tilemap>() == null;
         var sprite = playing && repeater.IsSignalSupplied ? suppliedSprite : unsuppliedSprite;
+        if (repeater.Type == SignalType.Red && sprite != null)
+        {
+            if (redSprites == null)
+            {
+                redSprites = new Dictionary<string, Sprite>();
+                foreach (var candidate in Resources.LoadAll<Sprite>("RedRepeaters"))
+                    redSprites[candidate.name] = candidate;
+            }
+            if (redSprites.TryGetValue(sprite.name, out var redSprite))
+            {
+                sprite = redSprite;
+                SignalTypeVisual.Restore(spriteRenderer);
+            }
+            else
+                SignalTypeVisual.Apply(spriteRenderer, repeater.Type);
+        }
+        else
+            SignalTypeVisual.Restore(spriteRenderer);
         if (spriteRenderer.sprite != sprite)
             spriteRenderer.sprite = sprite;
     }
