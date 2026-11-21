@@ -26,3 +26,4 @@
 ## Setup and verification
 - Add `PushableBlock.prefab` to a level (position anywhere; it snaps to the nearest cell centre), or add `Pushable` to any other object.
 - Press Play in `SampleScene` and walk into the blocks with WASD/arrows; change `maxChainLength` in the asset to see the limit move.
+- Placing in a level: the `Player` and `PushableBlock` tiles (`PrefabTile` assets `Assets/EntityTiles/PlayerTile.asset`, `PushableBlockTile.asset`) are in `Assets/TilePalettes/Signal Palette.prefab`, in the bottom row next to the signal emitters (cells (6,-8) and (7,-8)). Paint them on the level's `Terrain` tilemap like the signal tiles: the editor shows the preview sprite and the real prefab is instantiated when Play starts, at the cell centre, as a child of the Terrain tilemap. `Assets/Palettes/Entities.prefab` is an extra palette with the same two tiles. Not verified in the editor.

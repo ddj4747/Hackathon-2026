@@ -79,7 +79,10 @@ public class FixedCamera : MonoBehaviour
             rect = new Rect(0f, (1f - h) * 0.5f, 1f, h);
         }
 
-        cam.rect = rect;
+        // The viewport is only changed while playing: setting it in edit mode (OnValidate) wrote editor-window-dependent
+        // values into the Main Camera prefab and scenes. Edit mode keeps the saved (full-screen) rect.
+        if (Application.isPlaying)
+            cam.rect = rect;
 
         if (barCamera != null)
             barCamera.backgroundColor = barColor;

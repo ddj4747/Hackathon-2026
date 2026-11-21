@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 258e6c1b86ed41e4f9570669cb2f9ccb, type: 3}
+  m_Name: PushableBlockTile
+  m_EditorClassIdentifier: Assembly-CSharp::PrefabTile
+  previewSprite: {fileID: 2537882373423050008, guid: c2fa3e51949f0f04282050c0a4b8ef56, type: 3}
+  previewColor: {r: 1, g: 1, b: 1, a: 1}
+  prefab: {fileID: 4000000000000000001, guid: b1796bd7aa944427a9712b565624c76d, type: 3}
