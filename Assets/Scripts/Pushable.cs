@@ -42,6 +42,8 @@ public class Pushable : MonoBehaviour
     private void Awake()
     {
         if (grid == null)
+            grid = GetComponentInParent<Grid>();
+        if (grid == null)
             grid = FindAnyObjectByType<Grid>();
 
         if (grid == null)
