@@ -7,12 +7,12 @@
 # Game concept (planned)
 - A **2D top-down game** about establishing a connection between two repeaters.
 - Only the **floor, walls and water** use a **dual-grid** layout (see the Dual grid module); everything else stays on the normal rectangular Unity Grid prefab (`MapGrid`).
-- Visual style: **pixel art**, with a **512 × 352 pixel** target screen resolution and **16 × 16 pixel** tiles. A full viewport at this resolution spans **32 × 22 tiles**; this does not define the total map size.
+- Visual style: **pixel art**, with a **512 Ã— 352 pixel** target screen resolution and **16 Ã— 16 pixel** tiles. A full viewport at this resolution spans **32 Ã— 22 tiles**; this does not define the total map size.
 - The player moves around the map and manages the placement of objects in the room to make the connection work.
 - Player movement is grid-based: the player moves from one tile to another. Additional movement timing and collision rules remain undecided.
 - Input decisions: Space (action `Player/Confirm`) is the shared confirm/activate key, since there is no jump mechanic. Movement is WASD/arrows. R (action `Player/Restart`) restarts the current level. Leaving a level is done by walking into a `LevelExit` hole, not by a key.
 - The core gameplay is rearranging objects that affect the connection: some block it, others extend its reach, and additional effects may be defined later.
-- When signal is supplied, the basic repeater contributes signal quality `1` to its own tile and a stepped circular sector measured from its exact position. The sector uses a rounded boundary of Range + 0.4 grid units, limited to Range cells in each direction. Its width and start angle are configurable; the start is measured counterclockwise from local +X, and coverage extends counterclockwise from there. A tile overlay shows the range of a hovered emitter or repeater, including an unsupplied repeater's potential coverage.
+- When signal is supplied, the basic repeater contributes signal quality `1` to its own tile and a stepped circular sector measured from its exact position. The sector uses a rounded boundary of Range + 0.4 grid units, limited to Range cells in each direction. Its width and start angle are configurable; the start is measured counterclockwise from local +X, and coverage extends counterclockwise from there. A tile overlay shows the range of a hovered emitter, repeater or signal jammer, including an unsupplied repeater's potential coverage.
 - The directional repeater prefabs that used a 90-degree sector instead transmit along a one-cell-wide line in the center direction of that sector, up to their configured Range.
 - Signal emitters provide the starting signal in a configurable circular range. Repeaters activate when signal reaches their cell and stop when disconnected from a source.
 - Wireless signal uses direct line of sight: walls and objects with signal blocking enabled block their own cell and cast a shadow away from the source. A tile loses signal if any positive area lies in shadow. Two blockers meeting at a corner block a diagonal line; see [Connection manager](.agents/connection-manager.md).
@@ -54,6 +54,7 @@
 | Repeater enhancer | Pushable adjacent repeater range modifier | [.agents/repeater-enhancer.md](.agents/repeater-enhancer.md) |
 | Signal emitter | Starting signal source and circular coverage | [.agents/signal-emitter.md](.agents/signal-emitter.md) |
 | Signal receiver | Signal detection and connection event | [.agents/signal-receiver.md](.agents/signal-receiver.md) |
+| Signal jammer | Circular wireless signal blocking | [.agents/signal-jammer.md](.agents/signal-jammer.md) |
 | Cables | Fixed paths, endpoint adapters and wire artwork | [.agents/cables.md](.agents/cables.md) |
 | Player movement | Grid-based player prefab, sprite and input | [.agents/player-movement.md](.agents/player-movement.md) |
 | Level select | Menu scene and level plates | [.agents/level-select.md](.agents/level-select.md) |

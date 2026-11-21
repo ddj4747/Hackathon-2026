@@ -232,6 +232,16 @@ Tilemap:
       m_TileObjectToInstantiateIndex: 7
       dummyAlignment: 0
       m_AllTileFlags: 7
+  - first: {x: 4, y: -4, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 35
+      m_TileSpriteIndex: 4
+      m_TileMatrixIndex: 0
+      m_TileColorIndex: 2
+      m_TileObjectToInstantiateIndex: 25
+      dummyAlignment: 0
+      m_AllTileFlags: 7
   - first: {x: 0, y: -2, z: 0}
     second:
       serializedVersion: 2
@@ -499,6 +509,9 @@ Tilemap:
   - serializedVersion: 2
     m_RefCount: 1
     m_Data: {fileID: 11400000, guid: 1c3a9135f9d6069449fff3fa3dea14b7, type: 2}
+  - serializedVersion: 2
+    m_RefCount: 1
+    m_Data: {fileID: 11400000, guid: 1c6fd456d39c52641a3cc7bdc9f91594, type: 2}
   m_TileSpriteArray:
   - serializedVersion: 2
     m_RefCount: 1
@@ -513,7 +526,7 @@ Tilemap:
     m_RefCount: 1
     m_Data: {fileID: 2108661306, guid: e854f80332a558c4a9a04392bcf372a8, type: 3}
   - serializedVersion: 2
-    m_RefCount: 1
+    m_RefCount: 2
     m_Data: {fileID: 714420813, guid: e854f80332a558c4a9a04392bcf372a8, type: 3}
   - serializedVersion: 2
     m_RefCount: 1
@@ -607,7 +620,7 @@ Tilemap:
     m_Data: {fileID: 21300000, guid: 7b2c51bfc7454461b040c5f09326abbc, type: 3}
   m_TileMatrixArray:
   - serializedVersion: 2
-    m_RefCount: 35
+    m_RefCount: 36
     m_Data:
       e00: 1
       e01: 0
@@ -632,6 +645,9 @@ Tilemap:
   - serializedVersion: 2
     m_RefCount: 1
     m_Data: {r: 0.35, g: 0.9, b: 1, a: 1}
+  - serializedVersion: 2
+    m_RefCount: 1
+    m_Data: {r: 1, g: 0.25, b: 0.3, a: 1}
   m_TileObjectToInstantiateArray:
   - serializedVersion: 2
     m_RefCount: 1
@@ -708,6 +724,9 @@ Tilemap:
   - serializedVersion: 2
     m_RefCount: 1
     m_Data: {fileID: 6974506627881861333, guid: 719b0f02ada19ca43b26c6138ea69f71, type: 3}
+  - serializedVersion: 2
+    m_RefCount: 1
+    m_Data: {fileID: 8025265754424903415, guid: 6a48f5fcf83791c419a1705d1257c5b9, type: 3}
   m_AnimationFrameRate: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Origin: {x: 0, y: -8, z: 0}

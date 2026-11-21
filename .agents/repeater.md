@@ -1,4 +1,4 @@
-﻿# Repeater
+# Repeater
 
 ## Status
 
@@ -30,7 +30,7 @@
 
 ## Setup and verification
 
-- Select `Signal Palette` and paint on a Tilemap beneath the level Grid. It contains 15 repeater variants, four emitter orientations and four receiver orientations. `RepeaterTilemap` contains a sample row of all 15 variants; `SampleScene` contains a modified instance with six repeater tiles.
+- Select `Signal Palette` and paint on a Tilemap beneath the level Grid. It contains 15 repeater variants, four emitter orientations, four receiver orientations and a signal jammer, along with other signal tiles. `RepeaterTilemap` contains a sample row of all 15 variants; `SampleScene` contains a modified instance with six repeater tiles.
 - Standalone variants can also be placed under a Grid. Place a signal emitter so that its coverage reaches a repeater's cell; tile-created instances can be inspected in Play mode.
 - Unity CLI previously verified palette references, edit previews, all 15 instantiated prefabs and both sprite mappings. Unity MCP verified sector boundaries, start-angle changes, wraparound, rotation, and zero- and full-width coverage. Unity MCP also verified signal activation, chaining and shutdown without a source.
 

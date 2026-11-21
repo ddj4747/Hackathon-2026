@@ -1,4 +1,4 @@
-﻿# Connection manager
+# Connection manager
 
 ## Status
 
@@ -15,16 +15,16 @@
 - Adding the same value twice creates two contributions. Removal matches one stored value exactly and reports whether it was found.
 - Cable-linked cells share the strongest directly contributed signal throughout their connected component. Links do not themselves add contributions, so loops cannot sustain a signal after its source is removed. See [Cables](cables.md).
 - Signal sources activate repeaters whose cells they reach. Active repeaters extend signal to their coverage; activation is recomputed from sources so repeater cycles cannot sustain themselves. See [Repeater](repeater.md) and [Signal emitter](signal-emitter.md).
-- Wireless coverage uses direct line of sight: walls and marked objects block their own cell and cast a shadow away from the source. A tile loses signal if any positive area lies in shadow; two blockers meeting at a corner also block a diagonal line. Signal updates when blockers move or terrain changes. Cables retain their existing separate connections.
+- Wireless coverage uses direct line of sight: walls, marked objects and jammer coverage block their cells and cast a shadow away from the source. A tile loses signal if any positive area lies in shadow; two blockers meeting at a corner also block a diagonal line. Signal updates when blockers move or terrain changes. Cables retain their existing separate connections.
 - Unloading a scene clears and drops its manager. Starting a new play session starts with fresh managers.
-- The overlay shows only the hovered enabled emitter or repeater's own range. An unsupplied repeater shows its potential coverage without transmitting signal. Nothing is shown off an object; the overlay does not affect signal propagation.
+- The overlay shows only the hovered enabled emitter, repeater or jammer's own range. An unsupplied repeater shows its potential coverage without transmitting signal. Nothing is shown off an object; the overlay does not affect signal propagation.
 
 ## Public interfaces and dependencies
 
 - `ConnectionManager.Instance` resolves the active scene. Use `ForScene(gameObject.scene)` for an object that can live in an additively loaded scene.
 - `AddSignal(cell, quality)`, `RemoveSignal(cell, quality)` and `GetSignalQuality(cell)` accept Unity `Vector3Int` cell coordinates. `GetSignalQuality(worldPosition, grid)` converts through the supplied grid.
 - `HasSignal(cell)` and `HasSignal(worldPosition, grid)` report whether the cell's strongest signal quality is positive, including signals received over cable links. Cells without a contribution have no signal.
-- `SignalBlocker` marks a GameObject as an obstacle; `Pushable.stopsSignal` marks a movable object. Once a `DualGridLayer` contains terrain tiles, its logical wall cells (including unpainted cells) also block wireless signal. An entirely empty layer does not block signal.
+- [Signal jammers](signal-jammer.md) turn every cell in their radius into a wireless obstacle. `SignalBlocker` marks a GameObject as an obstacle; `Pushable.stopsSignal` marks a movable object. Once a `DualGridLayer` contains terrain tiles, its logical wall cells (including unpainted cells) also block wireless signal. An entirely empty layer does not block signal.
 - `ConnectionManager.ResetState()` clears contributions from all managers while keeping their instances.
 
 ## Setup and verification

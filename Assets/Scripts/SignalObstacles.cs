@@ -14,6 +14,7 @@ internal sealed class SignalObstacles
     {
         Pushable.CollectSignalBlockers(grid, cells);
         SignalBlocker.Collect(grid, cells);
+        SignalJammer.Collect(grid, cells);
         foreach (var layer in grid.GetComponentsInChildren<DualGridLayer>())
             if (layer.isActiveAndEnabled && layer.GetComponentInParent<Grid>() == grid &&
                 layer.Data.GetUsedTilesCount() > 0)
