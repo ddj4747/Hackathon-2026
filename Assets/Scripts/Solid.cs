@@ -40,11 +40,14 @@ public class Solid : MonoBehaviour
 
     /// <summary>
     /// True if the player or a pushed chain cannot enter the cell: a <see cref="Solid"/> object is there, or the
-    /// cell is Wall or Water on a <see cref="DualGridLayer"/>, or an active laser covers it.
+    /// cell is Wall or Water on a <see cref="DualGridLayer"/>, or an active laser covers it. An open
+    /// <see cref="LevelExit"/> allows the player into its wall cell, provided no solid or laser is there.
     /// </summary>
     public static bool IsBlocked(Grid grid, Vector3Int cell)
     {
-        return IsTerrainBlocked(grid, cell) || LaserEmitter.IsBeamAt(grid, cell);
+        if (IsAt(cell) || LaserEmitter.IsBeamAt(grid, cell)) return true;
+        if (!DualGridLayer.IsBlocked(grid, cell)) return false;
+        return !DualGridLayer.IsWall(grid, cell) || !LevelExit.IsOpenAt(grid, cell);
     }
 
     // A pushed object can enter a beam and be destroyed, but cannot enter walls or water.

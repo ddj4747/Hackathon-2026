@@ -15,7 +15,8 @@
 - A pushable snaps to the grid cell it is placed on and occupies it.
 - When the player steps toward a cell holding a pushable, the object is shoved one cell in the same direction; both move at the player's speed, one cell apart. Holding the key keeps pushing it along.
 - Chains: all pushables lined up in the pushed direction move together, one cell, at the player's speed, with no chain-length limit. If the cell after the chain is blocked, nothing moves and the player stays put.
-- `Solid` objects block the player and chains. Wall and Water cells of a `DualGridLayer` block them too (`Solid.IsBlocked(grid, cell)`): the player cannot enter them and a chain cannot be shoved onto them (nothing moves, the player stays put). Pushables themselves have no collider. The `Terrain` tilemap, level exits and other colliders are not treated as solid. Water under a walkable `Bridge` is passable for the player and chains ([bridge.md](bridge.md)); walls are never. No `Solid` prefab exists yet.
+- `Solid` objects and Wall and Water cells of a `DualGridLayer` block the player and pushed chains. Water under a walkable [bridge](bridge.md) is passable for both; bridges do not make walls passable. Pushables have no collider. The `Terrain` tilemap, level exits and other colliders are not treated as solid. No `Solid` prefab exists yet.
+- An open [level exit](level-exit.md) in a wall permits the player to enter that wall cell. Solid objects and lasers still block it; pushables cannot enter wall cells.
 - Active lasers block the player; a pushable that enters a laser is destroyed with a particle burst. See [Laser](laser.md).
 - Pulling and diagonal pushes are not implemented.
 - Enable `stopsSignal` on a Pushable to obstruct wireless signal at its logical occupied cell, including during a push. See [Connection manager](connection-manager.md).

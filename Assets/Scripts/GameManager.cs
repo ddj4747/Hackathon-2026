@@ -129,6 +129,8 @@ public class GameManager : MonoBehaviour
             return;
         }
 
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.Play(SoundManager.Effect.Restart);
         StartCoroutine(RestartRoutine(active.buildIndex));
     }
 
@@ -248,6 +250,8 @@ public class GameManager : MonoBehaviour
 
         loading = true;
         ReturnedFromScenePath = active.path;
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.Play(SoundManager.Effect.Exit);
         SceneManager.LoadScene(MenuSceneName);
     }
 

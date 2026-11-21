@@ -37,3 +37,10 @@ Stable tags `vMAJOR.MINOR.PATCH` trigger the workflow. Prerelease tags are rejec
 The workflow has not run on GitHub. Local checks cover YAML structure and platform/archive mappings, not Unity compilation or runtime behavior. Bash syntax validation was attempted but Git Bash could not start (Win32 error 5 creating a signal pipe). Download and smoke-test each player on its target OS after the first successful run.
 
 The intended module note `.agents/release-builds.md` could not be created because that directory is protected in this session. This document contains its setup and behavior information until the note can be placed there.
+
+## WebGL build
+`.github/workflows/webgl.yml` ("Build WebGL") builds the project for WebGL (WebAssembly) with GameCI unity-builder v4 and uploads it as the `Hackathon2026-WebGL` artifact (kept 14 days).
+- Triggers: a push to `main` (changes only to `*.md` or `.agents/` are ignored) and manual runs from Actions > Build WebGL > Run workflow. It is separate from the tag-triggered desktop release and does not create a release.
+- Uses the same repository secrets as the desktop release (see Setup) and the same Unity version from `ProjectSettings/ProjectVersion.txt`. Builds the enabled scenes from build settings. A new push to the same branch cancels a build that is still running.
+- To play the result, download the artifact, unzip it and serve the folder over HTTP (for example `python -m http.server`); opening `index.html` from disk does not work. If Unity's WebGL compression is Brotli or Gzip, the host has to send the matching `Content-Encoding` header (GitHub Pages does not for Brotli); choose Decompression Fallback or Disabled compression in Player Settings > Publishing Settings if the host cannot.
+- Not run on GitHub and not tested. Unknown until the first run: whether a GameCI WebGL image exists for Unity 6000.5.0f1, and whether the project (for example DOTween and the Input System) works in a WebGL player.

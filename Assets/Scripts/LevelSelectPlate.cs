@@ -152,6 +152,8 @@ public class LevelSelectPlate : MonoBehaviour
         }
 
         loading = true;
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.Play(SoundManager.Effect.Select);
         SceneManager.LoadScene(scenePath);
     }
 

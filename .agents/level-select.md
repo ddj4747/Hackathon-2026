@@ -1,18 +1,19 @@
 # Level select (Menu scene)
 
 ## Status
-- `Menu` scene with level plates implemented; first in the build's scene list. Not yet verified in the editor or in Play mode.
-- Only plate 1 has a scene assigned (`SampleScene`). Plates 2 and 3 are empty placeholders and log a warning when selected.
+- `Menu` scene with level plates implemented; first in the build's scene list.
+- Plates 1?5 load `Levels/Level0` through `Levels/Level4`, respectively.
 - Levels return to `Menu` through a `LevelExit` ([LEVEL_EXIT.md](level-exit.md)); no keyboard shortcut.
 
 ## Entry files
-- `Assets/Scenes/Menu.unity` (camera, Global Light 2D, `MapGrid`, `Player`, three `LevelPlate` instances at cells (3,0), (5,0), (7,0))
+- `Assets/Scenes/Menu.unity` (camera, Global Light 2D, `MapGrid`, `Player`, five `LevelPlate` instances, with plates 4 and 5 in a second row)
 - `Assets/Prefabs/LevelPlate.prefab`, `Assets/Scripts/LevelSelectPlate.cs`, `Assets/Sprites/LevelPlateSprite.png`
 - `Assets/InputSystem_Actions.inputactions`: shared `Confirm` action (Space, gamepad south) in the `Player` map
-- `ProjectSettings/EditorBuildSettings.asset`: `Menu` (index 0) and `SampleScene`
+- `ProjectSettings/EditorBuildSettings.asset`: `Menu`, `SampleScene`, and `Level0` through `Level4` are enabled.
 
 ## Behavior and rules
 - A plate snaps to the grid cell it is placed on. It highlights (yellow tint, grows 1.3x) while the player's centre is inside its cell.
+- The menu has a centered two-row plate layout and a starting position below it. Its dual-grid floor forms an 18 × 12 room; automatic walls around the floor keep the player inside.
 - Confirm (Space, gamepad south) loads the plate's scene, only while the player stands still on that plate.
 - Inspector fields on `LevelSelectPlate`: `Level Number` (text on the plate), `Scene Asset` (scene picker; its path is baked into a hidden `scenePath` in `OnValidate` so it works in builds), plus colours and highlight scale.
 - On returning from a level, the plate whose scene matches `GameManager.ReturnedFromScenePath` teleports the player onto itself in `Start`, then clears the marker. A level with no matching plate leaves the player at the scene's start position.
@@ -20,8 +21,11 @@
 - The number is a legacy `TextMesh` with `nokiafc22`, sorted above the plate (order 2) but below blocks (5) and the player (10), so the player covers the number; font and pixel rules in [PIXEL_PERFECT_AND_FONT.md](pixel-perfect-and-font.md).
 
 ## Public interfaces and dependencies
+- Valid level selection plays a placeholder effect through the [sound manager](sound-manager.md).
 - `LevelSelectPlate` uses `Grid`, `PlayerGridMovement` ([PLAYER_MOVEMENT.md](player-movement.md), `TeleportToCell`), `GameManager` and the project-wide actions (`InputSystem.actions`, action `Player/Confirm`, constant `GameManager.ConfirmActionPath`).
 - `PlayerGridMovement` itself still reads the keyboard directly; only Confirm uses the input actions asset.
 
 ## Setup and verification
 - New level plate: drag `LevelPlate.prefab` into a scene with `MapGrid` and `Player`, set `Level Number`, assign `Scene Asset`, and add that scene to the build's scene list.
+- Unity MCP verified all five scene paths on the saved Menu scene; selection through player input has not been tested for the new assignments.
+- The room and plate positions were saved through Unity CLI; walking against the boundary has not yet been tested in Play mode.

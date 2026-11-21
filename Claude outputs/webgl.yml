@@ -1,0 +1,102 @@
+name: Build WebGL
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+      - '.agents/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: webgl-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build WebGL (WebAssembly)
+    runs-on: ubuntu-22.04
+    timeout-minutes: 90
+
+    steps:
+      # The Unity WebGL image is large; free runner disk space first.
+      - name: Free disk space
+        uses: jlumbroso/free-disk-space@v1.3.1
+        with:
+          tool-cache: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: false
+          docker-images: false
+          swap-storage: true
+
+      - name: Check out source
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          persist-credentials: false
+
+      - name: Validate Unity credentials
+        shell: bash
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          if [[ -z "$UNITY_EMAIL" || -z "$UNITY_PASSWORD" ]]; then
+            echo '::error::Set the UNITY_EMAIL and UNITY_PASSWORD repository secrets.'
+            exit 1
+          fi
+          if [[ -z "$UNITY_LICENSE" && -z "$UNITY_SERIAL" ]]; then
+            echo '::error::Set UNITY_LICENSE (Personal) or UNITY_SERIAL (Pro) as a repository secret.'
+            exit 1
+          fi
+
+      - name: Cache Unity Library
+        uses: actions/cache@v4
+        with:
+          path: Library
+          key: Unity-${{ runner.os }}-WebGL-${{ hashFiles('ProjectSettings/ProjectVersion.txt') }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Unity-${{ runner.os }}-WebGL-${{ hashFiles('ProjectSettings/ProjectVersion.txt') }}-
+
+      - name: Build Unity WebGL player
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+        with:
+          projectPath: .
+          unityVersion: auto
+          targetPlatform: WebGL
+          buildsPath: build
+          buildName: Hackathon2026
+
+      - name: Check build output
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$GITHUB_WORKSPACE/build/WebGL"
+          if [[ ! -d "$output" ]] || [[ -z "$(find "$output" -mindepth 1 -print -quit)" ]]; then
+            echo "::error::Unity WebGL build output is missing: $output"
+            exit 1
+          fi
+          find "$output" -maxdepth 3 -type f | head -50
+
+      - name: Upload WebGL build
+        uses: actions/upload-artifact@v4
+        with:
+          name: Hackathon2026-WebGL
+          path: build/WebGL
+          if-no-files-found: error
+          compression-level: 6
+          retention-days: 14

@@ -17,6 +17,9 @@
 
 ## Setup and verification
 - Place `RedSignalReceiver` for a ready-configured Red receiver. Paint an Original or Red receiver or collector from `Signal Palette` on a regular Tilemap such as `MapGrid/Terrain`, not the dual-grid `Ground` terrain layer, or place a receiver or collector prefab beneath the Grid. A painted tile spawns its prefab in Play mode, so use a directly placed prefab instance for per-instance Inspector event bindings to scene objects.
+- To switch a laser on signal transitions, bind these events to its `LaserEmitter.SetOn(bool)` method; see [Laser](laser.md) for the boolean and initial-state setup.
+- To switch a bridge on signal transitions, bind these events to its `Bridge.SetWalkable(bool)` method; see [Bridge](bridge.md) for the initial state and group behavior.
+- Open `Assets/Scenes/SignalControlsTest.unity` and enter Play mode to try both: move the player up to push the crate one cell upward, clearing the signal. The receiver switches off the laser and opens the two-cell bridge. Press Q to undo the push and block the signal again. This standalone test scene is not a level-select entry. Unity MCP Play-mode checks moved the crate via API and verified signal acquisition/loss, laser beam blocking and both bridge cells' water walkability; player input and appearance were not checked.
 - Unity MCP verified palette tile references and receiver connection, sustained signal, disconnection and reconnection in an isolated preview scene.
 - Unity MCP verified a powered repeater-to-wire-to-receiver path, a closed wire port, sustained signal, reconnection and source removal in an isolated preview scene.
 - Unity CLI verified the collector's event transitions for manager signal, powered wire, overlapping inputs, reconnection and a closed wire port in an isolated preview scene.

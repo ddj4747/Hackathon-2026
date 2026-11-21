@@ -46,7 +46,7 @@
 # Module index
 | Module | Scope | Note |
 | --- | --- | --- |
-| Release builds | Tag-triggered desktop builds and GitHub releases | [.agents/release-builds.md](.agents/release-builds.md) |
+| Release builds | Tag-triggered desktop builds and GitHub releases, and the WebGL build workflow | [.agents/release-builds.md](.agents/release-builds.md) |
 | Unity MCP | CoplayDev editor package and connection prerequisites | [.agents/unity-mcp.md](.agents/unity-mcp.md) |
 | Map grid | Level grid prefab and terrain tilemap | [.agents/map-grid.md](.agents/map-grid.md) |
 | Dual grid | Floor, wall and animated water rendering on a half-cell-shifted tilemap (`MapGrid/Ground`); terrain paint tiles | [Claude outputs/DUAL_GRID.md](Claude%20outputs/DUAL_GRID.md) (temporary location; `.agents/` writes blocked) |
@@ -60,6 +60,7 @@
 | Laser | Switchable directional beam, movement blocking and movable-object destruction | [.agents/laser.md](.agents/laser.md) |
 | Cables | Fixed paths, endpoint adapters and wire artwork | [.agents/cables.md](.agents/cables.md) |
 | Player movement | Grid-based player prefab, sprite and input | [.agents/player-movement.md](.agents/player-movement.md) |
+| Sound manager | Persistent music and action sound effects | [.agents/sound-manager.md](.agents/sound-manager.md) |
 | Level select | Menu scene and level plates | [.agents/level-select.md](.agents/level-select.md) |
 | Game manager | Persistent manager, level exit and restart | [.agents/GAME_MANAGER.md](.agents/GAME_MANAGER.md) |
 | Level exit | Trigger hole returning to the menu | [.agents/level-exit.md](.agents/level-exit.md) |

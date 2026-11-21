@@ -173,6 +173,8 @@ public class PlayerGridMovement : MonoBehaviour
         stepProgress = 1f;
         undoProgress = 0f;
         StepStarted?.Invoke(undoObjects.Length > 0);
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.Play(SoundManager.Effect.Undo);
         return true;
     }
 
@@ -215,6 +217,16 @@ public class PlayerGridMovement : MonoBehaviour
         {
             UpdateUndoAnimation();
             return;   // no new steps until the undo has landed
+        }
+
+        // An exit in a wall may close while the player is stepping into it.
+        if (stepProgress < 1f && DualGridLayer.IsWall(grid, targetCell) && !LevelExit.IsOpenAt(grid, targetCell))
+        {
+            FinishPush();
+            targetCell = currentCell;
+            stepProgress = 1f;
+            transform.position = CellCenter(currentCell);
+            return;
         }
 
         // A beam can be switched on while a step is already in progress.
@@ -295,6 +307,8 @@ public class PlayerGridMovement : MonoBehaviour
         targetCell = target;
         Facing = direction;   // turn only when the step really starts
         StepStarted?.Invoke(pushed.Count > 0);
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.Play(pushed.Count > 0 ? SoundManager.Effect.Push : SoundManager.Effect.Step);
         return true;
     }
 

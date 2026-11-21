@@ -47,6 +47,9 @@ public sealed class LaserEmitter : MonoBehaviour
         }
     }
 
+    /// <summary>Set the beam state from a UnityEvent, such as a signal receiver event.</summary>
+    public void SetOn(bool value) => IsOn = value;
+
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void ResetStatics() => All.Clear();
 
