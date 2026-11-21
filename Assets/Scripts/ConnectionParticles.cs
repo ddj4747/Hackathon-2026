@@ -46,6 +46,9 @@ public class ConnectionParticles : MonoBehaviour
     /// <summary>Multiplies the emission rate (e.g. CircuitAura makes beams denser while active). 1 = normal.</summary>
     public float RateMultiplier { get; set; } = 1f;
 
+    /// <summary>False stops new pixels; the ones already flying finish their trip (used to fade a beam out).</summary>
+    public bool Emitting { get; set; } = true;
+
     /// <summary>Sets both ends of the connection at runtime.</summary>
     public void SetEndpoints(Transform a, Transform b)
     {
@@ -91,7 +94,7 @@ public class ConnectionParticles : MonoBehaviour
 
     private void Update()
     {
-        if (!TryGetLine(out Vector3 a, out Vector3 b, out float travel))
+        if (!Emitting || !TryGetLine(out Vector3 a, out Vector3 b, out float travel))
         {
             emitAccumulator = 0f;
             return;

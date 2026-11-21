@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6730007525621310947}
   - component: {fileID: 3173558357950628214}
+  - component: {fileID: 7809281918170640628}
   m_Layer: 0
   m_Name: MapGrid
   m_TagString: Untagged
@@ -46,6 +47,21 @@ Grid:
   m_CellGap: {x: 0, y: 0, z: 0}
   m_CellLayout: 0
   m_CellSwizzle: 0
+--- !u!114 &7809281918170640628
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1339895555051040209}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 665da7c293f305b458ff5431477e16bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SignalBeams
+  beamPrefab: {fileID: 5992586414275199366, guid: 3f153c871bb93d744823998e26a32bd7, type: 3}
+  fadeOutTime: 2.5
+  receiverRefreshInterval: 1
 --- !u!1 &6077892576969381453
 GameObject:
   m_ObjectHideFlags: 0
@@ -330,6 +346,7 @@ MonoBehaviour:
   waterTile: {fileID: 11400000, guid: e798e7498f0947f28caa97e6fcc00acd, type: 2}
   wallTile: {fileID: 11400000, guid: ddc2bff09843465585789593b0f77f17, type: 2}
   sortingOrder: -10
+  margin: 3
   frameDuration: 0.15
   stillFrameHold: 4
   showGuideInEditor: 1
