@@ -2,17 +2,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// A signal-controlled exit. When all assigned collectors are supplied, the hole opens and the player
-/// can walk into it to return to the menu. The exit snaps to the grid cell it is placed on.
+/// An always-open hole that returns the player to the menu. The exit snaps to its grid cell.
 /// </summary>
 [DisallowMultipleComponent]
 [RequireComponent(typeof(Collider2D))]
 public class LevelExit : MonoBehaviour
 {
-    [Tooltip("Scene collectors that control this exit. All entries must receive matching signal to open it.")]
-    [SerializeField] private SignalReceiver[] collectors = System.Array.Empty<SignalReceiver>();
-
-    private SpriteRenderer exitSprite;
     private static readonly List<LevelExit> Exits = new();
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -41,33 +36,19 @@ public class LevelExit : MonoBehaviour
         return false;
     }
 
-    /// <summary>True only while every assigned collector is enabled and receiving signal.</summary>
-    public bool IsOpen
-    {
-        get
-        {
-            if (collectors == null || collectors.Length == 0)
-                return false;
-            foreach (var collector in collectors)
-                if (collector == null || !collector.isActiveAndEnabled || !collector.IsSignalSupplied)
-                    return false;
-            return true;
-        }
-    }
+    /// <summary>Exits are always open, independent of signal.</summary>
+    public bool IsOpen => true;
 
     private void Awake()
     {
         // The exit must never block the player, whatever the inspector says.
         GetComponent<Collider2D>().isTrigger = true;
-        exitSprite = GetComponent<SpriteRenderer>();
-        RefreshAppearance();
+        var exitSprite = GetComponent<SpriteRenderer>();
+        if (exitSprite != null) exitSprite.enabled = true;
     }
 
     private void Start()
     {
-        if (collectors == null || collectors.Length == 0 || System.Array.Exists(collectors, item => item == null))
-            Debug.LogWarning("LevelExit: assign every collector in the Inspector; the exit will remain closed until configured.", this);
-
         Grid grid = GetComponentInParent<Grid>();
         if (grid == null)
             grid = FindAnyObjectByType<Grid>();
@@ -79,17 +60,9 @@ public class LevelExit : MonoBehaviour
         transform.position = center;
     }
 
-    private void LateUpdate() => RefreshAppearance();
-
-    private void RefreshAppearance()
-    {
-        if (exitSprite != null)
-            exitSprite.enabled = IsOpen;
-    }
-
     private void OnTriggerEnter2D(Collider2D other) => TryExit(other);
 
-    // The last collector can receive signal while the player is already standing on the exit cell.
+    // Also handle the player already standing on the cell when the exit becomes active.
     private void OnTriggerStay2D(Collider2D other) => TryExit(other);
 
     private void TryExit(Collider2D other)

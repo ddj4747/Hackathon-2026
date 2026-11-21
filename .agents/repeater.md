@@ -4,6 +4,7 @@
 
 - Repeaters contribute coverage when signal reaches their cell. A [signal emitter](signal-emitter.md) can provide the starting signal.
 - Fifteen visual variants each use the top-row unsupplied sprite and matching bottom-row supplied sprite, with separate Original and Red artwork.
+- The Original sheet has an additional leftmost column that is not sliced; the existing 15 variants use the following columns.
 
 ## Entry files
 

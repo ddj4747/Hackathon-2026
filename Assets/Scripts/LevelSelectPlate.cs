@@ -25,14 +25,17 @@ public class LevelSelectPlate : MonoBehaviour
     // Baked from sceneAsset in OnValidate so it also works in builds, where SceneAsset does not exist.
     [SerializeField, HideInInspector] private string scenePath;
 
+    [Header("Progression")]
+    [Tooltip("The preceding level, which must be beaten before this plate can be selected.")]
+    [SerializeField] private LevelSelectPlate previousLevel;
+    [Tooltip("Allow selection if the preceding plate does not have a scene yet.")]
+    [SerializeField] private bool allowWhenPreviousUnassigned;
+
     [Header("Look")]
     [SerializeField] private SpriteRenderer plateRenderer;
     [SerializeField] private TextMesh numberLabel;
-    [SerializeField] private Color normalColor = new Color(0.62f, 0.68f, 0.85f, 1f);
+    [SerializeField] private Color normalColor = Color.white;
     [SerializeField] private Color highlightColor = new Color(1f, 0.85f, 0.2f, 1f);
-    [Tooltip("The plate grows by this factor while highlighted, so it stays visible around the player.")]
-    [SerializeField, Min(1f)] private float highlightScale = 1.3f;
-    [SerializeField, Min(0.1f)] private float scaleSpeed = 14f;
 
     private Grid grid;
     private PlayerGridMovement player;
@@ -42,6 +45,10 @@ public class LevelSelectPlate : MonoBehaviour
 
     public int LevelNumber => levelNumber;
     public bool IsHighlighted { get; private set; }
+    public bool HasAssignedScene => !string.IsNullOrEmpty(scenePath);
+    public bool IsBeaten => GameManager.Instance != null && GameManager.Instance.IsLevelBeaten(scenePath);
+    public bool IsUnlocked => previousLevel == null ||
+        (!previousLevel.HasAssignedScene && allowWhenPreviousUnassigned) || previousLevel.IsBeaten;
 
     private void Awake()
     {
@@ -66,7 +73,7 @@ public class LevelSelectPlate : MonoBehaviour
 
         player = FindAnyObjectByType<PlayerGridMovement>();
         PlaceReturningPlayer();
-        SetVisual(false, instant: true);
+        SetVisual(false);
     }
 
     // Coming back from this plate's level through an exit: start the menu with the player standing on it.
@@ -112,22 +119,16 @@ public class LevelSelectPlate : MonoBehaviour
 
         // Highlighted as soon as the player's centre is inside this cell (i.e. halfway through the step onto it).
         bool onPlate = player != null && grid.WorldToCell(player.transform.position) == cell;
-        SetVisual(onPlate, instant: false);
+        SetVisual(onPlate);
     }
 
-    private void SetVisual(bool highlighted, bool instant)
+    private void SetVisual(bool highlighted)
     {
         IsHighlighted = highlighted;
         if (plateRenderer == null)
             return;
 
         plateRenderer.color = highlighted ? highlightColor : normalColor;
-
-        Vector3 target = Vector3.one * (highlighted ? highlightScale : 1f);
-        Transform t = plateRenderer.transform;
-        t.localScale = instant
-            ? target
-            : Vector3.Lerp(t.localScale, target, 1f - Mathf.Exp(-scaleSpeed * Time.deltaTime));
     }
 
     private void OnSelect(InputAction.CallbackContext context)
@@ -137,6 +138,9 @@ public class LevelSelectPlate : MonoBehaviour
 
         // The player must be standing still on this plate, not just passing over it.
         if (player.IsMoving || player.CurrentCell != cell)
+            return;
+
+        if (!IsUnlocked)
             return;
 
         if (string.IsNullOrEmpty(scenePath))
