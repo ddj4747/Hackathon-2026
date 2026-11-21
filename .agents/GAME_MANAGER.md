@@ -17,6 +17,7 @@
 - Space is the shared confirm/activate input: bind new confirm-style interactions to `Player/Confirm` instead of adding keys. `Jump` also uses Space in the asset but is unused (no jump mechanic).
 
 ## Public interfaces and dependencies
+- Successful restart and return to menu play placeholder effects through the [sound manager](sound-manager.md).
 - `GameManager.Instance`, `ReturnToMenu()`, `RestartLevel()`, `ReturnedFromScenePath`, `ClearReturn()`, constants `ConfirmActionPath`, `RestartActionPath` and `MenuSceneName` (`"Menu"`, must be in the build's scene list).
 - Used by `LevelExit` ([LEVEL_EXIT.md](level-exit.md)) and `LevelSelectPlate` ([LEVEL_SELECT.md](level-select.md)).
 

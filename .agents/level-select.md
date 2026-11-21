@@ -21,6 +21,7 @@
 - The number is a legacy `TextMesh` with `nokiafc22`, sorted above the plate (order 2) but below blocks (5) and the player (10), so the player covers the number; font and pixel rules in [PIXEL_PERFECT_AND_FONT.md](pixel-perfect-and-font.md).
 
 ## Public interfaces and dependencies
+- Valid level selection plays a placeholder effect through the [sound manager](sound-manager.md).
 - `LevelSelectPlate` uses `Grid`, `PlayerGridMovement` ([PLAYER_MOVEMENT.md](player-movement.md), `TeleportToCell`), `GameManager` and the project-wide actions (`InputSystem.actions`, action `Player/Confirm`, constant `GameManager.ConfirmActionPath`).
 - `PlayerGridMovement` itself still reads the keyboard directly; only Confirm uses the input actions asset.
 

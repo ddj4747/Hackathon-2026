@@ -169,6 +169,8 @@ public class PlayerGridMovement : MonoBehaviour
         targetCell = step.playerCell;
         stepProgress = 1f;
         undoProgress = 0f;
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.Play(SoundManager.Effect.Undo);
         return true;
     }
 
@@ -300,6 +302,8 @@ public class PlayerGridMovement : MonoBehaviour
 
         targetCell = target;
         Facing = direction;   // turn only when the step really starts
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.Play(pushed.Count > 0 ? SoundManager.Effect.Push : SoundManager.Effect.Step);
         return true;
     }
 

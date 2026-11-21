@@ -26,6 +26,7 @@
 - Animation (`PlayerSpriteAnimator`): walking plays frames 4-7, pushing (a step that shoves a `Pushable`) plays frames 0-3, at `framesPerSecond` (12). When the player stands still the last frame stays. The player is rotated (root transform, z) to face its last direction: up 0, left 90, down 180, right -90 degrees; `rotationOffset` corrects it if the art faces another way. Facing changes only when a step actually starts in that direction (not on blocked moves and not while a step is still finishing). Not yet verified visually.
 
 ## Public interfaces and dependencies
+- Successful steps, pushes and undo play placeholder effects through the [sound manager](sound-manager.md).
 - Uses the `Grid` from the `MapGrid` prefab (see [MAP_GRID.md](map-grid.md)); the `grid` field is auto-found with `FindFirstObjectByType<Grid>()` if empty.
 - Public: `CurrentCell`, `IsMoving`, `IsPushing`, `Facing` (read-only), `TeleportToCell(Vector3Int)` (instant move to a cell centre, cancels a step in progress, clears the undo history), `Undo()`, `UndoCount`, constant `UndoActionPath`.
 - Requires Input System (`activeInputHandler: 1` in ProjectSettings).

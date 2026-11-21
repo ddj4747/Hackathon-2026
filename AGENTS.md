@@ -60,6 +60,7 @@
 | Laser | Switchable directional beam, movement blocking and movable-object destruction | [.agents/laser.md](.agents/laser.md) |
 | Cables | Fixed paths, endpoint adapters and wire artwork | [.agents/cables.md](.agents/cables.md) |
 | Player movement | Grid-based player prefab, sprite and input | [.agents/player-movement.md](.agents/player-movement.md) |
+| Sound manager | Persistent music and action sound effects | [.agents/sound-manager.md](.agents/sound-manager.md) |
 | Level select | Menu scene and level plates | [.agents/level-select.md](.agents/level-select.md) |
 | Game manager | Persistent manager, level exit and restart | [.agents/GAME_MANAGER.md](.agents/GAME_MANAGER.md) |
 | Level exit | Trigger hole returning to the menu | [.agents/level-exit.md](.agents/level-exit.md) |
