@@ -21,7 +21,7 @@
 - The cable resolves an explicitly assigned Grid or its nearest parent Grid in the same scene. Coordinates are scene-grid cell coordinates. Adapters are found by their world position in that grid.
 - Directional wire tiles record up, right, down and left ports. Neighboring pieces connect only when both ports face their shared edge, including rotated/flipped tile transforms. In Play mode each tile creates a pushable piece; movement follows the existing chain-pushing rules. Signal uses the destination cell during a push and updates when the layout changes. See [Pushable blocks](pushable-blocks.md).
 - An unoccupied neighboring wire port acts as an adapter when an enabled emitter or an enabled, supplied repeater occupies that adjacent cell on the same Grid. Signal reaches every tile in that connected component; green shows supplied, blue shows unsupplied. Changes are recalculated during Play mode. A wire in the adjacent cell prevents that port being an adapter, even if its direction does not match.
-- Tilemap wire power is separate from `ConnectionManager` floor signals and the older path-based cable links. An enabled receiver in an adjacent cell is supplied by a powered open wire port facing it; other output is not implemented.
+- Tilemap wire power is separate from `ConnectionManager` floor signals and the older path-based cable links. An enabled receiver or collector in an adjacent cell is supplied by a powered open wire port facing it; other output is not implemented.
 
 ## Public interfaces and dependencies
 
