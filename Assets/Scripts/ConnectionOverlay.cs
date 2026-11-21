@@ -29,20 +29,45 @@ public sealed class ConnectionOverlay : MonoBehaviour
     private readonly HashSet<Vector3Int> displayed = new();
     private readonly HashSet<Vector3Int> desired = new();
     private Tilemap tilemap;
+    private TilemapRenderer tilemapRenderer;
     private Tile indicator;
     private Sprite indicatorSprite;
+    private Tile jammerIndicator;
+    private Sprite jammerSprite;
+    private Material originalMaterial;
+    private Material rangeMaterial;
+    private bool showingJammer;
+
+    private static readonly Color ActiveOriginal = new Color32(0x38, 0xb7, 0x64, 255);
+    private static readonly Color InactiveOriginal = new Color32(0x25, 0x71, 0x79, 255);
+    private static readonly Color ActiveRed = new Color32(0xb1, 0x3e, 0x53, 255);
+    private static readonly Color InactiveRed = new Color32(0x5d, 0x27, 0x5d, 255);
 
     private void OnEnable()
     {
         tilemap = GetComponent<Tilemap>();
-        tilemap.color = color;
+        tilemapRenderer = GetComponent<TilemapRenderer>();
+        originalMaterial = tilemapRenderer.sharedMaterial;
+        if (rangeMaterial == null)
+        {
+            var shader = Resources.Load<Shader>("SignalRangeOverlay");
+            if (shader != null) rangeMaterial = new Material(shader);
+            else Debug.LogError("Signal range overlay shader is missing.", this);
+        }
         if (indicator != null) return;
 
-        indicatorSprite = Sprite.Create(Texture2D.whiteTexture, new Rect(0f, 0f, 1f, 1f),
-            new Vector2(0.5f, 0.5f), 2f);
+        var white = Texture2D.whiteTexture;
+        indicatorSprite = Sprite.Create(white, new Rect(0f, 0f, white.width, white.height),
+            new Vector2(0.5f, 0.5f), white.width);
         indicator = ScriptableObject.CreateInstance<Tile>();
         indicator.sprite = indicatorSprite;
         indicator.colliderType = Tile.ColliderType.None;
+        indicator.flags = TileFlags.None;
+        jammerSprite = Sprite.Create(Texture2D.whiteTexture, new Rect(0f, 0f, 1f, 1f),
+            new Vector2(0.5f, 0.5f), 2f);
+        jammerIndicator = ScriptableObject.CreateInstance<Tile>();
+        jammerIndicator.sprite = jammerSprite;
+        jammerIndicator.colliderType = Tile.ColliderType.None;
     }
 
     private void LateUpdate()
@@ -90,6 +115,28 @@ public sealed class ConnectionOverlay : MonoBehaviour
 
     private void ShowCoverage(ISignalRangeSource source)
     {
+        var jammer = source is SignalJammer;
+        if (jammer != showingJammer)
+        {
+            tilemap.ClearAllTiles();
+            displayed.Clear();
+            showingJammer = jammer;
+        }
+
+        tilemapRenderer.sharedMaterial = jammer || rangeMaterial == null ? originalMaterial : rangeMaterial;
+        tilemap.color = jammer ? color : Color.white;
+        if (!jammer && rangeMaterial != null)
+        {
+            var tint = source switch
+            {
+                Repeater repeater when repeater.Type == SignalType.Red => repeater.IsSignalSupplied ? ActiveRed : InactiveRed,
+                Repeater repeater => repeater.IsSignalSupplied ? ActiveOriginal : InactiveOriginal,
+                SignalEmitter emitter when emitter.Type == SignalType.Red => ActiveRed,
+                _ => ActiveOriginal
+            };
+            rangeMaterial.SetColor("_OverlayColor", tint);
+        }
+
         desired.Clear();
         if (source != null && source.HasVisibleSignal)
             foreach (var cell in source.RangeCells) desired.Add(cell);
@@ -97,7 +144,18 @@ public sealed class ConnectionOverlay : MonoBehaviour
         foreach (var cell in displayed)
             if (!desired.Contains(cell)) tilemap.SetTile(cell, null);
         foreach (var cell in desired)
-            if (!displayed.Contains(cell)) tilemap.SetTile(cell, indicator);
+        {
+            if (!displayed.Contains(cell)) tilemap.SetTile(cell, jammer ? jammerIndicator : indicator);
+            if (!jammer)
+            {
+                // The shader uses vertex color as four exposed-edge flags (left, right, bottom, top).
+                tilemap.SetColor(cell, new Color(
+                    desired.Contains(cell + Vector3Int.left) ? 0f : 1f,
+                    desired.Contains(cell + Vector3Int.right) ? 0f : 1f,
+                    desired.Contains(cell + Vector3Int.down) ? 0f : 1f,
+                    desired.Contains(cell + Vector3Int.up) ? 0f : 1f));
+            }
+        }
 
         displayed.Clear();
         displayed.UnionWith(desired);
@@ -106,13 +164,18 @@ public sealed class ConnectionOverlay : MonoBehaviour
     private void OnDisable()
     {
         if (tilemap != null) tilemap.ClearAllTiles();
+        if (tilemapRenderer != null) tilemapRenderer.sharedMaterial = originalMaterial;
         displayed.Clear();
         desired.Clear();
+        showingJammer = false;
     }
 
     private void OnDestroy()
     {
         Destroy(indicator);
         Destroy(indicatorSprite);
+        Destroy(jammerIndicator);
+        Destroy(jammerSprite);
+        Destroy(rangeMaterial);
     }
 }

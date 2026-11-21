@@ -6,7 +6,7 @@
 
 ## Entry files
 
-- `Assets/Scripts/ConnectionManager.cs`, `Assets/Scripts/SignalType.cs`, `Assets/Scripts/ConnectionOverlay.cs`, `Assets/Prefabs/ConnectionOverlay.prefab`
+- `Assets/Scripts/ConnectionManager.cs`, `Assets/Scripts/SignalType.cs`, `Assets/Scripts/ConnectionOverlay.cs`, `Assets/Resources/SignalRangeOverlay.shader`, `Assets/Prefabs/ConnectionOverlay.prefab`
 - [Map grid](map-grid.md)
 
 ## Behavior and rules
@@ -18,6 +18,7 @@
 - Wireless coverage uses direct line of sight: walls, marked objects and jammer coverage block their cells and cast a shadow away from the source. A tile loses signal if any positive area lies in shadow; two blockers meeting at a corner also block a diagonal line. Signal updates when blockers move or terrain changes. Cables retain their existing separate connections.
 - Unloading a scene clears and drops its manager. Starting a new play session starts with fresh managers.
 - The overlay shows only the hovered enabled emitter, repeater or jammer's own range. An unsupplied repeater shows its potential coverage without transmitting signal. Nothing is shown off an object; the overlay does not affect signal propagation.
+- Emitter and repeater previews have a one-pixel dashed outer boundary with no fill. Dashes move clockwise in one-pixel steps at six pixels per second. Original uses `#38B764` when supplied and `#257179` when unsupplied; Red uses `#B13E53` and `#5D275D`. Emitters use the supplied color. Jammer previews retain their cyan squares.
 
 ## Public interfaces and dependencies
 
