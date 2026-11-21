@@ -15,6 +15,7 @@ public sealed class LaserEmitter : MonoBehaviour
     [SerializeField] private Sprite inactiveEmitter;
     [SerializeField] private Sprite beamSprite;
     [SerializeField, Tooltip("Pixel sparks emitted along the active beam.")] private ParticleSystem beamParticles;
+    [SerializeField, Tooltip("HDR sprite material used by URP Bloom.")] private Material beamMaterial;
     [SerializeField, Min(0f), Tooltip("Beam fade duration in seconds; gameplay switches immediately.")] private float fadeDuration = 0.2f;
 
     private const int MaxWallDistance = 1024;
@@ -238,6 +239,7 @@ public sealed class LaserEmitter : MonoBehaviour
             var renderer = segments[i];
             renderer.gameObject.SetActive(true);
             renderer.sprite = beamSprite;
+            if (beamMaterial != null) renderer.sharedMaterial = beamMaterial;
             var color = renderer.color;
             color.a = beamOpacity;
             renderer.color = color;
@@ -266,14 +268,14 @@ public sealed class LaserEmitter : MonoBehaviour
         if (fadeDuration <= 0f)
         {
             SetBeamOpacity(target);
-            if (!visible) HideSegmentsFrom(0);
+            if (!visible) HideBeamVisuals();
             return;
         }
         fadeTween = DOTween.To(() => beamOpacity, SetBeamOpacity, target, fadeDuration)
             .SetEase(Ease.Linear).SetTarget(this).OnComplete(() =>
             {
                 fadeTween = null;
-                if (!beamVisible) HideSegmentsFrom(0);
+                if (!beamVisible) HideBeamVisuals();
             });
     }
 
@@ -287,6 +289,11 @@ public sealed class LaserEmitter : MonoBehaviour
             color.a = value;
             segment.color = color;
         }
+    }
+
+    private void HideBeamVisuals()
+    {
+        HideSegmentsFrom(0);
     }
 
     private void UpdateParticles(Vector3Int origin, Vector3Int step)

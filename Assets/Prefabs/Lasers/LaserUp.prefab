@@ -1300,7 +1300,7 @@ ParticleSystem:
         m_RotationOrder: 4
     separateAxes: 0
   ColorModule:
-    enabled: 0
+    enabled: 1
     gradient:
       serializedVersion: 2
       minMaxState: 1
@@ -1325,8 +1325,8 @@ ParticleSystem:
         ctime6: 0
         ctime7: 0
         atime0: 0
-        atime1: 65535
-        atime2: 0
+        atime1: 29491
+        atime2: 65535
         atime3: 0
         atime4: 0
         atime5: 0
@@ -1335,7 +1335,7 @@ ParticleSystem:
         m_Mode: 0
         m_ColorSpace: -1
         m_NumColorKeys: 2
-        m_NumAlphaKeys: 2
+        m_NumAlphaKeys: 3
       minGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -4782,7 +4782,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a7ef37b33d5c68b4da7024588207b282, type: 2}
+  - {fileID: 2100000, guid: 688049450d852ab4da1689ab291a24d7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -4847,6 +4847,7 @@ GameObject:
   - component: {fileID: 7244215867791233884}
   - component: {fileID: 5107486351591741130}
   - component: {fileID: 1233828001993009739}
+  - component: {fileID: 6318108722665640101}
   m_Layer: 0
   m_Name: LaserUp
   m_TagString: Untagged
@@ -4948,4 +4949,22 @@ MonoBehaviour:
   inactiveEmitter: {fileID: 794731273560587575, guid: 1c4170ff3f25d1145a095ea956a5ec3c, type: 3}
   beamSprite: {fileID: -6300004475013961062, guid: 1c4170ff3f25d1145a095ea956a5ec3c, type: 3}
   beamParticles: {fileID: 6389603300085802104}
+  beamMaterial: {fileID: 2100000, guid: b41fd627312d9214cb33a85d8b7bf77b, type: 2}
   fadeDuration: 0.2
+--- !u!114 &6318108722665640101
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6763010009243666415}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.Volume
+  m_IsGlobal: 1
+  priority: 0
+  blendDistance: 0
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: 527449658baff2442baf91ced69dbc94, type: 2}
