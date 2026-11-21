@@ -73,7 +73,7 @@ public class DualGridLayer : MonoBehaviour
     [Tooltip("Sorting order of the visible tiles. Keep it below the player and the objects.")]
     [SerializeField] private int sortingOrder = -10;
 
-    [Tooltip("Plain wall drawn this many cells around everything you paint, so no empty background shows next to the level.")]
+    [Tooltip("Wall is drawn only up to this many cells from floor or water; farther wall disappears (also while editing).")]
     [SerializeField, Min(0)] private int margin = 3;
 
     [Header("Animation")]
@@ -278,6 +278,34 @@ public class DualGridLayer : MonoBehaviour
         ApplyAffected();
     }
 
+    /// <summary>
+    /// Removes every cell painted as Wall from the logical layer and redraws, which also drops wall left around
+    /// cells that were erased. Floor and water stay. Undoable in the editor.
+    /// </summary>
+    [ContextMenu("Clear walls (keep floor and water)")]
+    public void ClearWalls()
+    {
+#if UNITY_EDITOR
+        UnityEditor.Undo.RegisterCompleteObjectUndo(Data, "Clear dual grid walls");
+#endif
+        List<Vector3Int> walls = new List<Vector3Int>();
+        BoundsInt bounds = Data.cellBounds;
+        foreach (Vector3Int pos in bounds.allPositionsWithin)
+        {
+            if (Data.HasTile(pos) && GetTerrain(pos) == DualGridTerrain.Wall)
+                walls.Add(pos);
+        }
+
+        for (int i = 0; i < walls.Count; i++)
+            Data.SetTile(walls[i], null);
+
+#if UNITY_EDITOR
+        UnityEditor.EditorUtility.SetDirty(Data);
+#endif
+        RefreshAll();
+        Debug.Log("DualGridLayer: removed " + walls.Count + " painted wall cell(s) and the wall left around erased cells.", this);
+    }
+
     /// <summary>Lists every corner combination that no tileset has.</summary>
     [ContextMenu("Log missing tiles")]
     public void LogMissingTiles()
@@ -360,8 +388,13 @@ public class DualGridLayer : MonoBehaviour
         batchTiles.Clear();
         foreach (Vector3Int corner in pending)
         {
-            TileBase tile = comboTiles[ComputeCode(corner)];
-            if (tile == null)
+            // Wall far from any floor or water is not drawn, so erasing floor also removes the wall around it.
+            TileBase tile = null;
+            bool drawn = IsNearFloorOrWater(corner);
+            if (drawn)
+                tile = comboTiles[ComputeCode(corner)];
+
+            if (drawn && tile == null)
                 missingCorners.Add(corner);
             else
                 missingCorners.Remove(corner);
@@ -373,6 +406,21 @@ public class DualGridLayer : MonoBehaviour
 
         if (batchPositions.Count > 0)
             displayTilemap.SetTiles(batchPositions.ToArray(), batchTiles.ToArray());
+    }
+
+    // True if a floor or water cell is within `margin` cells of the corner (painted Wall cells do not count).
+    private bool IsNearFloorOrWater(Vector3Int corner)
+    {
+        for (int dx = -1 - margin; dx <= margin; dx++)
+        {
+            for (int dy = -1 - margin; dy <= margin; dy++)
+            {
+                Vector3Int cell = new Vector3Int(corner.x + dx, corner.y + dy, corner.z);
+                if (Data.HasTile(cell) && GetTerrain(cell) != DualGridTerrain.Wall)
+                    return true;
+            }
+        }
+        return false;
     }
 
     private int ComputeCode(Vector3Int corner)
