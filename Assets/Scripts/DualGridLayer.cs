@@ -149,6 +149,21 @@ public class DualGridLayer : MonoBehaviour
         return false;
     }
 
+    /// <summary>True for a logical wall (but not water) on a nonempty layer under the grid.</summary>
+    public static bool IsWall(Grid grid, Vector3Int cell)
+    {
+        for (int i = 0; i < Active.Count; i++)
+        {
+            DualGridLayer layer = Active[i];
+            if (layer.parentGrid == null)
+                layer.parentGrid = layer.GetComponentInParent<Grid>();
+            if (layer.parentGrid == grid && layer.Data.GetUsedTilesCount() != 0 &&
+                layer.GetTerrain(cell) == DualGridTerrain.Wall)
+                return true;
+        }
+        return false;
+    }
+
     /// <summary>Paints a cell from code with the floor / water / wall tile assigned in the Inspector.</summary>
     public void SetTerrain(Vector3Int cell, DualGridTerrain terrain)
     {

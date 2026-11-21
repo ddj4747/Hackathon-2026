@@ -1,14 +1,13 @@
 using UnityEngine;
 
 /// <summary>
-/// Global push rules shared by every <see cref="Pushable"/>. Lives as one asset,
-/// <c>Assets/Resources/PushSettings.asset</c>, so the values are edited in a single place.
+/// Legacy push settings retained for existing assets. Chain length no longer limits pushing.
 /// </summary>
 [CreateAssetMenu(fileName = "PushSettings", menuName = "Game/Push Settings")]
 public class PushSettings : ScriptableObject
 {
-    [Tooltip("Maximum number of objects the player can push in one chain. 0 = unlimited.")]
-    [Min(0)] public int maxChainLength = 3;
+    [Tooltip("Legacy setting; push chains have no length limit.")]
+    [Min(0)] public int maxChainLength;
 
     private static PushSettings instance;
 
