@@ -55,7 +55,7 @@ public sealed class SignalBeams : MonoBehaviour
         {
             nextReceiverRefresh = Time.unscaledTime + receiverRefreshInterval;
             receivers.Clear();
-            foreach (var receiver in FindObjectsByType<SignalReceiver>(FindObjectsSortMode.None))
+            foreach (var receiver in FindObjectsByType<SignalReceiver>())
                 if (receiver.gameObject.scene == gameObject.scene)
                     receivers.Add(receiver);
         }

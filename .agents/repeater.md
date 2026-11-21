@@ -21,6 +21,7 @@
 - In Play mode the visual follows `IsSignalSupplied`; blue is unsupplied and green is supplied. In edit mode Original tiles preview blue and Red tiles use a red tint. A painted repeater tile instantiates its matching functional prefab.
 - The player can push standalone and painted repeaters using the existing push and chain rules. Coverage and supply are recalculated from the repeater's moving position. See [Pushable blocks](pushable-blocks.md).
 - Adjacent pushable [enhancers](repeater-enhancer.md) increase the repeater range by one each; diagonal cells do not count.
+- `ignoreEnhancers` (serialized, default off) makes a repeater ignore adjacent enhancers; used by the [signal antenna](signal-antenna.md) (range 0, feeds cables only).
 - Hovering a repeater shows its potential coverage through the [connection overlay](connection-manager.md), even while it is unsupplied.
 
 ## Public interfaces and dependencies

@@ -27,6 +27,9 @@ public sealed class Repeater : MonoBehaviour, ISignalRangeSource
     [SerializeField, Tooltip("Use a one-cell-wide line in the direction at the center of the sector.")]
     private bool straightLine;
 
+    [SerializeField, Tooltip("Adjacent enhancers do not add range (e.g. SignalAntenna: range 0, only feeds cables).")]
+    private bool ignoreEnhancers;
+
     private readonly List<Vector3Int> coveredCells = new();
     private readonly List<Vector3Int> nextCoverage = new();
     private Grid grid;
@@ -67,7 +70,7 @@ public sealed class Repeater : MonoBehaviour, ISignalRangeSource
         var position = transform.position;
         var center = grid.WorldToCell(position);
         var origin = (Vector2)grid.LocalToCellInterpolated(grid.transform.InverseTransformPoint(position));
-        var radius = Mathf.Max(0, range) + CountAdjacentEnhancers(center);
+        var radius = Mathf.Max(0, range) + (ignoreEnhancers ? 0 : CountAdjacentEnhancers(center));
         var angle = Mathf.Clamp(sectorAngle, 0f, 360f);
         var direction = GetDirection(angle);
         var obstacles = new SignalObstacles(grid);
