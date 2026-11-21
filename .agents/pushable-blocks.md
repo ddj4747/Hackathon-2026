@@ -15,12 +15,12 @@
 - A pushable snaps to the grid cell it is placed on and occupies it.
 - When the player steps toward a cell holding a pushable, the object is shoved one cell in the same direction; both move at the player's speed, one cell apart. Holding the key keeps pushing it along.
 - Chains: all pushables lined up in the pushed direction move together, one cell, at the player's speed. The chain is limited to `PushSettings.maxChainLength` objects (default 3, 0 = unlimited; edit `Resources/PushSettings.asset`). Over the limit, or if the cell after the chain is `Solid`, nothing moves and the player stays put.
-- `Solid` objects block the player and chains. Pushables themselves have no collider. Tilemap tiles, level exits and other colliders are not treated as solid; which things count as walls is still undecided (see root `AGENTS.md`). No `Solid` prefab exists yet.
+- `Solid` objects block the player and chains. Wall and Water cells of a `DualGridLayer` block them too (`Solid.IsBlocked(grid, cell)`): the player cannot enter them and a chain cannot be shoved onto them (nothing moves, the player stays put). Pushables themselves have no collider. The `Terrain` tilemap, level exits and other colliders are not treated as solid. No `Solid` prefab exists yet.
 - Pulling and diagonal pushes are not implemented.
 - Enable `stopsSignal` on a Pushable to obstruct wireless signal at its logical occupied cell, including during a push. See [Connection manager](connection-manager.md).
 
 ## Public interfaces and dependencies
-- `Pushable.GetAt(cell)`, `Pushable.TryBeginChain(startCell, direction, list)`, `Cell`, `SetPushProgress(t)` (animated by the player each frame); `Solid.IsAt(cell)`; `PushSettings.Instance.maxChainLength`.
+- `Pushable.GetAt(cell)`, `Pushable.TryBeginChain(startCell, direction, list)`, `Cell`, `SetPushProgress(t)` (animated by the player each frame); `Solid.IsAt(cell)`, `Solid.IsBlocked(grid, cell)` (solid objects plus wall/water terrain); `PushSettings.Instance.maxChainLength`.
 - Uses the assigned `Grid`, or the nearest parent Grid, falling back to a scene Grid when empty. Directional wire pieces and repeaters also use `Pushable`; see [Cables](cables.md) and [Repeater](repeater.md).
 
 ## Setup and verification

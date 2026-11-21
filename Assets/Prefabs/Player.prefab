@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 1000000000000000002}
   - component: {fileID: 1000000000000000003}
   - component: {fileID: 1000000000000000004}
-  - component: {fileID: 1000000000000000005}
   - component: {fileID: 1000000000000000006}
   - component: {fileID: 1000000000000000007}
   - component: {fileID: 1000000000000000008}
@@ -104,21 +103,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   grid: {fileID: 0}
   tilesPerSecond: 6
---- !u!114 &1000000000000000005
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1000000000000000001}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 613fcd18780b4e6abe212bdf9eef0ecc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  targetCamera: {fileID: 0}
-  smoothTime: 0.15
-  offset: {x: 0, y: 0}
 --- !u!50 &1000000000000000006
 Rigidbody2D:
   serializedVersion: 5
