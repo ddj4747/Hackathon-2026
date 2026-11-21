@@ -4,8 +4,8 @@ using UnityEngine;
 /// <summary>
 /// Add this to any object to make it pushable by the player. The object snaps to a grid cell and
 /// occupies it. When the player walks into that cell, the object is shoved one cell further in the
-/// same direction, together with every pushable lined up behind it (a chain). The chain is limited by
-/// <see cref="PushSettings"/> and stopped by <see cref="Solid"/> objects and by wall or water cells; otherwise the player is blocked.
+/// same direction, together with every pushable lined up behind it (a chain). Solid objects, walls,
+/// and water can stop the chain; there is no limit on the number of pushables.
 /// The player drives the visual motion (see <see cref="PlayerGridMovement"/>) so everything stays in sync.
 /// </summary>
 [DisallowMultipleComponent]
@@ -46,6 +46,20 @@ public class Pushable : MonoBehaviour
         return null;
     }
 
+    internal static Pushable GetAt(Grid targetGrid, Vector3Int cell)
+    {
+        for (int i = 0; i < All.Count; i++)
+            if (All[i].grid == targetGrid && All[i].Cell == cell)
+                return All[i];
+        return null;
+    }
+
+    internal void DestroyInLaser()
+    {
+        gameObject.SetActive(false);
+        Destroy(gameObject);
+    }
+
     private void Awake()
     {
         if (grid == null)
@@ -78,38 +92,41 @@ public class Pushable : MonoBehaviour
     /// <summary>
     /// Tries to push everything in a straight line starting at <paramref name="startCell"/>. All
     /// consecutive pushables from there are shoved one cell in <paramref name="direction"/> as one chain.
-    /// Returns false (nothing moves, <paramref name="pushed"/> is empty) when the chain is longer than
-    /// <see cref="PushSettings.maxChainLength"/> or the cell after it is solid, wall or water. Returns true with an
+    /// Returns false (nothing moves, <paramref name="pushed"/> is empty) when the cell after the
+    /// chain is solid, wall or water. A pushable moved into
+    /// an active laser is destroyed. Returns true with an
     /// empty list when there is nothing to push. On success each object logically moves to its new
     /// cell immediately; the caller animates them with <see cref="SetPushProgress"/>.
     /// </summary>
     public static bool TryBeginChain(Vector3Int startCell, Vector3Int direction, List<Pushable> pushed)
     {
         pushed.Clear();
-        int max = PushSettings.Instance.maxChainLength;
-
+        if (direction == Vector3Int.zero)
+            return false;
         Vector3Int cell = startCell;
         Pushable block;
         while ((block = GetAt(cell)) != null)
         {
             pushed.Add(block);
-            if (max > 0 && pushed.Count > max)
-            {
-                pushed.Clear();
-                return false;
-            }
             cell += direction;
         }
 
         // 'cell' is now the first cell behind the chain; it must be free to enter.
-        if (pushed.Count > 0 && Solid.IsBlocked(pushed[0].grid, cell))
+        if (pushed.Count > 0 && Solid.IsTerrainBlocked(pushed[0].grid, cell))
         {
             pushed.Clear();
             return false;
         }
 
-        for (int i = 0; i < pushed.Count; i++)
-            pushed[i].BeginMove(direction);
+        for (int i = pushed.Count - 1; i >= 0; i--)
+        {
+            var item = pushed[i];
+            item.BeginMove(direction);
+            if (LaserEmitter.DestroyIfInBeam(item.grid, item))
+            {
+                pushed.RemoveAt(i);
+            }
+        }
         return true;
     }
 

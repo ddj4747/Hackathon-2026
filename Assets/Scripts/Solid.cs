@@ -30,14 +30,26 @@ public class Solid : MonoBehaviour
         return false;
     }
 
+    internal static bool IsAt(Grid targetGrid, Vector3Int cell)
+    {
+        for (int i = 0; i < All.Count; i++)
+            if (All[i].grid == targetGrid && All[i].Cell == cell)
+                return true;
+        return false;
+    }
+
     /// <summary>
     /// True if the player or a pushed chain cannot enter the cell: a <see cref="Solid"/> object is there, or the
-    /// cell is Wall or Water on a <see cref="DualGridLayer"/> under <paramref name="grid"/>.
+    /// cell is Wall or Water on a <see cref="DualGridLayer"/>, or an active laser covers it.
     /// </summary>
     public static bool IsBlocked(Grid grid, Vector3Int cell)
     {
-        return IsAt(cell) || DualGridLayer.IsBlocked(grid, cell);
+        return IsTerrainBlocked(grid, cell) || LaserEmitter.IsBeamAt(grid, cell);
     }
+
+    // A pushed object can enter a beam and be destroyed, but cannot enter walls or water.
+    internal static bool IsTerrainBlocked(Grid grid, Vector3Int cell) =>
+        IsAt(cell) || DualGridLayer.IsBlocked(grid, cell);
 
     private void Awake()
     {

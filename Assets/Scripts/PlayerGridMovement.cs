@@ -213,6 +213,16 @@ public class PlayerGridMovement : MonoBehaviour
             return;   // no new steps until the undo has landed
         }
 
+        // A beam can be switched on while a step is already in progress.
+        if (stepProgress < 1f && LaserEmitter.IsBeamAt(grid, targetCell))
+        {
+            FinishPush();
+            targetCell = currentCell;
+            stepProgress = 1f;
+            transform.position = CellCenter(currentCell);
+            return;
+        }
+
         Vector3Int input = ReadDirection();
 
         if (!IsMoving && input != Vector3Int.zero && TryBeginStep(input))
@@ -248,7 +258,7 @@ public class PlayerGridMovement : MonoBehaviour
         // The shoved block moves in lock-step with the player, one cell ahead.
         float pushProgress = IsMoving ? stepProgress : 1f;
         for (int i = 0; i < pushed.Count; i++)
-            pushed[i].SetPushProgress(pushProgress);
+            if (pushed[i] != null) pushed[i].SetPushProgress(pushProgress);
     }
 
     /// <summary>
@@ -286,7 +296,7 @@ public class PlayerGridMovement : MonoBehaviour
     private void FinishPush()
     {
         for (int i = 0; i < pushed.Count; i++)
-            pushed[i].SetPushProgress(1f);
+            if (pushed[i] != null) pushed[i].SetPushProgress(1f);
         pushed.Clear();
     }
 
