@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 258e6c1b86ed41e4f9570669cb2f9ccb, type: 3}
   m_Name: RepeaterEnhancer
   m_EditorClassIdentifier: Assembly-CSharp::PrefabTile
-  previewSprite: {fileID: 21300000, guid: 7b2c51bfc7454461b040c5f09326abbc, type: 3}
-  previewColor: {r: 0.35, g: 0.9, b: 1, a: 1}
+  previewSprite: {fileID: 6900569200395336606, guid: 4621a49d31d5f64428cfe5ece23f64b4, type: 3}
+  previewColor: {r: 1, g: 1, b: 1, a: 1}
   prefab: {fileID: 6974506627881861333, guid: 719b0f02ada19ca43b26c6138ea69f71, type: 3}

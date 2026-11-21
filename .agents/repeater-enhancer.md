@@ -1,7 +1,7 @@
 ﻿# Repeater enhancer
 
 ## Status
-- Implemented as a pushable range modifier, with a tinted block sprite as placeholder artwork.
+- Implemented as a pushable range modifier, with its own sprite (`Assets/Resources/Enhancer.png`).
 
 ## Entry files
 - `Assets/Scripts/RepeaterEnhancer.cs`, `Assets/Prefabs/RepeaterEnhancer.prefab`, `Assets/SignalTiles/RepeaterEnhancer.asset`, `Assets/TilePalettes/Signal Palette.prefab`
@@ -15,5 +15,5 @@
 - `RepeaterEnhancer` requires `Pushable`; repeaters count active adjacent enhancers when calculating coverage.
 
 ## Setup and verification
-- Paint the cyan enhancer tile from `Signal Palette` onto a Tilemap beneath the level Grid, or place the prefab under that Grid. Its sprite is a placeholder.
+- Paint the enhancer tile from `Signal Palette` onto a Tilemap beneath the level Grid, or place the prefab under that Grid.
 - Unity verified base and extended coverage, stacking, diagonal exclusion, moving away and back, and disabling in an isolated preview scene. Unity compiled without console errors.
