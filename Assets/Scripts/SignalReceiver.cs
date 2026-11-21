@@ -2,13 +2,15 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
-// Detects positive signal at this object's cell and raises an event on connection.
+// Detects wireless or wired signal and raises events when its supplied state changes.
 [DisallowMultipleComponent]
 public sealed class SignalReceiver : MonoBehaviour
 {
     [SerializeField] private UnityEvent onSignalReceived = new();
+    [SerializeField] private UnityEvent onSignalLost = new();
 
     public UnityEvent OnSignalReceived => onSignalReceived;
+    public UnityEvent OnSignalLost => onSignalLost;
     public bool IsSignalSupplied { get; private set; }
 
     private Grid grid;
@@ -30,12 +32,17 @@ public sealed class SignalReceiver : MonoBehaviour
 
         var supplied = grid != null && scene.isLoaded &&
             (ConnectionManager.ForScene(scene).HasSignal(transform.position, grid) || HasWireSignal(scene));
-        var connected = supplied && !IsSignalSupplied;
+        if (supplied == IsSignalSupplied) return;
         IsSignalSupplied = supplied;
-        if (connected)
+        if (supplied)
         {
             Debug.Log("Signal receiver connected.", this);
             onSignalReceived.Invoke();
+        }
+        else
+        {
+            Debug.Log("Signal receiver disconnected.", this);
+            onSignalLost.Invoke();
         }
     }
 

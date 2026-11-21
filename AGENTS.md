@@ -53,7 +53,7 @@
 | Repeater | Signal supply and directional coverage | [.agents/repeater.md](.agents/repeater.md) |
 | Repeater enhancer | Pushable adjacent repeater range modifier | [.agents/repeater-enhancer.md](.agents/repeater-enhancer.md) |
 | Signal emitter | Starting signal source and circular coverage | [.agents/signal-emitter.md](.agents/signal-emitter.md) |
-| Signal receiver | Signal detection and connection event | [.agents/signal-receiver.md](.agents/signal-receiver.md) |
+| Signal receiver | Receiver and collector signal detection and events | [.agents/signal-receiver.md](.agents/signal-receiver.md) |
 | Signal jammer | Circular wireless signal blocking | [.agents/signal-jammer.md](.agents/signal-jammer.md) |
 | Cables | Fixed paths, endpoint adapters and wire artwork | [.agents/cables.md](.agents/cables.md) |
 | Player movement | Grid-based player prefab, sprite and input | [.agents/player-movement.md](.agents/player-movement.md) |

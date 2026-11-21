@@ -1,21 +1,24 @@
 # Signal receiver
 
 ## Status
-- Four receiver orientations and palette tiles detect signal. The level-ending action is not yet selected or configured.
+- Four receiver orientations and four collector orientations detect signal. Their events have no listeners configured by default.
 
 ## Entry files
-- `Assets/Scripts/SignalReceiver.cs`, `Assets/Prefabs/SignalReceiver1.prefab` through `SignalReceiver4.prefab`, `Assets/SignalTiles/SignalReceiver1.asset` through `SignalReceiver4.asset`.
+- `Assets/Scripts/SignalReceiver.cs`, `Assets/Prefabs/SignalCollector*.prefab`, `Assets/SignalTiles/SignalCollector*.asset`, `Assets/Prefabs/SignalReceiver1.prefab` through `SignalReceiver4.prefab`, `Assets/SignalTiles/SignalReceiver1.asset` through `SignalReceiver4.asset`.
 - `Assets/Sprites/EmitterReceiver.png`, `Assets/TilePalettes/Signal Palette.prefab`.
 
 ## Behavior and rules
-- While enabled, the receiver checks for positive floor signal at its cell or a powered wire with an open port facing its adjacent cell, and logs `Signal receiver connected.` and invokes its event on each transition from disconnected to connected. It resets its supplied state when disabled.
+- While enabled, it checks for positive floor signal at its cell or a powered wire with an open port facing its adjacent cell. It invokes the received or lost event once on each corresponding transition; it does not report loss while either input remains supplied. It logs `Signal receiver connected.` on acquisition and `Signal receiver disconnected.` on loss. Disabling resets its state without invoking the loss event.
 - Uses its nearest parent Grid, or the only Grid in its scene. With multiple grids, parent it under the intended Grid.
 
 ## Public interfaces and dependencies
-- `IsSignalSupplied` reports its current sampled state; `OnSignalReceived` exposes the serialized UnityEvent. No listener is configured by default.
+- `IsSignalSupplied` reports its current sampled state; `OnSignalReceived` and `OnSignalLost` expose the serialized UnityEvents. No listeners are configured by default.
 - Uses the scene-scoped [connection manager](connection-manager.md) and adjacent [wire networks](cables.md). Palette tiles instantiate their matching prefab in Play mode.
 
 ## Setup and verification
-- Paint a blue receiver from `Signal Palette` on a Tilemap under the level Grid, or place its prefab beneath the Grid.
+- Paint a receiver or collector from `Signal Palette` on a regular Tilemap such as `MapGrid/Terrain`, not the dual-grid `Ground` terrain layer, or place a receiver or collector prefab beneath the Grid. A painted tile spawns its prefab in Play mode, so use a directly placed prefab instance for per-instance Inspector event bindings to scene objects.
 - Unity MCP verified palette tile references and receiver connection, sustained signal, disconnection and reconnection in an isolated preview scene.
 - Unity MCP verified a powered repeater-to-wire-to-receiver path, a closed wire port, sustained signal, reconnection and source removal in an isolated preview scene.
+- Unity CLI verified the collector's event transitions for manager signal, powered wire, overlapping inputs, reconnection and a closed wire port in an isolated preview scene.
+- Unity MCP verified the collector palette tile's prefab and sprite references, and one event and console log for each acquisition and loss in an isolated preview scene.
+- Unity CLI verified all four collector palette tiles reference their matching prefabs and sprites.
