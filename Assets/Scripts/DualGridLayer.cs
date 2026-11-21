@@ -10,8 +10,10 @@ using UnityEditor.SceneManagement;
 /// Dual grid for the floor, the walls and the water.
 ///
 /// The Tilemap on this object is the LOGICAL layer: you paint terrain on it. A <see cref="DualGridTerrainTile"/>
-/// paints its terrain (Floor / Wall / Water), any other tile paints Floor, an empty cell is Wall. The logical layer
-/// is drawn only as a faint editor guide. The visible art is drawn on a hidden child Tilemap shifted by half a cell:
+/// paints its terrain (Floor / Wall / Water), any other tile paints Floor. An empty cell is nothing, except that an
+/// empty cell next to floor or water (also diagonally) automatically becomes wall. Walls can also be painted by hand;
+/// those stay until erased. Auto walls are recomputed after every edit. The logical layer is drawn only as a faint
+/// editor guide (hand-painted cells only). The visible art is drawn on a hidden child Tilemap shifted by half a cell:
 /// every corner of the logical grid gets the ONE tileset tile whose four corners match the four cells around it.
 /// Tiles are never assembled from pieces: a combination no tileset has is left empty, marked in the Scene view and
 /// reported in the console.
@@ -44,6 +46,8 @@ public class DualGridLayer : MonoBehaviour
     private const string TerrainLetters = "FWA"; // index = DualGridTerrain value
     private static readonly int[] Pow3 = { 1, 3, 9, 27 };
 
+    private const int Void = -1;                 // empty cell with no floor / water around it
+
     // Logical cells around a corner (x,y), in corner order TL, TR, BL, BR.
     private static readonly Vector3Int[] CornerOffsets =
     {
@@ -68,13 +72,15 @@ public class DualGridLayer : MonoBehaviour
     [Header("Paint tiles (used by SetTerrain from code)")]
     [SerializeField] private TileBase floorTile;
     [SerializeField] private TileBase waterTile;
+    [SerializeField] private TileBase wallTile;
 
     [Header("Look")]
     [Tooltip("Sorting order of the visible tiles. Keep it below the player and the objects.")]
     [SerializeField] private int sortingOrder = -10;
 
-    [Tooltip("Wall is drawn only up to this many cells from floor or water; farther wall disappears (also while editing).")]
-    [SerializeField, Min(0)] private int margin = 3;
+    [Tooltip("Automatic wall fills empty cells up to this many cells from floor or water (wall thickness). " +
+             "Recomputed after every edit, so erasing floor / water also removes its wall. Hand-painted walls always stay.")]
+    [SerializeField, Min(1)] private int margin = 3;
 
     [Header("Animation")]
     [Tooltip("Seconds per animation frame.")]
@@ -84,7 +90,7 @@ public class DualGridLayer : MonoBehaviour
     [SerializeField, Min(1)] private int stillFrameHold = 4;
 
     [Header("Editor")]
-    [Tooltip("In the editor, show the painted cells as a faint overlay. Never shown in Play mode.")]
+    [Tooltip("In the editor, show the painted cells faintly below the art (visible only where no tile is drawn). Never shown in Play mode.")]
     [SerializeField] private bool showGuideInEditor = true;
 
     private readonly TileBase[] comboTiles = new TileBase[ComboCount];   // null = no tileset has this combination
@@ -108,46 +114,29 @@ public class DualGridLayer : MonoBehaviour
     /// <summary>The logical layer (one tile per painted cell).</summary>
     public Tilemap Data => dataTilemap != null ? dataTilemap : (dataTilemap = GetComponent<Tilemap>());
 
-    /// <summary>Terrain of a logical cell: DualGridTerrainTile = its terrain, other tile = Floor, empty = Wall.</summary>
+    /// <summary>
+    /// Terrain of a logical cell: painted terrain, or Wall for an automatic wall. An empty cell with nothing around it
+    /// (see <see cref="IsVoid"/>) also reports Wall.
+    /// </summary>
     public DualGridTerrain GetTerrain(Vector3Int cell)
     {
-        TileBase tile = Data.GetTile(cell);
-        if (tile == null)
-            return DualGridTerrain.Wall;
-        if (tile is DualGridTerrainTile terrainTile)
-            return terrainTile.terrain;
-        return DualGridTerrain.Floor;
+        int kind = GetKind(cell);
+        return kind == Void ? DualGridTerrain.Wall : (DualGridTerrain)kind;
     }
 
-    /// <summary>
-    /// True if a layer under <paramref name="grid"/> makes the cell impassable: Wall (including unpainted cells) or Water.
-    /// Used for player movement and pushing. A layer with no painted tiles at all blocks nothing, as for signal.
-    /// </summary>
-    public static bool IsBlocked(Grid grid, Vector3Int cell)
-    {
-        for (int i = 0; i < Active.Count; i++)
-        {
-            DualGridLayer layer = Active[i];
-            if (layer.parentGrid == null)
-                layer.parentGrid = layer.GetComponentInParent<Grid>();
-            if (layer.parentGrid != grid || layer.Data.GetUsedTilesCount() == 0)
-                continue;
-            if (layer.GetTerrain(cell) != DualGridTerrain.Floor)
-                return true;
-        }
-        return false;
-    }
+    /// <summary>True for an empty cell with no floor or water next to it (nothing is drawn there).</summary>
+    public bool IsVoid(Vector3Int cell) => GetKind(cell) == Void;
 
-    /// <summary>Paints a cell from code with the floor / water tile assigned in the Inspector (Wall clears the cell).</summary>
+    /// <summary>True for an empty cell that is a wall only because floor or water is next to it.</summary>
+    public bool IsAutoWall(Vector3Int cell) => !Data.HasTile(cell) && TouchesFloorOrWater(cell);
+
+    /// <summary>Paints a cell from code with the floor / water / wall tile assigned in the Inspector.</summary>
     public void SetTerrain(Vector3Int cell, DualGridTerrain terrain)
     {
-        TileBase tile = null;
-        if (terrain == DualGridTerrain.Floor)
-            tile = floorTile;
-        else if (terrain == DualGridTerrain.Water)
-            tile = waterTile;
-
-        if (terrain != DualGridTerrain.Wall && tile == null)
+        TileBase tile = terrain == DualGridTerrain.Floor ? floorTile
+                      : terrain == DualGridTerrain.Water ? waterTile
+                      : wallTile;
+        if (tile == null)
         {
             Debug.LogError("DualGridLayer: no paint tile assigned for " + terrain + ".", this);
             return;
@@ -158,11 +147,57 @@ public class DualGridLayer : MonoBehaviour
         ApplyAffected();
     }
 
+    /// <summary>Erases a painted cell from code (it becomes an auto wall or nothing).</summary>
+    public void ClearCell(Vector3Int cell)
+    {
+        Data.SetTile(cell, null);
+        AddAffected(cell);
+        ApplyAffected();
+    }
+
+    // Painted terrain of a cell, or -1 if nothing is painted there.
+    private int PaintedKind(Vector3Int cell)
+    {
+        TileBase tile = Data.GetTile(cell);
+        if (tile == null)
+            return Void;
+        if (tile is DualGridTerrainTile terrainTile)
+            return (int)terrainTile.terrain;
+        return (int)DualGridTerrain.Floor;
+    }
+
+    // Painted terrain, Wall for an empty cell within `margin` cells of floor / water (also diagonally), otherwise Void.
+    private int GetKind(Vector3Int cell)
+    {
+        int painted = PaintedKind(cell);
+        if (painted != Void)
+            return painted;
+        return TouchesFloorOrWater(cell) ? (int)DualGridTerrain.Wall : Void;
+    }
+
+    private bool TouchesFloorOrWater(Vector3Int cell)
+    {
+        int range = Mathf.Max(1, margin);
+        for (int dx = -range; dx <= range; dx++)
+        {
+            for (int dy = -range; dy <= range; dy++)
+            {
+                if (dx == 0 && dy == 0)
+                    continue;
+                int kind = PaintedKind(new Vector3Int(cell.x + dx, cell.y + dy, cell.z));
+                if (kind == (int)DualGridTerrain.Floor || kind == (int)DualGridTerrain.Water)
+                    return true;
+            }
+        }
+        return false;
+    }
+
     private void OnEnable()
     {
         dataTilemap = GetComponent<Tilemap>();
 
-        // The logical layer is never drawn in the game; in the editor it can be a faint guide just above the art.
+        // The logical layer is never drawn in the game; in the editor it can be a faint guide just BELOW the art, so it
+        // only shows where no art is drawn (drawn above, its half-transparent sprites tinted the art's edges).
         TilemapRenderer dataRenderer = GetComponent<TilemapRenderer>();
         if (dataRenderer != null)
         {
@@ -174,8 +209,8 @@ public class DualGridLayer : MonoBehaviour
                 Color guideColor = new Color(1f, 1f, 1f, 0.4f);
                 if (dataTilemap.color != guideColor)
                     dataTilemap.color = guideColor;
-                if (dataRenderer.sortingOrder != sortingOrder + 1)
-                    dataRenderer.sortingOrder = sortingOrder + 1;
+                if (dataRenderer.sortingOrder != sortingOrder - 1)
+                    dataRenderer.sortingOrder = sortingOrder - 1;
             }
         }
 
@@ -227,7 +262,7 @@ public class DualGridLayer : MonoBehaviour
             foreach (Vector3Int pos in bounds.allPositionsWithin)
             {
                 if (Data.HasTile(pos))
-                    hash = hash * 31 + pos.x * 73856093 + pos.y * 19349663 + (int)GetTerrain(pos) * 83492791 + 1;
+                    hash = hash * 31 + pos.x * 73856093 + pos.y * 19349663 + PaintedKind(pos) * 83492791 + 1;
             }
             return hash;
         }
@@ -308,8 +343,8 @@ public class DualGridLayer : MonoBehaviour
     }
 
     /// <summary>
-    /// Removes every cell painted as Wall from the logical layer and redraws, which also drops wall left around
-    /// cells that were erased. Floor and water stay. Undoable in the editor.
+    /// Removes every hand-painted Wall cell from the logical layer and redraws. Floor, water and the automatic wall
+    /// around them stay. Undoable in the editor.
     /// </summary>
     [ContextMenu("Clear walls (keep floor and water)")]
     public void ClearWalls()
@@ -363,7 +398,7 @@ public class DualGridLayer : MonoBehaviour
 
         HashSet<int> codes = new HashSet<int>();
         foreach (Vector3Int corner in missingCorners)
-            codes.Add(ComputeCode(corner));
+            codes.Add(ComputeCode(corner, out _));
 
         List<string> names = new List<string>();
         foreach (int code in codes)
@@ -397,11 +432,13 @@ public class DualGridLayer : MonoBehaviour
 #endif
     }
 
-    // A logical cell (x,y) touches the corners (x..x+1, y..y+1); the margin adds a ring of plain wall around them.
+    // A logical cell (x,y) touches the corners (x..x+1, y..y+1). A change can also turn the cells within `margin` of it
+    // into / out of auto walls, so every corner of that block is redrawn.
     private void AddAffected(Vector3Int dataCell)
     {
-        for (int dx = -margin; dx <= 1 + margin; dx++)
-            for (int dy = -margin; dy <= 1 + margin; dy++)
+        int range = Mathf.Max(1, margin);
+        for (int dx = -range; dx <= 1 + range; dx++)
+            for (int dy = -range; dy <= 1 + range; dy++)
                 pending.Add(new Vector3Int(dataCell.x + dx, dataCell.y + dy, dataCell.z));
     }
 
@@ -417,12 +454,8 @@ public class DualGridLayer : MonoBehaviour
         batchTiles.Clear();
         foreach (Vector3Int corner in pending)
         {
-            // Wall far from any floor or water is not drawn, so erasing floor also removes the wall around it.
-            TileBase tile = null;
-            bool drawn = IsNearFloorOrWater(corner);
-            if (drawn)
-                tile = comboTiles[ComputeCode(corner)];
-
+            int code = ComputeCode(corner, out bool drawn);
+            TileBase tile = drawn ? comboTiles[code] : null;
             if (drawn && tile == null)
                 missingCorners.Add(corner);
             else
@@ -437,26 +470,21 @@ public class DualGridLayer : MonoBehaviour
             displayTilemap.SetTiles(batchPositions.ToArray(), batchTiles.ToArray());
     }
 
-    // True if a floor or water cell is within `margin` cells of the corner (painted Wall cells do not count).
-    private bool IsNearFloorOrWater(Vector3Int corner)
-    {
-        for (int dx = -1 - margin; dx <= margin; dx++)
-        {
-            for (int dy = -1 - margin; dy <= margin; dy++)
-            {
-                Vector3Int cell = new Vector3Int(corner.x + dx, corner.y + dy, corner.z);
-                if (Data.HasTile(cell) && GetTerrain(cell) != DualGridTerrain.Wall)
-                    return true;
-            }
-        }
-        return false;
-    }
-
-    private int ComputeCode(Vector3Int corner)
+    // Corner code from its four cells. Void cells count as wall (no tile has "nothing" corners), so walls are drawn
+    // whole; a corner with only void cells is not drawn at all (drawn = false).
+    private int ComputeCode(Vector3Int corner, out bool drawn)
     {
         int code = 0;
+        drawn = false;
         for (int i = 0; i < 4; i++)
-            code += (int)GetTerrain(corner + CornerOffsets[i]) * Pow3[i];
+        {
+            int kind = GetKind(corner + CornerOffsets[i]);
+            if (kind == Void)
+                kind = (int)DualGridTerrain.Wall;
+            else
+                drawn = true;
+            code += kind * Pow3[i];
+        }
         return code;
     }
 
