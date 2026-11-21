@@ -35,6 +35,9 @@ public class ConnectionParticles : MonoBehaviour
     [Tooltip("Pixels per world unit (sprite import PPU).")]
     [SerializeField, Min(1)] private int pixelsPerUnit = 16;
 
+    [Tooltip("Colour of the pixels. SignalBeams sets it from the link's signal type.")]
+    [SerializeField] private Color color = Color.white;
+
     private ParticleSystem system;
     private ParticleSystem.Particle[] buffer;
     private float emitAccumulator;
@@ -42,6 +45,13 @@ public class ConnectionParticles : MonoBehaviour
     public Transform EndpointA => endpointA;
     public Transform EndpointB => endpointB;
     public int PixelsPerUnit => pixelsPerUnit;
+
+    /// <summary>Colour of newly emitted pixels (pixels already flying keep theirs).</summary>
+    public Color Color
+    {
+        get => color;
+        set => color = value;
+    }
 
     /// <summary>Multiplies the emission rate (e.g. CircuitAura makes beams denser while active). 1 = normal.</summary>
     public float RateMultiplier { get; set; } = 1f;
@@ -113,7 +123,7 @@ public class ConnectionParticles : MonoBehaviour
             velocity = Vector3.zero,
             startLifetime = travel / speed,
             startSize = 1f / pixelsPerUnit,
-            startColor = Color.white,
+            startColor = color,
             applyShapeToPosition = false,
         };
 
