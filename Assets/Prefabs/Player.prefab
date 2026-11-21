@@ -14,6 +14,8 @@ GameObject:
   - component: {fileID: 1000000000000000006}
   - component: {fileID: 1000000000000000007}
   - component: {fileID: 1000000000000000008}
+  - component: {fileID: 3074670760701697209}
+  - component: {fileID: 2552189733966886728}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -38,7 +40,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1000000000000000003
 SpriteRenderer:
-  serializedVersion: 2
+  serializedVersion: 3
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -54,6 +56,11 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -75,9 +82,11 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 10
+  m_MaskInteraction: 0
   m_Sprite: {fileID: -4709456396536258026, guid: 9b9d7b417b438354483d370108c70d3e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -87,8 +96,8 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+  m_BlendShapeWeights: []
 --- !u!114 &1000000000000000004
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -103,6 +112,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   grid: {fileID: 0}
   tilesPerSecond: 6
+  maxUndoSteps: 1000
+  undoSpeedMultiplier: 1.5
 --- !u!50 &1000000000000000006
 Rigidbody2D:
   serializedVersion: 5
@@ -120,6 +131,12 @@ Rigidbody2D:
   m_AngularDamping: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
@@ -160,11 +177,11 @@ BoxCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
-    border: 0
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
@@ -194,3 +211,41 @@ MonoBehaviour:
   - {fileID: -1182821291677670348, guid: 9b9d7b417b438354483d370108c70d3e, type: 3}
   framesPerSecond: 12
   rotationOffset: 0
+--- !u!114 &3074670760701697209
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1000000000000000001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7bdc98a452d9d245ad2388b0a14d389, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerSfx
+  footsteps: {fileID: 8300000, guid: 6fcde4d0fc0fb9b42b5b0b61eb6fce8f, type: 3}
+  footstepStart: 0.03
+  footstepLength: 0.17
+  footstepVolume: 1
+  footstepPitchJitter: 0.05
+  push: {fileID: 8300000, guid: 6c5582e9abffe8c4db748e76304913c7, type: 3}
+  pushLoopStart: 1
+  pushLoopEnd: 13.5
+  pushVolume: 1
+  pushFadeTime: 0.1
+--- !u!114 &2552189733966886728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1000000000000000001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b0fd833d135fa247abe4e016b26c0ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SignalConnectSfx
+  clip: {fileID: 8300000, guid: 59029bb8f49742b4484568e94d69bb97, type: 3}
+  volume: 0.5
+  startupSilence: 0.5
+  checkInterval: 0.05

@@ -25,6 +25,12 @@ public class LevelSelectPlate : MonoBehaviour
     // Baked from sceneAsset in OnValidate so it also works in builds, where SceneAsset does not exist.
     [SerializeField, HideInInspector] private string scenePath;
 
+    [Header("Progression")]
+    [Tooltip("The preceding level, which must be beaten before this plate can be selected.")]
+    [SerializeField] private LevelSelectPlate previousLevel;
+    [Tooltip("Allow selection if the preceding plate does not have a scene yet.")]
+    [SerializeField] private bool allowWhenPreviousUnassigned;
+
     [Header("Look")]
     [SerializeField] private SpriteRenderer plateRenderer;
     [SerializeField] private TextMesh numberLabel;
@@ -42,6 +48,10 @@ public class LevelSelectPlate : MonoBehaviour
 
     public int LevelNumber => levelNumber;
     public bool IsHighlighted { get; private set; }
+    public bool HasAssignedScene => !string.IsNullOrEmpty(scenePath);
+    public bool IsBeaten => GameManager.Instance != null && GameManager.Instance.IsLevelBeaten(scenePath);
+    public bool IsUnlocked => previousLevel == null ||
+        (!previousLevel.HasAssignedScene && allowWhenPreviousUnassigned) || previousLevel.IsBeaten;
 
     private void Awake()
     {
@@ -139,6 +149,9 @@ public class LevelSelectPlate : MonoBehaviour
         if (player.IsMoving || player.CurrentCell != cell)
             return;
 
+        if (!IsUnlocked)
+            return;
+
         if (string.IsNullOrEmpty(scenePath))
         {
             Debug.LogWarning($"LevelSelectPlate: level {levelNumber} has no scene assigned.", this);
@@ -152,6 +165,8 @@ public class LevelSelectPlate : MonoBehaviour
         }
 
         loading = true;
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.Play(SoundManager.Effect.Select);
         SceneManager.LoadScene(scenePath);
     }
 
