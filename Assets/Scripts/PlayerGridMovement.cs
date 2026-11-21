@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 /// from tile to tile at <see cref="tilesPerSecond"/>. The player always finishes the tile
 /// it is travelling to, so it never rests between cells.
 /// Walking into a <see cref="Pushable"/> shoves it (and any pushables lined up behind it) one cell ahead;
-/// if that is not possible, or the target cell is <see cref="Solid"/>, the player stays put.
+/// if that is not possible, or the target cell is <see cref="Solid"/>, wall or water, the player stays put.
 /// Controls (not final): WASD or arrow keys, 4 directions, the most recently pressed key wins.
 /// </summary>
 [DisallowMultipleComponent]
@@ -131,13 +131,13 @@ public class PlayerGridMovement : MonoBehaviour
 
     /// <summary>
     /// Sets the next target cell. Pushables standing there are shoved along as a chain;
-    /// returns false (no step) when the cell is solid or the chain cannot move.
+    /// returns false (no step) when the cell is solid, wall or water, or the chain cannot move.
     /// </summary>
     private bool TryBeginStep(Vector3Int direction)
     {
         Vector3Int target = currentCell + direction;
 
-        if (Solid.IsAt(target))
+        if (Solid.IsBlocked(grid, target))   // solid object, wall or water
             return false;
         if (!Pushable.TryBeginChain(target, direction, pushed))
             return false;

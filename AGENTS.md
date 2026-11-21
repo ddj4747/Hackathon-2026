@@ -7,7 +7,7 @@
 # Game concept (planned)
 - A **2D top-down game** about establishing a connection between two repeaters.
 - Only the **floor, walls and water** use a **dual-grid** layout (see the Dual grid module); everything else stays on the normal rectangular Unity Grid prefab (`MapGrid`).
-- Visual style: **pixel art**, with a **512 Ã— 352 pixel** target screen resolution and **16 Ã— 16 pixel** tiles. A full viewport at this resolution spans **32 Ã— 22 tiles**; this does not define the total map size.
+- Visual style: **pixel art**, with a **352 × 256 pixel** target screen resolution and **16 × 16 pixel** tiles. A full viewport at this resolution spans **22 × 16 tiles**; this does not define the total map size. The camera is fixed (does not follow the player) and shows exactly this area ([pixel-perfect note](.agents/pixel-perfect-and-font.md)).
 - The player moves around the map and manages the placement of objects in the room to make the connection work.
 - Player movement is grid-based: the player moves from one tile to another. Additional movement timing and collision rules remain undecided.
 - Input decisions: Space (action `Player/Confirm`) is the shared confirm/activate key, since there is no jump mechanic. Movement is WASD/arrows. R (action `Player/Restart`) restarts the current level. Leaving a level is done by walking into a `LevelExit` hole, not by a key.
@@ -60,7 +60,7 @@
 | Level select | Menu scene and level plates | [.agents/level-select.md](.agents/level-select.md) |
 | Game manager | Persistent manager, level exit and restart | [.agents/GAME_MANAGER.md](.agents/GAME_MANAGER.md) |
 | Level exit | Trigger hole returning to the menu | [.agents/level-exit.md](.agents/level-exit.md) |
-| Pixel-perfect rendering and font | Camera decisions and project font | [.agents/pixel-perfect-and-font.md](.agents/pixel-perfect-and-font.md) |
+| Pixel-perfect rendering and font | Fixed 352 × 256 camera and project font | [.agents/pixel-perfect-and-font.md](.agents/pixel-perfect-and-font.md) |
 | Pushable blocks | Pushable and solid components, chain pushing and settings | [.agents/pushable-blocks.md](.agents/pushable-blocks.md) |
 | GameObject tile palette | Placeholder floor and wall prefabs and grid snapping | [.agents/tile-palette.md](.agents/tile-palette.md) |
 

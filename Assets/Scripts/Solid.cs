@@ -30,6 +30,15 @@ public class Solid : MonoBehaviour
         return false;
     }
 
+    /// <summary>
+    /// True if the player or a pushed chain cannot enter the cell: a <see cref="Solid"/> object is there, or the
+    /// cell is Wall or Water on a <see cref="DualGridLayer"/> under <paramref name="grid"/>.
+    /// </summary>
+    public static bool IsBlocked(Grid grid, Vector3Int cell)
+    {
+        return IsAt(cell) || DualGridLayer.IsBlocked(grid, cell);
+    }
+
     private void Awake()
     {
         if (grid == null)

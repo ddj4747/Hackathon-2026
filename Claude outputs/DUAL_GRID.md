@@ -5,7 +5,7 @@
 - One dual-grid layer (`MapGrid/Ground`) draws floor (dark), walls (light) and animated water. Everything else (player, blocks, level exits, plates, `Solid`, pushing, the `Terrain` tilemap used for placing antennas/blocks) stays on the normal `MapGrid` Grid.
 - Rule from the user: never assemble one tile from pieces of others. A corner combination with no tile is left empty and reported.
 - The tilesets cover all 81 combinations (checked against the art; no duplicates). If art changes, context menu `Log missing tiles` on `Ground` lists any gaps.
-- The layer does not block movement; whether walls or water are solid is undecided.
+- Walls and water block the player and pushed objects: `DualGridLayer.IsBlocked(grid, cell)` is true for Wall (including unpainted cells) and Water, and is checked through `Solid.IsBlocked` by `PlayerGridMovement` and `Pushable.TryBeginChain` (nothing can be pushed onto them either). A layer with no painted tiles blocks nothing, so unpainted levels stay walkable. No Unity colliders are involved. Not yet verified in Play mode.
 - Once terrain is painted, logical wall cells (including unpainted cells) block wireless signal. A completely empty layer does not block signal; see [Connection manager](../.agents/connection-manager.md).
 
 ## Entry files
@@ -25,11 +25,11 @@
 - Painting, erasing and undo update the display automatically. A corner is drawn only if a floor or water cell is within `Margin` cells (default 3); wall farther away disappears, also while editing, so erasing floor removes its surrounding wall. Painted Wall cells alone draw nothing. Sorting order -10. `Clear walls (keep floor and water)` (component context menu, undoable) removes painted Wall cells.
 
 ## Public interfaces and dependencies
-- `DualGridLayer.GetTerrain(cell)`, `SetTerrain(cell, terrain)` (uses `Floor Tile` / `Water Tile`), `RefreshAll()`, `Rebuild()`, `ClearWalls()`, `LogMissingTiles()`, `Data`.
+- `DualGridLayer.IsBlocked(grid, cell)` (static; walls/water for movement), `DualGridLayer.GetTerrain(cell)`, `SetTerrain(cell, terrain)` (uses `Floor Tile` / `Water Tile`), `RefreshAll()`, `Rebuild()`, `ClearWalls()`, `LogMissingTiles()`, `Data`.
 - Needs a parent `Grid` (`MapGrid`); one tile = one parent cell. Takes the material from the `TilemapRenderer` on the same object.
 
 ## Setup and verification
 - `MapGrid.prefab` has the four tilesets (frames 1, 4, 4, 1) and the paint tiles assigned on `Ground`. Re-slicing a sheet in the Sprite Editor resets Read/Write; turn it back on.
 - Drag the three `Assets/Tiles/DualGrid*.asset` tiles into a Tile Palette, set Active Tilemap = `Ground`, paint. Never paint floor/water on `Terrain`.
 - New tiles: add them anywhere in an existing sheet (keep frames side by side, equal width) or add a new sheet to `Tilesets`; then `Rebuild dual grid` from the component's context menu.
-- Unresolved: whether walls/water block movement.
+- To test blocking: paint a floor area on `Ground` with a wall/water edge, press Play and walk and push blocks into it.

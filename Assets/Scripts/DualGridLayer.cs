@@ -95,9 +95,15 @@ public class DualGridLayer : MonoBehaviour
     private readonly List<Vector3Int> batchPositions = new List<Vector3Int>();
     private readonly List<TileBase> batchTiles = new List<TileBase>();
 
+    private static readonly List<DualGridLayer> Active = new List<DualGridLayer>();
+
     private Tilemap dataTilemap;
     private Tilemap displayTilemap;
     private bool needsRebuild;
+    private Grid parentGrid;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics() => Active.Clear();
 
     /// <summary>The logical layer (one tile per painted cell).</summary>
     public Tilemap Data => dataTilemap != null ? dataTilemap : (dataTilemap = GetComponent<Tilemap>());
@@ -111,6 +117,25 @@ public class DualGridLayer : MonoBehaviour
         if (tile is DualGridTerrainTile terrainTile)
             return terrainTile.terrain;
         return DualGridTerrain.Floor;
+    }
+
+    /// <summary>
+    /// True if a layer under <paramref name="grid"/> makes the cell impassable: Wall (including unpainted cells) or Water.
+    /// Used for player movement and pushing. A layer with no painted tiles at all blocks nothing, as for signal.
+    /// </summary>
+    public static bool IsBlocked(Grid grid, Vector3Int cell)
+    {
+        for (int i = 0; i < Active.Count; i++)
+        {
+            DualGridLayer layer = Active[i];
+            if (layer.parentGrid == null)
+                layer.parentGrid = layer.GetComponentInParent<Grid>();
+            if (layer.parentGrid != grid || layer.Data.GetUsedTilesCount() == 0)
+                continue;
+            if (layer.GetTerrain(cell) != DualGridTerrain.Floor)
+                return true;
+        }
+        return false;
     }
 
     /// <summary>Paints a cell from code with the floor / water tile assigned in the Inspector (Wall clears the cell).</summary>
@@ -155,12 +180,16 @@ public class DualGridLayer : MonoBehaviour
         }
 
         Tilemap.tilemapTileChanged += OnTilemapTileChanged;
+        if (!Active.Contains(this))
+            Active.Add(this);
         Rebuild();
     }
 
     private void OnDisable()
     {
         Tilemap.tilemapTileChanged -= OnTilemapTileChanged;
+        Active.Remove(this);
+        parentGrid = null;
         DestroyDisplay();
         ReleaseCreated();
     }
