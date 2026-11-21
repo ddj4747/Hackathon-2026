@@ -2,20 +2,20 @@
 
 ## Status
 - `Menu` scene with level plates implemented; first in the build's scene list.
-- Plates 1-5 load `Levels/Level0` through `Levels/Level4`, respectively; a Tutorial label sits above unassigned plate 0. Plates 0, 6 and 7 are unassigned placeholders; the Coming soon label sits below 6 and 7.
+- Plates 1-5 load `Levels/Level0` through `Levels/Level4`, respectively. Plates 0 and 6-9 are unassigned placeholders with the same gray normal tint; Tutorial and Coming soon labels remain in the room.
 - Levels return to `Menu` through a `LevelExit` ([LEVEL_EXIT.md](level-exit.md)); no keyboard shortcut.
 
 ## Entry files
-- `Assets/Scenes/Menu.unity` (camera, Global Light 2D, `MapGrid`, `Player`, eight `LevelPlate` instances, with plates 4 through 7 in a second row)
+- `Assets/Scenes/Menu.unity` (camera, Global Light 2D, `MapGrid`, `Player`, ten `LevelPlate` instances in the reference layout)
 - `Assets/Prefabs/LevelPlate.prefab`, `Assets/Scripts/LevelSelectPlate.cs`, `Assets/Scripts/LevelSelectCable.cs`, `Assets/Sprites/LevelPlateSprite.png`, `Assets/Resources/WiresGround.png`
 - `Assets/InputSystem_Actions.inputactions`: shared `Confirm` action (Space, gamepad south) in the `Player` map
 - `ProjectSettings/EditorBuildSettings.asset`: `Menu`, `SampleScene`, and `Level0` through `Level4` are enabled.
 
 ## Behavior and rules
 - A plate snaps to the grid cell it is placed on. It highlights (yellow tint, grows 1.3x) while the player's centre is inside its cell.
-- The menu has centered rows of plates 0, 1, 2, 3 and 4, 5, 6, 7, with a starting position below them. Its dual-grid floor forms an 18 × 12 room; automatic walls around the floor keep the player inside.
-- Confirm (Space, gamepad south) loads the plate's scene only while the player stands still on it and its prerequisite is met. Plates 2-7 require the preceding plate's scene to have been beaten; the unassigned tutorial and its level-1 rule are unresolved.
-- Ground cables for plates 0-1, 1-2, 2-3, and 3-4 use `WiresGround.png` sprites and show whether the source scene is beaten. The cable between 3 and 4 routes around the right and above the lower row. Two parallel cables run between plates 4 and 5; the second cable's power rule is unresolved.
+- Plates follow the reference path: 0-1-2-3-4, branching through 5-7 and 6 to 8, then 9. Their cells are 0 (-7,-3), 1 (-6,-4), 2 (-4,-2), 3 (-2,-2), 4 (0,-3), 5 (2,-2), 6 (0,0), 7 (4,0), 8 (2,2), and 9 (1,4). The dual-grid floor forms an 18 by 12 room; automatic walls around the floor keep the player inside.
+- Confirm (Space, gamepad south) loads the plate's scene only while the player stands still on it and its prerequisite is met. Plates 2-7 retain their existing preceding-plate requirements. Plates 8 and 9 have no prerequisites assigned yet; progression for the new branches, the unassigned tutorial, and its level-1 rule remain unresolved.
+- Ground cables use `WiresGround.png` sprites and show whether their source plate's scene is beaten. Cables follow 0-1-2-3-4, 4-5-7-8, 4-6-8 and 8-9. The shared junction below 8 uses an inactive static sprite; its power rule is unresolved.
 - Inspector fields on `LevelSelectPlate`: `Level Number` (text on the plate), `Scene Asset` (scene picker; its path is baked into a hidden `scenePath` in `OnValidate` so it works in builds), plus colours and highlight scale.
 - On returning from a level, the plate whose scene matches `GameManager.ReturnedFromScenePath` teleports the player onto itself in `Start`, then clears the marker. A level with no matching plate leaves the player at the scene's start position.
 - A scene must be in the build's scene list to be loadable; otherwise the plate logs an error. Selecting an unassigned placeholder logs a warning and does not load a scene.
@@ -29,4 +29,4 @@
 ## Setup and verification
 - New level plate: drag `LevelPlate.prefab` into a scene with `MapGrid` and `Player`, set `Level Number`, assign `Scene Asset`, and add that scene to the build's scene list.
 - Unity preview-scene checks verified the plate assignments, cable sprites, completion-based unlocking and cable state changes. Selection through player input has not been tested in Play mode.
-- The room and plate positions were saved through Unity CLI; walking against the boundary has not yet been tested in Play mode.
+- Unity CLI scene checks verified all ten plate labels and cells, existing assignments and prerequisites, valid cable sprite references, and a walkable route from the player start to every plate. The new layout and walking have not been checked in Play mode.
