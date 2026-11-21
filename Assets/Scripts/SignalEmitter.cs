@@ -4,10 +4,15 @@ using UnityEngine.SceneManagement;
 
 // A starting signal source. Parent it under the level Grid when a scene has multiple grids.
 [DisallowMultipleComponent]
+[ExecuteAlways]
 public sealed class SignalEmitter : MonoBehaviour, ISignalRangeSource
 {
     [SerializeField, Min(0), Tooltip("Radius of the signal in grid cells.")]
     private int range = 3;
+
+    [SerializeField] private SignalType signalType;
+    public SignalType Type => signalType;
+    private SignalType registeredType;
 
     private readonly List<Vector3Int> coveredCells = new();
     private readonly List<Vector3Int> nextCoverage = new();
@@ -32,6 +37,12 @@ public sealed class SignalEmitter : MonoBehaviour, ISignalRangeSource
     private void OnTransformParentChanged() => gridScene = default;
 
     private void Update()
+    {
+        SignalTypeVisual.Apply(GetComponent<SpriteRenderer>(), signalType);
+        if (Application.IsPlaying(gameObject)) UpdateSignal();
+    }
+
+    private void UpdateSignal()
     {
         var scene = gameObject.scene;
         if (scene.isLoaded && scene != gridScene)
@@ -68,10 +79,11 @@ public sealed class SignalEmitter : MonoBehaviour, ISignalRangeSource
                 if (offset.sqrMagnitude <= radiusSquared && obstacles.HasLineOfSight(origin, center, cell, centerOffset))
                     nextCoverage.Add(cell);
             }
-        if (manager == target && resetVersion == target.ResetVersion && SameCoverage()) return;
+        if (manager == target && resetVersion == target.ResetVersion && registeredType == signalType && SameCoverage()) return;
         RemoveCoverage();
         manager = target;
         resetVersion = target.ResetVersion;
+        registeredType = signalType;
         foreach (var cell in nextCoverage) AddCoverage(cell);
     }
 
@@ -99,7 +111,7 @@ public sealed class SignalEmitter : MonoBehaviour, ISignalRangeSource
 
     private void AddCoverage(Vector3Int cell)
     {
-        manager.AddSignal(cell, 1f);
+        manager.AddSignal(cell, 1f, registeredType);
         coveredCells.Add(cell);
     }
 
@@ -112,7 +124,7 @@ public sealed class SignalEmitter : MonoBehaviour, ISignalRangeSource
     private void RemoveCoverage()
     {
         if (manager != null && resetVersion == manager.ResetVersion)
-            foreach (var cell in coveredCells) manager.RemoveSignal(cell, 1f);
+            foreach (var cell in coveredCells) manager.RemoveSignal(cell, 1f, registeredType);
         coveredCells.Clear();
         manager = null;
     }

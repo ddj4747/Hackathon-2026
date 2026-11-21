@@ -5,6 +5,10 @@ using UnityEngine.SceneManagement;
 [DisallowMultipleComponent]
 public sealed class Repeater : MonoBehaviour, ISignalRangeSource
 {
+    [SerializeField] private SignalType signalType;
+    public SignalType Type => signalType;
+    private SignalType registeredType;
+
     public bool IsSignalSupplied => isActiveAndEnabled && manager != null && manager.IsRepeaterPowered(this);
     Grid ISignalRangeSource.RangeGrid => grid;
     IReadOnlyList<Vector3Int> ISignalRangeSource.RangeCells => coveredCells;
@@ -119,7 +123,7 @@ public sealed class Repeater : MonoBehaviour, ISignalRangeSource
 
     private void ApplyCoverage(ConnectionManager target, Vector3Int center)
     {
-        bool same = manager == target && resetVersion == target.ResetVersion && registeredCenter == center &&
+        bool same = manager == target && resetVersion == target.ResetVersion && registeredCenter == center && registeredType == signalType &&
             coveredCells.Count == nextCoverage.Count;
         for (var i = 0; same && i < coveredCells.Count; i++) same = coveredCells[i] == nextCoverage[i];
         if (same) return;
@@ -127,6 +131,7 @@ public sealed class Repeater : MonoBehaviour, ISignalRangeSource
         manager = target;
         resetVersion = target.ResetVersion;
         registeredCenter = center;
+        registeredType = signalType;
         coveredCells.AddRange(nextCoverage);
         manager.SetRepeater(this, center, coveredCells);
     }

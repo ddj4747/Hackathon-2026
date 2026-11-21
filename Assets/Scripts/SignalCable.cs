@@ -11,6 +11,8 @@ public sealed class SignalCable : MonoBehaviour
     [Tooltip("Optional visual renderer. Its positions follow the configured path.")]
     [SerializeField] private LineRenderer cableRenderer;
 
+    [SerializeField] private SignalType signalType;
+    private SignalType registeredType;
     private ConnectionManager manager;
     private Vector3Int registeredA, registeredB;
     private bool registered;
@@ -30,12 +32,13 @@ public sealed class SignalCable : MonoBehaviour
         var connected = HasAdapter(selectedGrid, a) && HasAdapter(selectedGrid, b);
         var currentManager = ConnectionManager.ForScene(gameObject.scene);
         if (!connected) { Disconnect(); return; }
-        if (registered && manager == currentManager && a == registeredA && b == registeredB) return;
+        if (registered && manager == currentManager && a == registeredA && b == registeredB && registeredType == signalType) return;
         Disconnect();
         manager = currentManager;
         registeredA = a;
         registeredB = b;
-        manager.SetCableLink(this, a, b);
+        registeredType = signalType;
+        manager.SetCableLink(this, a, b, registeredType);
         registered = true;
     }
 

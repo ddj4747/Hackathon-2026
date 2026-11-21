@@ -5,6 +5,7 @@ using UnityEngine.Tilemaps;
 public sealed class RepeaterTile : TileBase
 {
     [SerializeField] private Sprite previewSprite;
+    [SerializeField] private Color previewColor = Color.white;
     [SerializeField] private GameObject repeaterPrefab;
 
     public Sprite PreviewSprite => previewSprite;
@@ -15,7 +16,7 @@ public sealed class RepeaterTile : TileBase
         // The prefab renders the live state; the tile sprite is only the editing preview.
         tileData.sprite = Application.isPlaying ? null : previewSprite;
         tileData.gameObject = repeaterPrefab;
-        tileData.color = Color.white;
+        tileData.color = previewColor;
         tileData.transform = Matrix4x4.identity;
         tileData.flags = TileFlags.LockAll;
         tileData.colliderType = Tile.ColliderType.None;

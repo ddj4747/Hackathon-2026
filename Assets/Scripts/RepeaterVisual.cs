@@ -21,8 +21,11 @@ public sealed class RepeaterVisual : MonoBehaviour
 
     private void Update() => Refresh();
 
+    private void OnDisable() => SignalTypeVisual.Restore(spriteRenderer);
+
     private void Refresh()
     {
+        SignalTypeVisual.Apply(spriteRenderer, repeater.Type);
         bool playing = Application.IsPlaying(gameObject);
         // In the editor the Tilemap draws its preview; in Play mode the prefab draws itself.
         spriteRenderer.enabled = playing || GetComponentInParent<Tilemap>() == null;
