@@ -10,13 +10,11 @@ public sealed class SignalEmitter : MonoBehaviour, ISignalRangeSource
     private int range = 3;
 
     private readonly List<Vector3Int> coveredCells = new();
+    private readonly List<Vector3Int> nextCoverage = new();
     private Grid grid;
     private Scene gridScene;
     private ConnectionManager manager;
     private uint resetVersion;
-    private Vector3Int lastCenter;
-    private Vector2 lastOrigin;
-    private int lastRange;
 
     Grid ISignalRangeSource.RangeGrid => grid;
     IReadOnlyList<Vector3Int> ISignalRangeSource.RangeCells => coveredCells;
@@ -55,29 +53,34 @@ public sealed class SignalEmitter : MonoBehaviour, ISignalRangeSource
         var center = grid.WorldToCell(position);
         var origin = (Vector2)grid.LocalToCellInterpolated(grid.transform.InverseTransformPoint(position));
         var radius = Mathf.Max(0, range);
-        if (manager == target && resetVersion == target.ResetVersion && center == lastCenter &&
-            origin.Equals(lastOrigin) && radius == lastRange)
-            return;
-
-        RemoveCoverage();
-        manager = target;
-        resetVersion = target.ResetVersion;
-        lastCenter = center;
-        lastOrigin = origin;
-        lastRange = radius;
-
-        AddCoverage(center);
+        var obstacles = new SignalObstacles(grid);
+        var centerOffset = (Vector2)grid.GetLayoutCellCenter();
+        nextCoverage.Clear();
+        if (obstacles.HasLineOfSight(origin, center, center, centerOffset)) nextCoverage.Add(center);
         var roundedRadius = radius + 0.4f;
         var radiusSquared = roundedRadius * roundedRadius;
-        var centerOffset = (Vector2)grid.GetLayoutCellCenter();
         for (var y = -radius; y <= radius; y++)
             for (var x = -radius; x <= radius; x++)
             {
                 if (x == 0 && y == 0) continue;
                 var cell = center + new Vector3Int(x, y, 0);
                 var offset = new Vector2(cell.x, cell.y) + centerOffset - origin;
-                if (offset.sqrMagnitude <= radiusSquared) AddCoverage(cell);
+                if (offset.sqrMagnitude <= radiusSquared && obstacles.HasLineOfSight(origin, center, cell, centerOffset))
+                    nextCoverage.Add(cell);
             }
+        if (manager == target && resetVersion == target.ResetVersion && SameCoverage()) return;
+        RemoveCoverage();
+        manager = target;
+        resetVersion = target.ResetVersion;
+        foreach (var cell in nextCoverage) AddCoverage(cell);
+    }
+
+    private bool SameCoverage()
+    {
+        if (coveredCells.Count != nextCoverage.Count) return false;
+        for (var i = 0; i < coveredCells.Count; i++)
+            if (coveredCells[i] != nextCoverage[i]) return false;
+        return true;
     }
 
     private Grid FindGrid(Scene scene)

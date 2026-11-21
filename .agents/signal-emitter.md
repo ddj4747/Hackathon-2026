@@ -13,6 +13,7 @@
 ## Behavior and rules
 
 - While enabled, an emitter supplies quality 1 to its own cell and a full circular range using the repeater's rounded radius rule. Disabling, moving, changing its range, or resetting signals updates coverage.
+- Walls and marked objects obstruct its line of sight and the hover overlay reflects the resulting coverage. See [Connection manager](connection-manager.md).
 - An enabled emitter can supply an adjacent [wire network](cables.md) through an open wire port facing its cell.
 - Uses its nearest parent Grid, or the only Grid in its scene. With multiple grids, parent it under the intended Grid.
 - Hovering an enabled emitter shows its own coverage through the [connection overlay](connection-manager.md).

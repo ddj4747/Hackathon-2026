@@ -24,16 +24,12 @@ public sealed class Repeater : MonoBehaviour, ISignalRangeSource
     private bool straightLine;
 
     private readonly List<Vector3Int> coveredCells = new();
+    private readonly List<Vector3Int> nextCoverage = new();
     private Grid grid;
     private Scene gridScene;
     private ConnectionManager manager;
     private uint resetVersion;
-    private Vector3Int lastCenter;
-    private Vector2 lastOrigin;
-    private int lastRange;
-    private float lastAngle;
-    private Vector2 lastDirection;
-    private bool lastStraightLine;
+    private Vector3Int registeredCenter;
 
     private void OnEnable()
     {
@@ -70,33 +66,26 @@ public sealed class Repeater : MonoBehaviour, ISignalRangeSource
         var radius = Mathf.Max(0, range) + CountAdjacentEnhancers(center);
         var angle = Mathf.Clamp(sectorAngle, 0f, 360f);
         var direction = GetDirection(angle);
-        if (manager == sceneManager && resetVersion == sceneManager.ResetVersion && lastCenter == center && lastOrigin.Equals(origin) && lastRange == radius &&
-            lastAngle == angle && lastDirection == direction && lastStraightLine == straightLine)
-            return;
-
-        RemoveCoverage();
-        manager = sceneManager;
-        resetVersion = manager.ResetVersion;
-        lastCenter = center;
-        lastOrigin = origin;
-        lastRange = radius;
-        lastAngle = angle;
-        lastDirection = direction;
-        lastStraightLine = straightLine;
-
-        AddCoverage(center);
+        var obstacles = new SignalObstacles(grid);
+        var centerOffset = (Vector2)grid.GetLayoutCellCenter();
+        nextCoverage.Clear();
+        if (obstacles.HasLineOfSight(origin, center, center, centerOffset)) nextCoverage.Add(center);
         if (straightLine)
         {
             // Sample one cell per step along the major axis to rasterize a thin line.
             var step = direction / Mathf.Max(Mathf.Abs(direction.x), Mathf.Abs(direction.y));
             for (var i = 1; i <= radius; i++)
-                AddCoverage(center + new Vector3Int(Mathf.RoundToInt(step.x * i), Mathf.RoundToInt(step.y * i), 0));
-            manager.SetRepeater(this, center, coveredCells);
+            {
+                var cell = center + new Vector3Int(Mathf.RoundToInt(step.x * i), Mathf.RoundToInt(step.y * i), 0);
+                if (!obstacles.HasLineOfSight(origin, center, cell, centerOffset)) break;
+                nextCoverage.Add(cell);
+            }
+            ApplyCoverage(sceneManager, center);
             return;
         }
         if (angle <= 0f)
         {
-            manager.SetRepeater(this, center, coveredCells);
+            ApplyCoverage(sceneManager, center);
             return;
         }
 
@@ -104,7 +93,6 @@ public sealed class Repeater : MonoBehaviour, ISignalRangeSource
         var roundedRadius = radius + 0.4f;
         var radiusSquared = roundedRadius * roundedRadius;
         var minimumDot = Mathf.Cos(angle * 0.5f * Mathf.Deg2Rad);
-        var centerOffset = (Vector2)grid.GetLayoutCellCenter();
         for (var y = -radius; y <= radius; y++)
         {
             for (var x = -radius; x <= radius; x++)
@@ -123,9 +111,23 @@ public sealed class Repeater : MonoBehaviour, ISignalRangeSource
                     Mathf.Sqrt(distanceSquared) < minimumDot - 0.00001f)
                     continue;
 
-                AddCoverage(cell);
+                if (obstacles.HasLineOfSight(origin, center, cell, centerOffset)) nextCoverage.Add(cell);
             }
         }
+        ApplyCoverage(sceneManager, center);
+    }
+
+    private void ApplyCoverage(ConnectionManager target, Vector3Int center)
+    {
+        bool same = manager == target && resetVersion == target.ResetVersion && registeredCenter == center &&
+            coveredCells.Count == nextCoverage.Count;
+        for (var i = 0; same && i < coveredCells.Count; i++) same = coveredCells[i] == nextCoverage[i];
+        if (same) return;
+        RemoveCoverage();
+        manager = target;
+        resetVersion = target.ResetVersion;
+        registeredCenter = center;
+        coveredCells.AddRange(nextCoverage);
         manager.SetRepeater(this, center, coveredCells);
     }
 
@@ -173,11 +175,6 @@ public sealed class Repeater : MonoBehaviour, ISignalRangeSource
         var localDirection = new Vector3(Mathf.Cos(centerAngle), Mathf.Sin(centerAngle), 0f);
         var direction = (Vector2)grid.transform.InverseTransformDirection(transform.TransformDirection(localDirection));
         return direction.sqrMagnitude > 0f ? direction.normalized : Vector2.right;
-    }
-
-    private void AddCoverage(Vector3Int cell)
-    {
-        coveredCells.Add(cell);
     }
 
     private void OnDisable()

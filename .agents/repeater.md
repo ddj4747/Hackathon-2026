@@ -15,6 +15,7 @@
 ## Behavior and rules
 
 - A repeater supplied by a positive signal contributes quality 1 to its own cell and configured sector or line. It stops contributing if its source is lost. Cycles cannot supply themselves without an external source.
+- Walls and marked objects obstruct its line of sight; the hover overlay shows the unobstructed potential coverage. See [Connection manager](connection-manager.md).
 - Range, sector angle, start angle, position and local +X facing determine the coverage described in the root project instructions. The start angle defaults to 0 degrees and the sector extends counterclockwise. Grid lookup uses the nearest parent Grid or the only Grid in the scene.
 - Variants `Repeater_04` through `Repeater_15` use a one-cell-wide line along the center of their former 90-degree sector. The line extends Range cells, rotates with the prefab, and is extended by adjacent enhancers. Other repeater prefabs retain sector coverage.
 - In Play mode the visual follows `IsSignalSupplied`; blue is unsupplied and green is supplied. In edit mode tiles preview blue. A painted repeater tile instantiates its matching functional prefab.

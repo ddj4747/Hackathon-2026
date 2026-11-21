@@ -3,7 +3,7 @@
 ## Status
 - `GridSnap`, placeholder `Floor`/`Wall` prefabs and the palette creator are implemented. Not yet verified in the editor.
 - `Assets/Palettes/GameObjectTiles.prefab` is included; the creator can regenerate it.
-- Floor and Wall are visual placeholders only: no collider, no blocking. Collision rules are still undecided. The real tileset is planned as a dual-grid Tilemap, so these are temporary.
+- Floor and Wall are visual placeholders with no movement collider. Wall has a `SignalBlocker` component and blocks wireless signal. See [Connection manager](connection-manager.md).
 
 ## Entry files
 - `Assets/Scripts/GridSnap.cs`: `[ExecuteAlways]` snap-to-cell component
