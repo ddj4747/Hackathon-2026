@@ -58,7 +58,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5880267050249090525, guid: 58edbb84171d00a45ba9a58e85137363, type: 3}
       propertyPath: range
-      value: 7
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 5880267050249090525, guid: 58edbb84171d00a45ba9a58e85137363, type: 3}
       propertyPath: signalType
