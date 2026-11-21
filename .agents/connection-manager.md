@@ -31,7 +31,8 @@
 
 - Verified maximum selection, duplicate removal, empty cells, world-to-cell lookup, scene isolation and global reset in Unity.
 - Verified cable propagation, competing sources, disconnection and source removal in a loop with Unity CLI.
-- Parent `ConnectionOverlay.prefab` under the level Grid. Hover uses the main camera, the Input System mouse and each signal object's sprite bounds. An isolated Unity preview-scene check verified hover selection, per-source coverage, clearing, loss of supply and unchanged signal propagation.
+- `LevelTemplate` and `Level0` include a linked `ConnectionOverlay.prefab` under `MapGrid`. For other levels, add one overlay under each Grid that needs range previews, keeping its local position at zero; the overlay and the signal objects must resolve to the same Grid. Keep the overlay enabled and the scene camera tagged `MainCamera`. Hover works in Play mode using the Input System mouse and each signal object's sprite bounds; the overlay renderer must sort above the ground. Existing levels do not inherit changes made to the template.
+- In Level0 Play mode, Unity verified camera-ray selection of all three repeaters, populated their coverage tiles, and cleared the overlay. An isolated Unity preview-scene check also verified per-source coverage, loss of supply and unchanged signal propagation.
 
 - Unity MCP preview-scene checks verified coexisting types, matching repeater activation and shutdown, and cable type isolation.
 
