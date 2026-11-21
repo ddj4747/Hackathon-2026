@@ -49,6 +49,8 @@ MonoBehaviour:
   levelNumber: 1
   sceneAsset: {fileID: 0}
   scenePath: 
+  previousLevel: {fileID: 0}
+  allowWhenPreviousUnassigned: 0
   plateRenderer: {fileID: 2000000000000000006}
   numberLabel: {fileID: 2000000000000000010}
   normalColor: {r: 0.62, g: 0.68, b: 0.85, a: 1}

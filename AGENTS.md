@@ -19,7 +19,8 @@
 - Wireless signal uses direct line of sight: walls and objects with signal blocking enabled block their own cell and cast a shadow away from the source. A tile loses signal if any positive area lies in shadow. Two blockers meeting at a corner block a diagonal line; see [Connection manager](.agents/connection-manager.md).
 - A repeater uses its nearest parent Grid or the only Grid in its scene. With multiple grids, parent the repeater under the one it should use.
 - The game should have several levels and many gameplay variants through different room layouts, object arrangements and combinations of connection effects.
-- Connection rules beyond basic repeater coverage, other object effects, additional interaction mechanics and level completion conditions remain undecided. Ask the user before implementing those details; do not treat this concept as an implemented feature.
+- A level is beaten when all its signal receivers and collectors are supplied simultaneously; the game manager saves this progress. See [Game manager](.agents/GAME_MANAGER.md).
+- Connection rules beyond basic repeater coverage, other object effects and additional interaction mechanics remain undecided. Ask the user before implementing those details; do not treat this concept as an implemented feature.
 
 # Unity interaction
 - **Computer/screen control is forbidden.** Do not use GUI automation, browser UI automation, mouse/keyboard control, or screen capture. Use commands and APIs only, with **Unity CLI first**, or **Unity MCP** when available.

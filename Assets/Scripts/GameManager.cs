@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -15,6 +16,7 @@ using UnityEngine.UI;
 /// behind a full-screen loading screen. Restarting does nothing in the menu.
 ///
 /// A small controls reminder (bottom-right corner) is shown in every scene.
+/// A level is saved as beaten when all its signal receivers and collectors are supplied.
 /// </summary>
 public class GameManager : MonoBehaviour
 {
@@ -33,6 +35,7 @@ public class GameManager : MonoBehaviour
     public const string MenuSceneName = "Menu";
 
     private const string MenuScenePath = "Assets/Scenes/" + MenuSceneName + ".unity";
+    private const string BeatenLevelKeyPrefix = "GameManager.BeatenLevel.";
 
     public static GameManager Instance { get; private set; }
 
@@ -42,10 +45,73 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public string ReturnedFromScenePath { get; private set; }
 
+    /// <summary>Returns whether the level at this scene path has been marked as beaten.</summary>
+    public bool IsLevelBeaten(string scenePath)
+    {
+        return !string.IsNullOrEmpty(scenePath)
+            && scenePath != MenuScenePath
+            && PlayerPrefs.GetInt(BeatenLevelKeyPrefix + scenePath, 0) == 1;
+    }
+
+    /// <summary>Sets the saved completion state for a level scene.</summary>
+    public void SetLevelBeaten(string scenePath, bool beaten)
+    {
+        if (string.IsNullOrEmpty(scenePath) || scenePath == MenuScenePath)
+            return;
+
+        if (beaten)
+            PlayerPrefs.SetInt(BeatenLevelKeyPrefix + scenePath, 1);
+        else
+            PlayerPrefs.DeleteKey(BeatenLevelKeyPrefix + scenePath);
+        PlayerPrefs.Save();
+    }
+
+    /// <summary>Marks the active level as beaten and saves the result across game sessions.</summary>
+    public void MarkCurrentLevelBeaten()
+    {
+        Scene active = SceneManager.GetActiveScene();
+        if (active.name == MenuSceneName || string.IsNullOrEmpty(active.path))
+            return;
+
+        SetLevelBeaten(active.path, true);
+    }
+
     private bool loading;
     private bool restarting;
     private InputAction restartAction;
     private GameObject loadingScreen;
+    private readonly List<GameObject> sceneRoots = new();
+    private readonly List<SignalReceiver> sceneReceivers = new();
+
+    private void LateUpdate()
+    {
+        Scene active = SceneManager.GetActiveScene();
+        if (!active.isLoaded || active.name == MenuSceneName || string.IsNullOrEmpty(active.path)
+            || IsLevelBeaten(active.path))
+            return;
+
+        if (AllReceiversSupplied(active, sceneRoots, sceneReceivers))
+            MarkCurrentLevelBeaten();
+    }
+
+    private static bool AllReceiversSupplied(Scene scene, List<GameObject> roots, List<SignalReceiver> receivers)
+    {
+        bool foundReceiver = false;
+        roots.Clear();
+        scene.GetRootGameObjects(roots);
+        foreach (GameObject root in roots)
+        {
+            receivers.Clear();
+            root.GetComponentsInChildren(true, receivers);
+            foreach (SignalReceiver receiver in receivers)
+            {
+                foundReceiver = true;
+                if (!receiver.isActiveAndEnabled || !receiver.IsSignalSupplied)
+                    return false;
+            }
+        }
+        return foundReceiver;
+    }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void ResetStatics()

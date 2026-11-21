@@ -215,7 +215,7 @@ public class PlayerGridMovement : MonoBehaviour
             return;   // no new steps until the undo has landed
         }
 
-        // An exit in a wall may close while the player is stepping into it.
+        // An exit in a wall may be disabled while the player is stepping into it.
         if (stepProgress < 1f && DualGridLayer.IsWall(grid, targetCell) && !LevelExit.IsOpenAt(grid, targetCell))
         {
             FinishPush();
