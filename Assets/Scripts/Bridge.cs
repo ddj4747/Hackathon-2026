@@ -47,6 +47,9 @@ public sealed class Bridge : MonoBehaviour
         }
     }
 
+    /// <summary>Set this bridge's flag from a UnityEvent, such as a signal receiver event.</summary>
+    public void SetWalkable(bool value) => Walkable = value;
+
     /// <summary>True if the player can walk on this bridge: its own flag or a touching bridge's flag is set.</summary>
     public bool IsOpen
     {
