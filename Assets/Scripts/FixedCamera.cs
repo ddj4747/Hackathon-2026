@@ -22,8 +22,8 @@ public class FixedCamera : MonoBehaviour
     [Tooltip("World position the camera is fixed at (centre of the view). Z is kept from the transform.")]
     [SerializeField] private Vector2 center = Vector2.zero;
 
-    [Tooltip("Colour of the bars shown when the window aspect ratio differs from the target. Default = wall colour #333C57 (DualGridLayer Wall Color).")]
-    [SerializeField] private Color barColor = new Color32(0x33, 0x3C, 0x57, 0xFF);
+    [Tooltip("Colour of the bars shown when the window aspect ratio differs from the target.")]
+    [SerializeField] private Color barColor = Color.black;
 
     private Camera cam;
     private Camera barCamera;

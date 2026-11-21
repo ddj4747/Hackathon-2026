@@ -45,7 +45,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -154,4 +154,4 @@ MonoBehaviour:
   referenceHeight: 256
   pixelsPerUnit: 16
   center: {x: 0, y: 0}
-  barColor: {r: 0.2, g: 0.23529412, b: 0.34117648, a: 1}
+  barColor: {r: 0, g: 0, b: 0, a: 1}

@@ -1,12 +1,12 @@
 # Signal antenna
 
 ## Status
-- Implemented as a [repeater](repeater.md) variant with placeholder art. Collects wireless signal and hands it to an adjacent wire; transmits no wireless range of its own.
+- Implemented as a [repeater](repeater.md) variant. Collects wireless signal and hands it to an adjacent wire; transmits no wireless range of its own.
 
 ## Entry files
 - `Assets/Prefabs/Repeaters/SignalAntenna.prefab` (variant of `Assets/Prefabs/Repeater.prefab`), `Assets/Prefabs/RedSignalVariants/Red_SignalAntenna.prefab` (variant of `SignalAntenna`, `signalType` Red).
 - `Assets/SignalTiles/SignalAntenna.asset` (`PrefabTile`: preview sprite `SignalAntenna_Unsupplied`, prefab `Assets/Prefabs/Repeaters/SignalAntenna.prefab`) and `Assets/RepeaterTiles/Red/Red_SignalAntenna.asset` (`RepeaterTile`; red preview tint 1, 0.45, 0.45), placed in `Assets/TilePalettes/Signal Palette.prefab` at cells (6,-2) and (15,-2), next to the enhancer. `Assets/RepeaterTiles/SignalAntenna.asset` is an older `RepeaterTile` for the same prefab and is no longer in the palette.
-- `Assets/Sprites/SignalAntenna_Unsupplied.png`, `SignalAntenna_Supplied.png`: placeholder 16x16 sprites (PPU 16, Point, uncompressed) in the repeater colours.
+- `Assets/Sprites/SignalAntenna_Unsupplied.png`, `SignalAntenna_Supplied.png`: 16x16 sprites copied from the top and bottom of the leftmost column of `Assets/Resources/Repeaters.png` (PPU 16, Point, uncompressed).
 
 ## Behavior and rules
 - `Repeater` with `range` 0, `sectorAngle` 360 and `ignoreEnhancers` on: its coverage is only its own cell, adjacent enhancers add nothing.
