@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5890462736911529406}
   - component: {fileID: 6973790593854373449}
   - component: {fileID: 339108538262462662}
+  - component: {fileID: 7312904415880112203}
   m_Layer: 0
   m_Name: SignalJammer
   m_TagString: Untagged
@@ -106,3 +107,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SignalJammer
   range: 3
+--- !u!114 &7312904415880112203
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8025265754424903415}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fe306fc6a1143e7bc14753c682f3c45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Pushable
+  stopsSignal: 0
+  grid: {fileID: 0}

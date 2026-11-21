@@ -12,11 +12,12 @@ internal sealed class SignalObstacles
     private Vector2[] scratch = new Vector2[12];
     private readonly Vector2[] corners = new Vector2[4];
 
-    internal SignalObstacles(Grid grid)
+    // Jammers compute their own coverage from walls and other blockers, so they pass includeJammers: false.
+    internal SignalObstacles(Grid grid, bool includeJammers = true)
     {
         Pushable.CollectSignalBlockers(grid, cells);
         SignalBlocker.Collect(grid, cells);
-        SignalJammer.Collect(grid, cells);
+        if (includeJammers) SignalJammer.Collect(grid, cells);
         foreach (var layer in grid.GetComponentsInChildren<DualGridLayer>())
             if (layer.isActiveAndEnabled && layer.GetComponentInParent<Grid>() == grid &&
                 layer.Data.GetUsedTilesCount() > 0)
