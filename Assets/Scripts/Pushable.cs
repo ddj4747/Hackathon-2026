@@ -11,6 +11,9 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class Pushable : MonoBehaviour
 {
+    [Tooltip("Whether this object stops the signal (the connection range does not pass through it). Nothing reads this yet.")]
+    public bool stopsSignal;
+
     [Tooltip("Unity Grid (e.g. the MapGrid prefab) that defines the cells. Found automatically if empty.")]
     [SerializeField] private Grid grid;
 

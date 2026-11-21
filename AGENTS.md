@@ -6,8 +6,8 @@
 
 # Game concept (planned)
 - A **2D top-down game** about establishing a connection between two repeaters.
-- The tileset will use a **dual-grid** layout. A rectangular Unity Grid prefab provides the map grid. Dual-grid tile mapping and rendering setup remain undecided.
-- Visual style: **pixel art**, with a **512 Ã— 352 pixel** target screen resolution and **16 Ã— 16 pixel** tiles. A full viewport at this resolution spans **32 Ã— 22 tiles**; this does not define the total map size.
+- Only the **floor, walls and water** use a **dual-grid** layout (see the Dual grid module); everything else stays on the normal rectangular Unity Grid prefab (`MapGrid`).
+- Visual style: **pixel art**, with a **512 × 352 pixel** target screen resolution and **16 × 16 pixel** tiles. A full viewport at this resolution spans **32 × 22 tiles**; this does not define the total map size.
 - The player moves around the map and manages the placement of objects in the room to make the connection work.
 - Player movement is grid-based: the player moves from one tile to another. Additional movement timing and collision rules remain undecided.
 - Input decisions: Space (action `Player/Confirm`) is the shared confirm/activate key, since there is no jump mechanic. Movement is WASD/arrows. R (action `Player/Restart`) restarts the current level. Leaving a level is done by walking into a `LevelExit` hole, not by a key.
@@ -47,6 +47,7 @@
 | Release builds | Tag-triggered desktop builds and GitHub releases | [.agents/release-builds.md](.agents/release-builds.md) |
 | Unity MCP | CoplayDev editor package and connection prerequisites | [.agents/unity-mcp.md](.agents/unity-mcp.md) |
 | Map grid | Level grid prefab and terrain tilemap | [.agents/map-grid.md](.agents/map-grid.md) |
+| Dual grid | Floor, wall and animated water rendering on a half-cell-shifted tilemap (`MapGrid/Ground`); terrain paint tiles | [Claude outputs/DUAL_GRID.md](Claude%20outputs/DUAL_GRID.md) (temporary location; `.agents/` writes blocked) |
 | Connection manager | Scene-scoped signal quality. `Assets/Prefabs/ConnectionManager.prefab` exposes the same instance through `ConnectionManagerHost.Manager`. | [.agents/connection-manager.md](.agents/connection-manager.md) |
 | Repeater | Signal supply and directional coverage | [.agents/repeater.md](.agents/repeater.md) |
 | Repeater enhancer | Pushable adjacent repeater range modifier | [.agents/repeater-enhancer.md](.agents/repeater-enhancer.md) |
