@@ -2051,12 +2051,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2000000000000000003, guid: fd83cd86717748afb7c456bb285d5d95, type: 3}
       propertyPath: scenePath
-      value: 
+      value: Assets/Scenes/Levels/Level-1.unity
       objectReference: {fileID: 0}
     - target: {fileID: 2000000000000000003, guid: fd83cd86717748afb7c456bb285d5d95, type: 3}
       propertyPath: sceneAsset
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 102900000, guid: 4b27735ae2df81848b48bb543edeac7e, type: 3}
     - target: {fileID: 2000000000000000003, guid: fd83cd86717748afb7c456bb285d5d95, type: 3}
       propertyPath: levelNumber
       value: 0
