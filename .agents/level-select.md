@@ -1,15 +1,15 @@
 # Level select (Menu scene)
 
 ## Status
-- `Menu` scene with level plates implemented; first in the build's scene list. Not yet verified in the editor or in Play mode.
-- Only plate 1 has a scene assigned (`SampleScene`). Plates 2 and 3 are empty placeholders and log a warning when selected.
+- `Menu` scene with level plates implemented; first in the build's scene list.
+- Plate 1 loads `Levels/Level0`, plate 2 loads `Levels/Level1`; plate 3 is an unassigned placeholder and logs a warning when selected.
 - Levels return to `Menu` through a `LevelExit` ([LEVEL_EXIT.md](level-exit.md)); no keyboard shortcut.
 
 ## Entry files
 - `Assets/Scenes/Menu.unity` (camera, Global Light 2D, `MapGrid`, `Player`, three `LevelPlate` instances at cells (3,0), (5,0), (7,0))
 - `Assets/Prefabs/LevelPlate.prefab`, `Assets/Scripts/LevelSelectPlate.cs`, `Assets/Sprites/LevelPlateSprite.png`
 - `Assets/InputSystem_Actions.inputactions`: shared `Confirm` action (Space, gamepad south) in the `Player` map
-- `ProjectSettings/EditorBuildSettings.asset`: `Menu` (index 0) and `SampleScene`
+- `ProjectSettings/EditorBuildSettings.asset`: `Menu`, `SampleScene`, `Level1` and `Level0` are enabled.
 
 ## Behavior and rules
 - A plate snaps to the grid cell it is placed on. It highlights (yellow tint, grows 1.3x) while the player's centre is inside its cell.
@@ -25,3 +25,4 @@
 
 ## Setup and verification
 - New level plate: drag `LevelPlate.prefab` into a scene with `MapGrid` and `Player`, set `Level Number`, assign `Scene Asset`, and add that scene to the build's scene list.
+- Unity verified both scene assets and their baked paths on the saved Menu scene; selection through player input has not been tested for these assignments.
