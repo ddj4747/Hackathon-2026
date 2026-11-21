@@ -130,6 +130,25 @@ public class DualGridLayer : MonoBehaviour
     /// <summary>True for an empty cell that is a wall only because floor or water is next to it.</summary>
     public bool IsAutoWall(Vector3Int cell) => !Data.HasTile(cell) && TouchesFloorOrWater(cell);
 
+    /// <summary>
+    /// True if a layer under <paramref name="grid"/> makes the cell impassable: Wall (painted, automatic or void) or
+    /// Water. Used for player movement and pushing. A layer with no painted tiles at all blocks nothing, as for signal.
+    /// </summary>
+    public static bool IsBlocked(Grid grid, Vector3Int cell)
+    {
+        for (int i = 0; i < Active.Count; i++)
+        {
+            DualGridLayer layer = Active[i];
+            if (layer.parentGrid == null)
+                layer.parentGrid = layer.GetComponentInParent<Grid>();
+            if (layer.parentGrid != grid || layer.Data.GetUsedTilesCount() == 0)
+                continue;
+            if (layer.GetTerrain(cell) != DualGridTerrain.Floor)
+                return true;
+        }
+        return false;
+    }
+
     /// <summary>Paints a cell from code with the floor / water / wall tile assigned in the Inspector.</summary>
     public void SetTerrain(Vector3Int cell, DualGridTerrain terrain)
     {
