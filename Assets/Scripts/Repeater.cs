@@ -20,6 +20,9 @@ public sealed class Repeater : MonoBehaviour, ISignalRangeSource
     [SerializeField, Range(0f, 360f), Tooltip("Start of the coverage sector in degrees counterclockwise from local +X.")]
     private float startAngle;
 
+    [SerializeField, Tooltip("Use a one-cell-wide line in the direction at the center of the sector.")]
+    private bool straightLine;
+
     private readonly List<Vector3Int> coveredCells = new();
     private Grid grid;
     private Scene gridScene;
@@ -30,6 +33,7 @@ public sealed class Repeater : MonoBehaviour, ISignalRangeSource
     private int lastRange;
     private float lastAngle;
     private Vector2 lastDirection;
+    private bool lastStraightLine;
 
     private void OnEnable()
     {
@@ -67,7 +71,7 @@ public sealed class Repeater : MonoBehaviour, ISignalRangeSource
         var angle = Mathf.Clamp(sectorAngle, 0f, 360f);
         var direction = GetDirection(angle);
         if (manager == sceneManager && resetVersion == sceneManager.ResetVersion && lastCenter == center && lastOrigin.Equals(origin) && lastRange == radius &&
-            lastAngle == angle && lastDirection == direction)
+            lastAngle == angle && lastDirection == direction && lastStraightLine == straightLine)
             return;
 
         RemoveCoverage();
@@ -78,8 +82,18 @@ public sealed class Repeater : MonoBehaviour, ISignalRangeSource
         lastRange = radius;
         lastAngle = angle;
         lastDirection = direction;
+        lastStraightLine = straightLine;
 
         AddCoverage(center);
+        if (straightLine)
+        {
+            // Sample one cell per step along the major axis to rasterize a thin line.
+            var step = direction / Mathf.Max(Mathf.Abs(direction.x), Mathf.Abs(direction.y));
+            for (var i = 1; i <= radius; i++)
+                AddCoverage(center + new Vector3Int(Mathf.RoundToInt(step.x * i), Mathf.RoundToInt(step.y * i), 0));
+            manager.SetRepeater(this, center, coveredCells);
+            return;
+        }
         if (angle <= 0f)
         {
             manager.SetRepeater(this, center, coveredCells);
@@ -152,7 +166,7 @@ public sealed class Repeater : MonoBehaviour, ISignalRangeSource
 
     private Vector2 GetDirection(float angle)
     {
-        if (angle <= 0f || angle >= 360f)
+        if (!straightLine && (angle <= 0f || angle >= 360f))
             return Vector2.right;
 
         var centerAngle = (Mathf.Repeat(startAngle, 360f) + angle * 0.5f) * Mathf.Deg2Rad;

@@ -14,8 +14,9 @@
 
 ## Behavior and rules
 
-- A repeater supplied by a positive signal contributes quality 1 to its own cell and configured sector. It stops contributing if its source is lost. Cycles cannot supply themselves without an external source.
+- A repeater supplied by a positive signal contributes quality 1 to its own cell and configured sector or line. It stops contributing if its source is lost. Cycles cannot supply themselves without an external source.
 - Range, sector angle, start angle, position and local +X facing determine the coverage described in the root project instructions. The start angle defaults to 0 degrees and the sector extends counterclockwise. Grid lookup uses the nearest parent Grid or the only Grid in the scene.
+- Variants `Repeater_04` through `Repeater_15` use a one-cell-wide line along the center of their former 90-degree sector. The line extends Range cells, rotates with the prefab, and is extended by adjacent enhancers. Other repeater prefabs retain sector coverage.
 - In Play mode the visual follows `IsSignalSupplied`; blue is unsupplied and green is supplied. In edit mode tiles preview blue. A painted repeater tile instantiates its matching functional prefab.
 - The player can push standalone and painted repeaters using the existing push and chain rules. Coverage and supply are recalculated from the repeater's moving position. See [Pushable blocks](pushable-blocks.md).
 - Adjacent pushable [enhancers](repeater-enhancer.md) increase the repeater range by one each; diagonal cells do not count.
@@ -23,7 +24,7 @@
 
 ## Public interfaces and dependencies
 
-- Coverage uses the scene-scoped `ConnectionManager`. Sector angle, start angle and range are serialized on the repeater.
+- Coverage uses the scene-scoped `ConnectionManager`. Sector angle, start angle, range and the straight-line option are serialized on the repeater.
 - `IsSignalSupplied` exposes whether the repeater is enabled and receives signal; [wire tilemaps](cables.md) use it for adjacent open-port adapters. Wire tilemaps do not supply repeaters.
 
 ## Setup and verification
@@ -34,3 +35,4 @@
 
 - Unity verified that all 15 variants inherit Pushable and checked a painted repeater in Play mode: the player pushed it out of supply, removing its coverage, and pushing it back restored coverage.
 - Unity Play-mode checks in an isolated scene verified the unsupplied range preview and all 15 painted variants switching sprites when signal was supplied and removed.
+- An isolated Unity preview-scene check verified all 12 line prefabs, their directions and ranges, activation and shutdown, rotation and enhancer extension; it also verified that circular coverage is unchanged.
