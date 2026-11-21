@@ -65,6 +65,9 @@ public class PlayerGridMovement : MonoBehaviour
     /// <summary>True while an undo is animating back to the previous cell.</summary>
     public bool IsUndoing => undoProgress < 1f;
 
+    /// <summary>Raised when a step (or an undo of one) starts; the argument is true when it moves pushed objects.</summary>
+    public event System.Action<bool> StepStarted;
+
     /// <summary>Direction of the last step actually started (not changed by blocked or queued input). Starts facing up.</summary>
     public Vector3Int Facing { get; private set; } = Vector3Int.up;
 
@@ -169,6 +172,7 @@ public class PlayerGridMovement : MonoBehaviour
         targetCell = step.playerCell;
         stepProgress = 1f;
         undoProgress = 0f;
+        StepStarted?.Invoke(undoObjects.Length > 0);
         if (SoundManager.Instance != null)
             SoundManager.Instance.Play(SoundManager.Effect.Undo);
         return true;
@@ -302,6 +306,7 @@ public class PlayerGridMovement : MonoBehaviour
 
         targetCell = target;
         Facing = direction;   // turn only when the step really starts
+        StepStarted?.Invoke(pushed.Count > 0);
         if (SoundManager.Instance != null)
             SoundManager.Instance.Play(pushed.Count > 0 ? SoundManager.Effect.Push : SoundManager.Effect.Step);
         return true;

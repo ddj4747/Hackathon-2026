@@ -8,7 +8,8 @@
 ## Entry files
 - `Assets/Scripts/PlayerGridMovement.cs`
 - `Assets/Scripts/PlayerSpriteAnimator.cs`
-- `Assets/Prefabs/Player.prefab` (SpriteRenderer + `PlayerGridMovement` + `PlayerSpriteAnimator`, sorting order 10)
+- `Assets/Prefabs/Player.prefab` (SpriteRenderer + `PlayerGridMovement` + `PlayerSpriteAnimator` + `PlayerSfx` + `SignalConnectSfx`, sorting order 10)
+- `Assets/Scripts/PlayerSfx.cs`, `Assets/Scripts/SignalConnectSfx.cs`; clips in `Assets/SFX/` (footsteps, cardboard-box push, 8-bit connect sound)
 - `Assets/Sprites/Player.png`: sprite sheet, 4 x 2 cells of 16 x 16 px, 16 PPU, point filter, no compression. Frames `Player_0`-`Player_3` (top row) = pushing, `Player_4`-`Player_7` (bottom row) = walking. The sprites face up only.
 - `Assets/Sprites/PlayerSprite.png`: old placeholder square, no longer used (can be deleted).
 
@@ -25,10 +26,14 @@
 - Undo (Q, action `Player/Undo`, keyboard only): every started step records the player cell, its facing and the cells of the chain it shoved; Q reverts the last step with an animation: logical cells change at once, then the player walks back to its previous cell at `tilesPerSecond * undoSpeedMultiplier` (1.5) still facing the undone step (walk frames, or push frames when objects come back) and the shoved objects slide back with it (`Pushable.BeginMoveTo`); at the end the facing from before the step is restored. A step in progress is reversed from where it is; Q during an undo animation lands it at once and starts the next undo. No new steps while undoing. `IsUndoing` is public; `IsMoving` / `IsPushing` include the undo. History is per level load (R / scene reload clears it), up to `maxUndoSteps` (1000). Signal, wires and beams follow the restored positions. Unity MCP verified in a temporary scene (manual stepping): chain push, steps, cancelling a half-finished push and undoing back to the start; empty history returns false; animation positions halfway, push flag while a block comes back, chained Q, final facing. Not checked in Play mode.
 - Animation (`PlayerSpriteAnimator`): walking plays frames 4-7, pushing (a step that shoves a `Pushable`) plays frames 0-3, at `framesPerSecond` (12). When the player stands still the last frame stays. The player is rotated (root transform, z) to face its last direction: up 0, left 90, down 180, right -90 degrees; `rotationOffset` corrects it if the art faces another way. Facing changes only when a step actually starts in that direction (not on blocked moves and not while a step is still finishing). Not yet verified visually.
 
+- Sound (`PlayerSfx`): each `StepStarted` (step or undo) plays one footstep cut from the footsteps clip (`footstepStart` 0.03 s, `footstepLength` 0.17 s, small random pitch). While `IsPushing`, a scrape loop cut from the push clip (1-13.5 s) plays, fading in and out over `pushFadeTime` (0.1 s). Clips must be Decompress On Load so their samples can be read; otherwise the whole clip is used.
+- Sound (`SignalConnectSfx`, on the player prefab only because every level has a player): every 0.05 s it checks repeaters (antenna included) and receivers / collectors in the player's scene and plays the connect clip once (volume 0.5) when any of them became supplied. Connections in the first 0.5 s after start (the level's initial state) are silent.
+- Unity MCP Play-mode check of the sounds (manual stepping, `LevelClaude'a`): step / push / undo events with the push flag, push loop fade-in, slices created (0.17 s, 12.5 s), a new connection detected for each repeater placed, none at start. Not listened to.
+
 ## Public interfaces and dependencies
 - Successful steps, pushes and undo play placeholder effects through the [sound manager](sound-manager.md).
 - Uses the `Grid` from the `MapGrid` prefab (see [MAP_GRID.md](map-grid.md)); the `grid` field is auto-found with `FindFirstObjectByType<Grid>()` if empty.
-- Public: `CurrentCell`, `IsMoving`, `IsPushing`, `Facing` (read-only), `TeleportToCell(Vector3Int)` (instant move to a cell centre, cancels a step in progress, clears the undo history), `Undo()`, `UndoCount`, constant `UndoActionPath`.
+- Public: `CurrentCell`, `IsMoving`, `IsPushing`, `Facing` (read-only), event `StepStarted(bool pushing)`, `TeleportToCell(Vector3Int)` (instant move to a cell centre, cancels a step in progress, clears the undo history), `Undo()`, `UndoCount`, constant `UndoActionPath`.
 - Requires Input System (`activeInputHandler: 1` in ProjectSettings).
 
 ## Setup and verification
