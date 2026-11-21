@@ -1,7 +1,7 @@
 # Level exit
 
 ## Status
-- `LevelExit` is a reusable signal-controlled exit. Level0 and Level1 have exits in the right wall linked to their adjacent collectors.
+- `LevelExit` is a reusable signal-controlled exit. Level0 and Level1 have exits linked to adjacent collectors. Level2 through Level4 have exits linked to their existing receivers; Level3 requires both receivers.
 
 ## Entry files
 - `Assets/Prefabs/LevelExit.prefab`, `Assets/Scripts/LevelExit.cs`, `Assets/Sprites/LevelExitSprite.png`.
@@ -17,7 +17,8 @@
 
 ## Setup and verification
 - Place `LevelExit.prefab` on a floor cell or a wall cell next to walkable floor, under the level Grid. Place one or more collector prefab instances under the Grid and assign their `SignalReceiver` components to the exit. A collector painted onto a Tilemap is spawned at runtime and cannot be assigned as a scene reference in the Inspector.
-- Level0: collector at grid cell (4, -1), exit immediately above at (4, 0). Level1: collector at (4, 0), exit at (4, 1). Add `Menu` to the build scene list.
+- Level0: collector at grid cell (4, -1), exit at (4, 0). Level1: collector at (4, 0), exit at (4, 1). Level2: receiver at (3, 2), exit at (3, 3). Level3: receivers at (2, -6) and (1, 5), exit at (0, 5). Level4: receiver at (5, 2), exit at (5, 1). Add `Menu` to the build scene list.
+- Unity MCP verified the saved Level2?Level4 receiver references and wall cells, and checked the exit states in preview scenes, including both Level3 receivers independently and together. Not tested in Play mode.
 - Unity MCP preview-scene checks covered one and two collectors, empty and missing entries, signal-type mismatch, disabling a collector, signal loss and the hole sprite.
 - A Level0 preview-scene check verified the saved collector reference, closed-wall blocking, entry when supplied, and cancellation of a step when signal is lost. A Play-mode check using a temporary powered repeater verified the collector becomes supplied, the exit renderer is enabled and in the camera view, and walking into it loads Menu. The wall appearance has not been inspected visually.
 - A Level1 preview-scene check verified the collector reference and wall blocking before, during and after signal.

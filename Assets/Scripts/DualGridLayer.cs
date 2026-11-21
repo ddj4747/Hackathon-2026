@@ -132,7 +132,7 @@ public class DualGridLayer : MonoBehaviour
 
     /// <summary>
     /// True if a layer under <paramref name="grid"/> makes the cell impassable: Wall (painted, automatic or void) or
-    /// Water. Used for player movement and pushing. A layer with no painted tiles at all blocks nothing, as for signal.
+    /// Water. Used for player movement and pushing. Water under a walkable <see cref="Bridge"/> is passable. A layer with no painted tiles at all blocks nothing, as for signal.
     /// </summary>
     public static bool IsBlocked(Grid grid, Vector3Int cell)
     {
@@ -143,8 +143,13 @@ public class DualGridLayer : MonoBehaviour
                 layer.parentGrid = layer.GetComponentInParent<Grid>();
             if (layer.parentGrid != grid || layer.Data.GetUsedTilesCount() == 0)
                 continue;
-            if (layer.GetTerrain(cell) != DualGridTerrain.Floor)
-                return true;
+            DualGridTerrain terrain = layer.GetTerrain(cell);
+            if (terrain == DualGridTerrain.Floor)
+                continue;
+            // A walkable Bridge (or a Bridge touching one) makes water passable. Walls stay solid.
+            if (terrain == DualGridTerrain.Water && Bridge.IsWalkableAt(grid, cell))
+                continue;
+            return true;
         }
         return false;
     }

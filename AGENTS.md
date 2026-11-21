@@ -66,6 +66,7 @@
 | Pixel-perfect rendering and font | Fixed 352 × 256 camera and project font | [.agents/pixel-perfect-and-font.md](.agents/pixel-perfect-and-font.md) |
 | Pushable blocks | Pushable and solid components, chain pushing and settings | [.agents/pushable-blocks.md](.agents/pushable-blocks.md) |
 | GameObject tile palette | Placeholder floor and wall prefabs and grid snapping | [.agents/tile-palette.md](.agents/tile-palette.md) |
+| Bridge | Toggleable walkway over water, grouped by adjacency | [.agents/bridge.md](.agents/bridge.md) |
 
 
 # Verification
