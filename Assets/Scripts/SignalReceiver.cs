@@ -17,6 +17,9 @@ public sealed class SignalReceiver : MonoBehaviour
     public UnityEvent OnSignalLost => onSignalLost;
     public bool IsSignalSupplied { get; private set; }
 
+    /// <summary>Raised when any receiver's supplied state changes, including when a supplied receiver is disabled.</summary>
+    public static event System.Action<SignalReceiver, bool> SuppliedChanged;
+
     private Grid grid;
     private Scene gridScene;
 
@@ -54,11 +57,14 @@ public sealed class SignalReceiver : MonoBehaviour
             Debug.Log("Signal receiver disconnected.", this);
             onSignalLost.Invoke();
         }
+        SuppliedChanged?.Invoke(this, supplied);
     }
 
     private void OnDisable()
     {
+        var wasSupplied = IsSignalSupplied;
         IsSignalSupplied = false;
+        if (wasSupplied) SuppliedChanged?.Invoke(this, false);
         SignalTypeVisual.Restore(GetComponent<SpriteRenderer>());
     }
 
