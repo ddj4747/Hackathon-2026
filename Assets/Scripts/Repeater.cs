@@ -3,9 +3,13 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 [DisallowMultipleComponent]
-public sealed class Repeater : MonoBehaviour
+public sealed class Repeater : MonoBehaviour, ISignalRangeSource
 {
     public bool IsSignalSupplied => isActiveAndEnabled && manager != null && manager.IsRepeaterPowered(this);
+    Grid ISignalRangeSource.RangeGrid => grid;
+    IReadOnlyList<Vector3Int> ISignalRangeSource.RangeCells => coveredCells;
+    bool ISignalRangeSource.HasVisibleSignal => isActiveAndEnabled && grid != null &&
+        manager != null && resetVersion == manager.ResetVersion;
 
     [SerializeField, Min(0), Tooltip("Radius in grid cells measured from this repeater's position.")]
     private int range = 3;
@@ -30,6 +34,7 @@ public sealed class Repeater : MonoBehaviour
     private void OnEnable()
     {
         gridScene = default;
+        SignalRangeSources.Add(this);
     }
 
     private void OnTransformParentChanged()
@@ -58,7 +63,7 @@ public sealed class Repeater : MonoBehaviour
         var position = transform.position;
         var center = grid.WorldToCell(position);
         var origin = (Vector2)grid.LocalToCellInterpolated(grid.transform.InverseTransformPoint(position));
-        var radius = Mathf.Max(0, range);
+        var radius = Mathf.Max(0, range) + CountAdjacentEnhancers(center);
         var angle = Mathf.Clamp(sectorAngle, 0f, 360f);
         var direction = GetDirection(angle);
         if (manager == sceneManager && resetVersion == sceneManager.ResetVersion && lastCenter == center && lastOrigin.Equals(origin) && lastRange == radius &&
@@ -132,6 +137,19 @@ public sealed class Repeater : MonoBehaviour
         return sceneGrid;
     }
 
+    private int CountAdjacentEnhancers(Vector3Int center)
+    {
+        var count = 0;
+        foreach (var enhancer in RepeaterEnhancer.Active)
+        {
+            if (!enhancer.UsesGrid(grid)) continue;
+            var offset = grid.WorldToCell(enhancer.transform.position) - center;
+            if (offset.z == 0 && Mathf.Abs(offset.x) + Mathf.Abs(offset.y) == 1)
+                count++;
+        }
+        return count;
+    }
+
     private Vector2 GetDirection(float angle)
     {
         if (angle <= 0f || angle >= 360f)
@@ -150,6 +168,7 @@ public sealed class Repeater : MonoBehaviour
 
     private void OnDisable()
     {
+        SignalRangeSources.Remove(this);
         RemoveCoverage();
     }
 

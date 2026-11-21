@@ -6,7 +6,7 @@
 
 ## Entry files
 
-- `Assets/Scripts/ConnectionManager.cs`
+- `Assets/Scripts/ConnectionManager.cs`, `Assets/Scripts/ConnectionOverlay.cs`, `Assets/Prefabs/ConnectionOverlay.prefab`
 - [Map grid](map-grid.md)
 
 ## Behavior and rules
@@ -16,6 +16,7 @@
 - Cable-linked cells share the strongest directly contributed signal throughout their connected component. Links do not themselves add contributions, so loops cannot sustain a signal after its source is removed. See [Cables](cables.md).
 - Signal sources activate repeaters whose cells they reach. Active repeaters extend signal to their coverage; activation is recomputed from sources so repeater cycles cannot sustain themselves. See [Repeater](repeater.md) and [Signal emitter](signal-emitter.md).
 - Unloading a scene clears and drops its manager. Starting a new play session starts with fresh managers.
+- The overlay shows only the hovered enabled emitter or repeater's own range. An unsupplied repeater shows its potential coverage without transmitting signal. Nothing is shown off an object; the overlay does not affect signal propagation.
 
 ## Public interfaces and dependencies
 
@@ -28,3 +29,4 @@
 
 - Verified maximum selection, duplicate removal, empty cells, world-to-cell lookup, scene isolation and global reset in Unity.
 - Verified cable propagation, competing sources, disconnection and source removal in a loop with Unity CLI.
+- Parent `ConnectionOverlay.prefab` under the level Grid. Hover uses the main camera, the Input System mouse and each signal object's sprite bounds. An isolated Unity preview-scene check verified hover selection, per-source coverage, clearing, loss of supply and unchanged signal propagation.

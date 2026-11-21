@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 
 // A starting signal source. Parent it under the level Grid when a scene has multiple grids.
 [DisallowMultipleComponent]
-public sealed class SignalEmitter : MonoBehaviour
+public sealed class SignalEmitter : MonoBehaviour, ISignalRangeSource
 {
     [SerializeField, Min(0), Tooltip("Radius of the signal in grid cells.")]
     private int range = 3;
@@ -18,10 +18,19 @@ public sealed class SignalEmitter : MonoBehaviour
     private Vector2 lastOrigin;
     private int lastRange;
 
+    Grid ISignalRangeSource.RangeGrid => grid;
+    IReadOnlyList<Vector3Int> ISignalRangeSource.RangeCells => coveredCells;
+    bool ISignalRangeSource.HasVisibleSignal => isActiveAndEnabled && grid != null &&
+        manager != null && resetVersion == manager.ResetVersion;
+
     internal bool IsEmittingOn(Grid targetGrid) => isActiveAndEnabled && grid == targetGrid &&
         manager != null && resetVersion == manager.ResetVersion;
 
-    private void OnEnable() => gridScene = default;
+    private void OnEnable()
+    {
+        gridScene = default;
+        SignalRangeSources.Add(this);
+    }
     private void OnTransformParentChanged() => gridScene = default;
 
     private void Update()
@@ -91,7 +100,11 @@ public sealed class SignalEmitter : MonoBehaviour
         coveredCells.Add(cell);
     }
 
-    private void OnDisable() => RemoveCoverage();
+    private void OnDisable()
+    {
+        SignalRangeSources.Remove(this);
+        RemoveCoverage();
+    }
 
     private void RemoveCoverage()
     {

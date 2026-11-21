@@ -12,7 +12,7 @@
 - Player movement is grid-based: the player moves from one tile to another. Additional movement timing and collision rules remain undecided.
 - Input decisions: Space (action `Player/Confirm`) is the shared confirm/activate key, since there is no jump mechanic. Movement is WASD/arrows. R (action `Player/Restart`) restarts the current level. Leaving a level is done by walking into a `LevelExit` hole, not by a key.
 - The core gameplay is rearranging objects that affect the connection: some block it, others extend its reach, and additional effects may be defined later.
-- When signal is supplied, the basic repeater contributes signal quality `1` to its own tile and a stepped circular sector measured from its exact position. The sector uses a rounded boundary of Range + 0.4 grid units, limited to Range cells in each direction. Its width and start angle are configurable; the start is measured counterclockwise from local +X, and coverage extends counterclockwise from there. A tile overlay shows which cells have a positive signal.
+- When signal is supplied, the basic repeater contributes signal quality `1` to its own tile and a stepped circular sector measured from its exact position. The sector uses a rounded boundary of Range + 0.4 grid units, limited to Range cells in each direction. Its width and start angle are configurable; the start is measured counterclockwise from local +X, and coverage extends counterclockwise from there. A tile overlay shows the range of a hovered emitter or repeater, including an unsupplied repeater's potential coverage.
 - Signal emitters provide the starting signal in a configurable circular range. Repeaters activate when signal reaches their cell and stop when disconnected from a source.
 - A repeater uses its nearest parent Grid or the only Grid in its scene. With multiple grids, parent the repeater under the one it should use.
 - The game should have several levels and many gameplay variants through different room layouts, object arrangements and combinations of connection effects.
@@ -48,6 +48,7 @@
 | Map grid | Level grid prefab and terrain tilemap | [.agents/map-grid.md](.agents/map-grid.md) |
 | Connection manager | Scene-scoped signal quality. `Assets/Prefabs/ConnectionManager.prefab` exposes the same instance through `ConnectionManagerHost.Manager`. | [.agents/connection-manager.md](.agents/connection-manager.md) |
 | Repeater | Signal supply and directional coverage | [.agents/repeater.md](.agents/repeater.md) |
+| Repeater enhancer | Pushable adjacent repeater range modifier | [.agents/repeater-enhancer.md](.agents/repeater-enhancer.md) |
 | Signal emitter | Starting signal source and circular coverage | [.agents/signal-emitter.md](.agents/signal-emitter.md) |
 | Signal receiver | Signal detection and connection event | [.agents/signal-receiver.md](.agents/signal-receiver.md) |
 | Cables | Fixed paths, endpoint adapters and wire artwork | [.agents/cables.md](.agents/cables.md) |

@@ -1,4 +1,4 @@
-# Repeater
+﻿# Repeater
 
 ## Status
 
@@ -18,6 +18,8 @@
 - Range, sector angle, start angle, position and local +X facing determine the coverage described in the root project instructions. The start angle defaults to 0 degrees and the sector extends counterclockwise. Grid lookup uses the nearest parent Grid or the only Grid in the scene.
 - In Play mode the visual follows `IsSignalSupplied`; blue is unsupplied and green is supplied. In edit mode tiles preview blue. A painted repeater tile instantiates its matching functional prefab.
 - The player can push standalone and painted repeaters using the existing push and chain rules. Coverage and supply are recalculated from the repeater's moving position. See [Pushable blocks](pushable-blocks.md).
+- Adjacent pushable [enhancers](repeater-enhancer.md) increase the repeater range by one each; diagonal cells do not count.
+- Hovering a repeater shows its potential coverage through the [connection overlay](connection-manager.md), even while it is unsupplied.
 
 ## Public interfaces and dependencies
 
@@ -31,3 +33,4 @@
 - Unity CLI previously verified palette references, edit previews, all 15 instantiated prefabs and both sprite mappings. Unity MCP verified sector boundaries, start-angle changes, wraparound, rotation, and zero- and full-width coverage. Unity MCP also verified signal activation, chaining and shutdown without a source.
 
 - Unity verified that all 15 variants inherit Pushable and checked a painted repeater in Play mode: the player pushed it out of supply, removing its coverage, and pushing it back restored coverage.
+- Unity Play-mode checks in an isolated scene verified the unsupplied range preview and all 15 painted variants switching sprites when signal was supplied and removed.
