@@ -16,7 +16,7 @@ public sealed class GameManagerEditor : Editor
         var manager = (GameManager)target;
         List<string> beatenScenes = FindBeatenScenes(manager);
         if (beatenScenes.Count == 0)
-            EditorGUILayout.HelpBox("No beaten levels saved.", MessageType.Info);
+            EditorGUILayout.HelpBox("No levels beaten this session.", MessageType.Info);
 
         foreach (string beatenPath in beatenScenes)
         {

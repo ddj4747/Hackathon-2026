@@ -16,7 +16,7 @@ using UnityEngine.UI;
 /// behind a full-screen loading screen. Restarting does nothing in the menu.
 ///
 /// A small controls reminder (bottom-right corner) is shown in every scene.
-/// A level is saved as beaten when all its signal receivers and collectors are supplied.
+/// A level is marked as beaten for the current session when all its signal receivers and collectors are supplied.
 /// </summary>
 public class GameManager : MonoBehaviour
 {
@@ -35,7 +35,7 @@ public class GameManager : MonoBehaviour
     public const string MenuSceneName = "Menu";
 
     private const string MenuScenePath = "Assets/Scenes/" + MenuSceneName + ".unity";
-    private const string BeatenLevelKeyPrefix = "GameManager.BeatenLevel.";
+    private readonly HashSet<string> beatenLevels = new();
 
     public static GameManager Instance { get; private set; }
 
@@ -50,23 +50,22 @@ public class GameManager : MonoBehaviour
     {
         return !string.IsNullOrEmpty(scenePath)
             && scenePath != MenuScenePath
-            && PlayerPrefs.GetInt(BeatenLevelKeyPrefix + scenePath, 0) == 1;
+            && beatenLevels.Contains(scenePath);
     }
 
-    /// <summary>Sets the saved completion state for a level scene.</summary>
+    /// <summary>Sets the current session's completion state for a level scene.</summary>
     public void SetLevelBeaten(string scenePath, bool beaten)
     {
         if (string.IsNullOrEmpty(scenePath) || scenePath == MenuScenePath)
             return;
 
         if (beaten)
-            PlayerPrefs.SetInt(BeatenLevelKeyPrefix + scenePath, 1);
+            beatenLevels.Add(scenePath);
         else
-            PlayerPrefs.DeleteKey(BeatenLevelKeyPrefix + scenePath);
-        PlayerPrefs.Save();
+            beatenLevels.Remove(scenePath);
     }
 
-    /// <summary>Marks the active level as beaten and saves the result across game sessions.</summary>
+    /// <summary>Marks the active level as beaten for the current game session.</summary>
     public void MarkCurrentLevelBeaten()
     {
         Scene active = SceneManager.GetActiveScene();
