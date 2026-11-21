@@ -951,6 +951,16 @@ Tilemap:
       m_TileObjectToInstantiateIndex: 19
       dummyAlignment: 0
       m_AllTileFlags: 7
+  - first: {x: 6, y: -2, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 78
+      m_TileSpriteIndex: 35
+      m_TileMatrixIndex: 0
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 57
+      dummyAlignment: 0
+      m_AllTileFlags: 3
   - first: {x: 10, y: -2, z: 0}
     second:
       serializedVersion: 2
@@ -999,6 +1009,16 @@ Tilemap:
       m_TileMatrixIndex: 0
       m_TileColorIndex: 4
       m_TileObjectToInstantiateIndex: 46
+      dummyAlignment: 0
+      m_AllTileFlags: 3
+  - first: {x: 15, y: -2, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 79
+      m_TileSpriteIndex: 35
+      m_TileMatrixIndex: 0
+      m_TileColorIndex: 4
+      m_TileObjectToInstantiateIndex: 58
       dummyAlignment: 0
       m_AllTileFlags: 3
   - first: {x: 0, y: -1, z: 0}
@@ -1201,6 +1221,26 @@ Tilemap:
       m_TileObjectToInstantiateIndex: 56
       dummyAlignment: 0
       m_AllTileFlags: 3
+  - first: {x: 6, y: -8, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 78
+      m_TileSpriteIndex: 35
+      m_TileMatrixIndex: 0
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 57
+      dummyAlignment: 0
+      m_AllTileFlags: 7
+  - first: {x: 7, y: -8, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 79
+      m_TileSpriteIndex: 36
+      m_TileMatrixIndex: 0
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 58
+      dummyAlignment: 0
+      m_AllTileFlags: 7
   m_AnimatedTiles: {}
   m_TileAssetArray:
   - serializedVersion: 2
@@ -1437,6 +1477,16 @@ Tilemap:
   - serializedVersion: 2
     m_RefCount: 1
     m_Data: {fileID: 11400000, guid: a78846027b5adf9459f0c0d7283eb600, type: 2}
+  - serializedVersion: 2
+    m_RefCount: 1
+    m_Data: {fileID: 11400000, guid: e0530f14664c4c209d278e67a291cfbf, type: 2}
+  - serializedVersion: 2
+    m_RefCount: 1
+    m_Data: {fileID: 11400000, guid: 250b929ecaf34bb0bc8d3719d89a97df, type: 2}
+    m_Data: {fileID: 11400000, guid: 9d4c051d6d15a124c8f5a0729859edea, type: 2}
+  - serializedVersion: 2
+    m_RefCount: 1
+    m_Data: {fileID: 11400000, guid: b99688e31a462b64c896b500cf3f69db, type: 2}
   m_TileSpriteArray:
   - serializedVersion: 2
     m_RefCount: 2
@@ -1543,9 +1593,15 @@ Tilemap:
   - serializedVersion: 2
     m_RefCount: 2
     m_Data: {fileID: 858427236, guid: 1aa6542943f63084ab67a9d5924d6b14, type: 3}
+  - serializedVersion: 2
+    m_RefCount: 1
+    m_Data: {fileID: -4709456396536258026, guid: 9b9d7b417b438354483d370108c70d3e, type: 3}
+  - serializedVersion: 2
+    m_RefCount: 1
+    m_Data: {fileID: 2537882373423050008, guid: c2fa3e51949f0f04282050c0a4b8ef56, type: 3}
   m_TileMatrixArray:
   - serializedVersion: 2
-    m_RefCount: 78
+    m_RefCount: 80
     m_Data:
       e00: 1
       e01: 0
@@ -1565,7 +1621,7 @@ Tilemap:
       e33: 1
   m_TileColorArray:
   - serializedVersion: 2
-    m_RefCount: 38
+    m_RefCount: 39
     m_Data: {r: 1, g: 1, b: 1, a: 1}
   - serializedVersion: 2
     m_RefCount: 1
@@ -1577,7 +1633,7 @@ Tilemap:
     m_RefCount: 11
     m_Data: {r: 1, g: 0.55, b: 0.55, a: 1}
   - serializedVersion: 2
-    m_RefCount: 27
+    m_RefCount: 28
     m_Data: {r: 1, g: 0.45, b: 0.45, a: 1}
   m_TileObjectToInstantiateArray:
   - serializedVersion: 2
@@ -1751,6 +1807,12 @@ Tilemap:
   - serializedVersion: 2
     m_RefCount: 1
     m_Data: {fileID: 3891363932226642804, guid: 814f2c24c99c34e42bac4aeb6f827bb1, type: 3}
+  - serializedVersion: 2
+    m_RefCount: 1
+    m_Data: {fileID: 1267521146200617180, guid: 489f0dc086dc79647a4bc500a0904cc4, type: 3}
+  - serializedVersion: 2
+    m_RefCount: 1
+    m_Data: {fileID: 1499646913155071631, guid: e045cde4ecc31484cb325f82a8b10cf2, type: 3}
   m_AnimationFrameRate: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Origin: {x: 0, y: -8, z: 0}
@@ -1927,6 +1989,7 @@ MonoBehaviour:
   sectorAngle: 360
   startAngle: 0
   straightLine: 0
+  ignoreEnhancers: 0
 --- !u!212 &8716298715768254992
 SpriteRenderer:
   serializedVersion: 3
@@ -2067,6 +2130,7 @@ MonoBehaviour:
   sectorAngle: 90
   startAngle: 225
   straightLine: 1
+  ignoreEnhancers: 0
 --- !u!212 &8303116216799279518
 SpriteRenderer:
   serializedVersion: 3
@@ -2439,6 +2503,7 @@ MonoBehaviour:
   sectorAngle: 90
   startAngle: 45
   straightLine: 1
+  ignoreEnhancers: 0
 --- !u!212 &7635812833050933954
 SpriteRenderer:
   serializedVersion: 3
@@ -2579,6 +2644,7 @@ MonoBehaviour:
   sectorAngle: 90
   startAngle: 315
   straightLine: 1
+  ignoreEnhancers: 0
 --- !u!212 &5891113044387656566
 SpriteRenderer:
   serializedVersion: 3
@@ -2839,6 +2905,7 @@ MonoBehaviour:
   sectorAngle: 90
   startAngle: 225
   straightLine: 1
+  ignoreEnhancers: 0
 --- !u!212 &8548441894300527172
 SpriteRenderer:
   serializedVersion: 3
@@ -2979,6 +3046,7 @@ MonoBehaviour:
   sectorAngle: 90
   startAngle: 315
   straightLine: 1
+  ignoreEnhancers: 0
 --- !u!212 &8277887863615046136
 SpriteRenderer:
   serializedVersion: 3
@@ -3578,6 +3646,7 @@ MonoBehaviour:
   sectorAngle: 90
   startAngle: 225
   straightLine: 1
+  ignoreEnhancers: 0
 --- !u!212 &7483068420893012745
 SpriteRenderer:
   serializedVersion: 3
@@ -4070,6 +4139,7 @@ MonoBehaviour:
   sectorAngle: 90
   startAngle: 135
   straightLine: 1
+  ignoreEnhancers: 0
 --- !u!212 &2907633230544442178
 SpriteRenderer:
   serializedVersion: 3
@@ -4423,6 +4493,7 @@ MonoBehaviour:
   sectorAngle: 90
   startAngle: 45
   straightLine: 1
+  ignoreEnhancers: 0
 --- !u!212 &4408801534679129710
 SpriteRenderer:
   serializedVersion: 3
@@ -4803,6 +4874,7 @@ MonoBehaviour:
   sectorAngle: 90
   startAngle: 135
   straightLine: 1
+  ignoreEnhancers: 0
 --- !u!212 &6209478101763255259
 SpriteRenderer:
   serializedVersion: 3
@@ -5055,6 +5127,7 @@ MonoBehaviour:
   sectorAngle: 90
   startAngle: 45
   straightLine: 1
+  ignoreEnhancers: 0
 --- !u!212 &397390745312348418
 SpriteRenderer:
   serializedVersion: 3
@@ -5195,6 +5268,7 @@ MonoBehaviour:
   sectorAngle: 360
   startAngle: 0
   straightLine: 0
+  ignoreEnhancers: 0
 --- !u!212 &2023062245091954469
 SpriteRenderer:
   serializedVersion: 3
@@ -5335,6 +5409,7 @@ MonoBehaviour:
   sectorAngle: 90
   startAngle: 315
   straightLine: 1
+  ignoreEnhancers: 0
 --- !u!212 &1486489106333997899
 SpriteRenderer:
   serializedVersion: 3
@@ -5595,6 +5670,7 @@ MonoBehaviour:
   sectorAngle: 90
   startAngle: 135
   straightLine: 1
+  ignoreEnhancers: 0
 --- !u!212 &932488943715655309
 SpriteRenderer:
   serializedVersion: 3
@@ -6087,6 +6163,7 @@ MonoBehaviour:
   sectorAngle: 360
   startAngle: 0
   straightLine: 0
+  ignoreEnhancers: 0
 --- !u!212 &5218782613715741188
 SpriteRenderer:
   serializedVersion: 3

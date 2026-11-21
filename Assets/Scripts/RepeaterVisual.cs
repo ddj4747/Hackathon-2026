@@ -27,7 +27,6 @@ public sealed class RepeaterVisual : MonoBehaviour
 
     private void Refresh()
     {
-        SignalTypeVisual.Restore(spriteRenderer);
         bool playing = Application.IsPlaying(gameObject);
         // In the editor the Tilemap draws its preview; in Play mode the prefab draws itself.
         spriteRenderer.enabled = playing || GetComponentInParent<Tilemap>() == null;
@@ -41,8 +40,15 @@ public sealed class RepeaterVisual : MonoBehaviour
                     redSprites[candidate.name] = candidate;
             }
             if (redSprites.TryGetValue(sprite.name, out var redSprite))
+            {
                 sprite = redSprite;
+                SignalTypeVisual.Restore(spriteRenderer);
+            }
+            else
+                SignalTypeVisual.Apply(spriteRenderer, repeater.Type);
         }
+        else
+            SignalTypeVisual.Restore(spriteRenderer);
         if (spriteRenderer.sprite != sprite)
             spriteRenderer.sprite = sprite;
     }

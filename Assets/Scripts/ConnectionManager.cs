@@ -13,6 +13,9 @@ public sealed class ConnectionManager
     private readonly Dictionary<Repeater, (Vector3Int center, List<Vector3Int> coverage)> repeaters = new();
     private readonly HashSet<Repeater> poweredRepeaters = new();
     private readonly HashSet<(Vector3Int cell, SignalType type)> repeaterSignalCells = new();
+    // Wire tilemaps in this scene. They let a powered repeater (or an emitter) feed repeaters at the other open ports.
+    private readonly List<WireNetwork> wireNetworks = new();
+    private readonly HashSet<(Vector3Int cell, SignalType type)> wireFed = new();
 
     internal event Action<Vector3Int> SignalChanged;
     internal event Action SignalsCleared;
@@ -111,6 +114,12 @@ public sealed class ConnectionManager
             if (GetSignalQuality(pair.Value.center, pair.Key.Type) > 0f && poweredRepeaters.Add(pair.Key))
                 pending.Enqueue(pair.Key);
 
+        // Wires touching an emitter feed the repeaters at their other open ports.
+        wireNetworks.RemoveAll(network => network == null);
+        wireFed.Clear();
+        foreach (var network in wireNetworks) network.CollectEmitterFed(wireFed);
+        PowerWireFed(pending);
+
         while (pending.Count > 0)
         {
             var repeater = pending.Dequeue();
@@ -122,11 +131,41 @@ public sealed class ConnectionManager
                     if (pair.Key.Type == repeater.Type && connected.Contains(pair.Value.center) && poweredRepeaters.Add(pair.Key))
                         pending.Enqueue(pair.Key);
             }
+
+            // A powered repeater feeds touching wires, which feed the repeaters at their other open ports.
+            // Everything starts from emitters, so a wire and a repeater cannot keep each other powered.
+            wireFed.Clear();
+            foreach (var network in wireNetworks) network.CollectFed(repeaters[repeater].center, repeater.Type, wireFed);
+            PowerWireFed(pending);
         }
 
         affected.UnionWith(SignalCells);
         foreach (var cell in affected) SignalChanged?.Invoke(cell);
     }
+
+    private void PowerWireFed(Queue<Repeater> pending)
+    {
+        if (wireFed.Count == 0) return;
+        foreach (var pair in repeaters)
+            if (wireFed.Contains((pair.Value.center, pair.Key.Type)) && poweredRepeaters.Add(pair.Key))
+                pending.Enqueue(pair.Key);
+    }
+
+    internal void RegisterWireNetwork(WireNetwork network)
+    {
+        if (network == null || wireNetworks.Contains(network)) return;
+        wireNetworks.Add(network);
+        RecalculateRepeaters(AllSignalCells());
+    }
+
+    internal void UnregisterWireNetwork(WireNetwork network)
+    {
+        if (wireNetworks.Remove(network))
+            RecalculateRepeaters(AllSignalCells());
+    }
+
+    // Called by a wire network when its layout (cells, ports, types or emitters next to it) changed.
+    internal void WireLayoutChanged() => RecalculateRepeaters(AllSignalCells());
 
     private HashSet<Vector3Int> ConnectedCells(Vector3Int cell, SignalType type)
     {

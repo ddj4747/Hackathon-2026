@@ -6,6 +6,8 @@ internal sealed class SignalObstacles
 {
     private readonly HashSet<Vector3Int> cells = new();
     private readonly List<DualGridLayer> terrain = new();
+    // Emitters and receivers (inputs / outputs) may sit in a wall; the wall does not block their own cell.
+    private readonly HashSet<Vector3Int> wallMounted = new();
     private Vector2[] polygon = new Vector2[12];
     private Vector2[] scratch = new Vector2[12];
     private readonly Vector2[] corners = new Vector2[4];
@@ -19,11 +21,19 @@ internal sealed class SignalObstacles
             if (layer.isActiveAndEnabled && layer.GetComponentInParent<Grid>() == grid &&
                 layer.Data.GetUsedTilesCount() > 0)
                 terrain.Add(layer);
+        if (terrain.Count > 0)
+        {
+            foreach (var emitter in grid.GetComponentsInChildren<SignalEmitter>())
+                wallMounted.Add(grid.WorldToCell(emitter.transform.position));
+            foreach (var receiver in grid.GetComponentsInChildren<SignalReceiver>())
+                wallMounted.Add(grid.WorldToCell(receiver.transform.position));
+        }
     }
 
     private bool Blocks(Vector3Int cell)
     {
         if (cells.Contains(cell)) return true;
+        if (wallMounted.Contains(cell)) return false;
         foreach (var layer in terrain)
             if (layer.GetTerrain(cell) == DualGridTerrain.Wall) return true;
         return false;

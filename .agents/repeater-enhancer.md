@@ -8,7 +8,7 @@
 - [Repeater](repeater.md), [Pushable blocks](pushable-blocks.md)
 
 ## Behavior and rules
-- Each enabled enhancer directly above, below, left or right of a repeater adds one cell to its range. Bonuses stack; diagonals do not count. Moving or disabling an enhancer updates coverage. The repeater must still receive signal to contribute coverage.
+- Each enabled enhancer directly above, below, left or right of a repeater adds one cell to its range. Repeaters with `ignoreEnhancers` (the [signal antenna](signal-antenna.md)) are not affected. Bonuses stack; diagonals do not count. Moving or disabling an enhancer updates coverage. The repeater must still receive signal to contribute coverage.
 - An enhancer affects repeaters on the same Grid in its scene. It uses its nearest parent Grid or the only Grid in its scene.
 
 ## Public interfaces and dependencies

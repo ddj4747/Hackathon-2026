@@ -71,6 +71,98 @@ public sealed class WireNetwork : MonoBehaviour
             hasPreviewType = true;
         }
         Recalculate();
+        if (Application.IsPlaying(gameObject)) SyncWithManager();
+    }
+
+    // ---- Wires feeding repeaters (Play mode). The scene's ConnectionManager asks which cells a source feeds,
+    // so repeater supply is always recomputed from emitters and a wire/repeater pair cannot power itself.
+
+    private readonly List<(Vector3Int cell, SignalType type)> emitterSources = new();
+    private ConnectionManager registeredManager;
+    private int layoutHash;
+
+    private void SyncWithManager()
+    {
+        var scene = gameObject.scene;
+        if (!scene.isLoaded) return;
+        var target = ConnectionManager.ForScene(scene);
+        if (target != registeredManager)
+        {
+            registeredManager?.UnregisterWireNetwork(this);
+            registeredManager = target;
+            layoutHash = ComputeLayoutHash();
+            target.RegisterWireNetwork(this);
+            return;
+        }
+        int hash = ComputeLayoutHash();
+        if (hash == layoutHash) return;
+        layoutHash = hash;
+        target.WireLayoutChanged();
+    }
+
+    private int ComputeLayoutHash()
+    {
+        unchecked
+        {
+            int hash = 17;
+            foreach (var pair in movableWires)
+            {
+                var wire = pair.Value;
+                if (wire == null) continue;
+                int ports = 0;
+                for (int i = 0; i < Steps.Length; i++) if (wire.HasPort(Steps[i])) ports |= 1 << i;
+                hash += (pair.Key.x * 73856093) ^ (pair.Key.y * 19349663) ^ ((int)wire.Type * 83492791) ^ (ports * 2654435);
+            }
+            foreach (var source in emitterSources)
+                hash += (source.cell.x * 12582917) ^ (source.cell.y * 4256249) ^ ((int)source.type + 7) * 31;
+            return hash;
+        }
+    }
+
+    /// <summary>Adds the cells fed by wires that touch an enabled emitter (open port facing it).</summary>
+    internal void CollectEmitterFed(HashSet<(Vector3Int cell, SignalType type)> result)
+    {
+        foreach (var source in emitterSources) CollectFed(source.cell, source.type, result);
+    }
+
+    /// <summary>
+    /// Adds the non-wire cells next to an open port of every wire that a source at <paramref name="sourceCell"/>
+    /// feeds (same type, open port facing the source), following connected wires.
+    /// </summary>
+    internal void CollectFed(Vector3Int sourceCell, SignalType type, HashSet<(Vector3Int cell, SignalType type)> result)
+    {
+        if (!Application.isPlaying || !isActiveAndEnabled || movableWires.Count == 0 || movableWires.ContainsKey(sourceCell))
+            return;
+
+        var visited = new HashSet<Vector3Int>();
+        var queue = new Queue<Vector3Int>();
+        foreach (var step in Steps)
+        {
+            var cell = sourceCell - step;
+            if (movableWires.TryGetValue(cell, out var wire) && wire != null && wire.Type == type && wire.HasPort(step) &&
+                visited.Add(cell))
+                queue.Enqueue(cell);
+        }
+
+        while (queue.Count > 0)
+        {
+            var cell = queue.Dequeue();
+            var wire = movableWires[cell];
+            foreach (var step in Steps)
+            {
+                if (!wire.HasPort(step)) continue;
+                var neighbor = cell + step;
+                if (movableWires.TryGetValue(neighbor, out var other))
+                {
+                    if (other != null && other.Type == wire.Type && other.HasPort(-step) && visited.Add(neighbor))
+                        queue.Enqueue(neighbor);
+                }
+                else if (neighbor != sourceCell)
+                {
+                    result.Add((neighbor, type));
+                }
+            }
+        }
     }
 
     public void Recalculate()
@@ -142,6 +234,7 @@ public sealed class WireNetwork : MonoBehaviour
         var grid = GetComponentInParent<Grid>();
         var sources = new HashSet<(Vector3Int cell, SignalType type)>();
         movableWires.Clear();
+        emitterSources.Clear();
         if (grid != null && gameObject.scene.isLoaded)
         {
             foreach (var root in gameObject.scene.GetRootGameObjects())
@@ -157,7 +250,12 @@ public sealed class WireNetwork : MonoBehaviour
                     sources.Add((grid.WorldToCell(repeater.transform.position), repeater.Type));
                 }
                 foreach (var emitter in root.GetComponentsInChildren<SignalEmitter>())
-                    if (emitter.IsEmittingOn(grid)) sources.Add((grid.WorldToCell(emitter.transform.position), emitter.Type));
+                    if (emitter.IsEmittingOn(grid))
+                    {
+                        var source = (grid.WorldToCell(emitter.transform.position), emitter.Type);
+                        sources.Add(source);
+                        emitterSources.Add(source);
+                    }
             }
         }
 
@@ -199,11 +297,15 @@ public sealed class WireNetwork : MonoBehaviour
 
     private void OnDisable()
     {
+        var manager = registeredManager;
+        registeredManager = null;
+        emitterSources.Clear();
         var previous = new List<Vector3Int>(powered);
         powered.Clear();
         isPowerSupplied = false;
         foreach (var wire in movableWires.Values) if (wire != null) wire.SetPowered(false);
         movableWires.Clear();
         if (!Application.isPlaying && tilemap != null) foreach (var cell in previous) tilemap.RefreshTile(cell);
+        manager?.UnregisterWireNetwork(this);
     }
 }

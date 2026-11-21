@@ -21,12 +21,14 @@
 - In Play mode the visual follows `IsSignalSupplied`; Original uses blue when unsupplied and green when supplied, while Red uses purple and red. Red artwork replaces `#257179` with `#5D275D`, `#38B764` with `#B13E53`, and `#A7F070` with `#EF7D57`. Edit-mode tiles preview the matching unsupplied artwork. A painted repeater tile instantiates its matching functional prefab.
 - The player can push standalone and painted repeaters using the existing push and chain rules. Coverage and supply are recalculated from the repeater's moving position. See [Pushable blocks](pushable-blocks.md).
 - Adjacent pushable [enhancers](repeater-enhancer.md) increase the repeater range by one each; diagonal cells do not count.
+- Prefab ranges (normal and Red): circular `Repeater_01`-`03` = 2, 3, 4; line variants `Repeater_04`-`15` = 3, 4, 5 per direction (04-06, 07-09, 10-12, 13-15). Base `Repeater.prefab` stays 3.
+- `ignoreEnhancers` (serialized, default off) makes a repeater ignore adjacent enhancers; used by the [signal antenna](signal-antenna.md) (range 0, feeds cables only).
 - Hovering a repeater shows its potential coverage through the [connection overlay](connection-manager.md), even while it is unsupplied.
 
 ## Public interfaces and dependencies
 
-- Coverage uses the scene-scoped `ConnectionManager`. Signal type, sector angle, start angle, range and the straight-line option are serialized on the repeater. Original is the default. Red repeaters resolve matching sprite names from `Assets/Resources/RedRepeaters.png`; other signal objects may use the shared Red shader.
-- `IsSignalSupplied` exposes whether the repeater is enabled and receives signal; [wire tilemaps](cables.md) use it for adjacent open-port adapters. Wire tilemaps do not supply repeaters.
+- Coverage uses the scene-scoped `ConnectionManager`. Signal type, sector angle, start angle, range and the straight-line option are serialized on the repeater. Original is the default. Red repeaters resolve matching sprite names from `Assets/Resources/RedRepeaters.png`, falling back to the shared Red shader when no matching artwork exists.
+- `IsSignalSupplied` exposes whether the repeater is enabled and receives signal; [wire tilemaps](cables.md) use it for adjacent open-port adapters. In Play mode a matching-type wire also supplies a repeater next to its open port when the wire is fed by an emitter or by another supplied repeater; see [Cables](cables.md).
 
 ## Setup and verification
 
