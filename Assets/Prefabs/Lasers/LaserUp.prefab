@@ -4920,7 +4920,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 5
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 2641982599817886970, guid: 1c4170ff3f25d1145a095ea956a5ec3c, type: 3}
+  m_Sprite: {fileID: 2912723816855675680, guid: 1c4170ff3f25d1145a095ea956a5ec3c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -4945,11 +4945,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LaserEmitter
   direction: 1
   isOn: 1
-  activeEmitter: {fileID: 2641982599817886970, guid: 1c4170ff3f25d1145a095ea956a5ec3c, type: 3}
-  inactiveEmitter: {fileID: 794731273560587575, guid: 1c4170ff3f25d1145a095ea956a5ec3c, type: 3}
+  activeEmitter: {fileID: 2912723816855675680, guid: 1c4170ff3f25d1145a095ea956a5ec3c, type: 3}
+  inactiveEmitter: {fileID: -7930308477057294387, guid: 1c4170ff3f25d1145a095ea956a5ec3c, type: 3}
   beamSprite: {fileID: -6300004475013961062, guid: 1c4170ff3f25d1145a095ea956a5ec3c, type: 3}
+  verticalBeamTile: {fileID: 11400000, guid: 75a71a344f5a44a09425ea7afdf4fadc, type: 2}
+  horizontalBeamTile: {fileID: 11400000, guid: 5f3db733768d4dc0a23fd9b6b7f96dea, type: 2}
   beamParticles: {fileID: 6389603300085802104}
-  beamMaterial: {fileID: 2100000, guid: b41fd627312d9214cb33a85d8b7bf77b, type: 2}
+  beamMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   fadeDuration: 0.2
 --- !u!114 &6318108722665640101
 MonoBehaviour:

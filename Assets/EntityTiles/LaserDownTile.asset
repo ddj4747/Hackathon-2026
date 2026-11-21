@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 258e6c1b86ed41e4f9570669cb2f9ccb, type: 3}
   m_Name: LaserDownTile
   m_EditorClassIdentifier: Assembly-CSharp::PrefabTile
-  previewSprite: {fileID: 2912723816855675680, guid: 1c4170ff3f25d1145a095ea956a5ec3c, type: 3}
+  previewSprite: {fileID: 2641982599817886970, guid: 1c4170ff3f25d1145a095ea956a5ec3c, type: 3}
   previewColor: {r: 1, g: 1, b: 1, a: 1}
   prefab: {fileID: 2768742186330969271, guid: 7ebefc221df06db428740b6618c6c791, type: 3}

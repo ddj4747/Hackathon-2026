@@ -8,6 +8,8 @@ using UnityEngine.SceneManagement;
 public sealed class SignalReceiver : MonoBehaviour
 {
     [SerializeField] private SignalType signalType;
+    [SerializeField, Tooltip("Sprite shown while this receiver is supplied.")]
+    private Sprite suppliedSprite;
     public SignalType Type => signalType;
 
     [SerializeField] private UnityEvent onSignalReceived = new();
@@ -17,16 +19,28 @@ public sealed class SignalReceiver : MonoBehaviour
     public UnityEvent OnSignalLost => onSignalLost;
     public bool IsSignalSupplied { get; private set; }
 
+    /// <summary>Raised when any receiver's supplied state changes, including when a supplied receiver is disabled.</summary>
+    public static event System.Action<SignalReceiver, bool> SuppliedChanged;
+
     private Grid grid;
     private Scene gridScene;
+    private SpriteRenderer spriteRenderer;
+    private Sprite unsuppliedSprite;
 
-    private void OnEnable() => gridScene = default;
+    private void OnEnable()
+    {
+        gridScene = default;
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null) unsuppliedSprite = spriteRenderer.sprite;
+    }
     private void OnTransformParentChanged() => gridScene = default;
 
     private void Update()
     {
-        SignalTypeVisual.Apply(GetComponent<SpriteRenderer>(), signalType);
+        SignalTypeVisual.Apply(spriteRenderer, signalType);
         if (Application.IsPlaying(gameObject)) UpdateSignal();
+        if (spriteRenderer != null && suppliedSprite != null)
+            spriteRenderer.sprite = Application.IsPlaying(gameObject) && IsSignalSupplied ? suppliedSprite : unsuppliedSprite;
     }
 
     private void UpdateSignal()
@@ -54,12 +68,16 @@ public sealed class SignalReceiver : MonoBehaviour
             Debug.Log("Signal receiver disconnected.", this);
             onSignalLost.Invoke();
         }
+        SuppliedChanged?.Invoke(this, supplied);
     }
 
     private void OnDisable()
     {
+        var wasSupplied = IsSignalSupplied;
         IsSignalSupplied = false;
-        SignalTypeVisual.Restore(GetComponent<SpriteRenderer>());
+        if (spriteRenderer != null && suppliedSprite != null) spriteRenderer.sprite = unsuppliedSprite;
+        if (wasSupplied) SuppliedChanged?.Invoke(this, false);
+        SignalTypeVisual.Restore(spriteRenderer);
     }
 
     private bool HasWireSignal(Scene scene)

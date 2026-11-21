@@ -9,6 +9,7 @@
 - `Assets/EntityTiles/BridgeTile.asset` and `BridgeWalkableTile.asset`: `PrefabTile` assets, placed at cells (8,-8) and (9,-8) of `Assets/TilePalettes/Signal Palette.prefab`
 - `Assets/Sprites/Bridge.png`: placeholder 16 x 16 plank sprite
 - `Assets/Prefabs/RedBridgeController.prefab` and `Assets/Scripts/SignalBridgeController.cs`: red signal receiver controlling a selected bridge.
+- The controller's receiver displays supplied artwork while powered; see [Signal receiver](signal-receiver.md).
 - Integration: `DualGridLayer.IsBlocked` (used by `Solid.IsBlocked`, the player and pushing)
 
 ## Behavior and rules
