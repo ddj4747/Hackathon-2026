@@ -27,7 +27,7 @@ public class GameManager : MonoBehaviour
     /// <summary>The loading screen stays up at least this long (seconds), so it never just flickers.</summary>
     private const float MinLoadingScreenTime = 0.3f;
 
-    private const string ControlsHintText = "SPACE - select\nWASD - movement\nR - reset";
+    private const string ControlsHintText = "SPACE - select\nWASD - movement\nQ - undo\nR - reset";
 
     /// <summary>Name of the menu scene. It must be in the build's scene list.</summary>
     public const string MenuSceneName = "Menu";

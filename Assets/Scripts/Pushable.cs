@@ -121,6 +121,25 @@ public class Pushable : MonoBehaviour
         Cell = target;
     }
 
+    /// <summary>
+    /// Logically moves the object back to <paramref name="cell"/> now and animates it there from where it currently
+    /// is, driven by <see cref="SetPushProgress"/> (used by undo).
+    /// </summary>
+    public void BeginMoveTo(Vector3Int cell)
+    {
+        moveFrom = transform.position;
+        moveTo = CellCenter(cell);
+        Cell = cell;
+    }
+
+    /// <summary>Instantly puts the object on a cell (used by undo). Cancels a push animation in progress.</summary>
+    public void TeleportToCell(Vector3Int cell)
+    {
+        Cell = cell;
+        moveFrom = moveTo = CellCenter(cell);
+        transform.position = moveTo;
+    }
+
     /// <summary>Places the object between the push's start and end cell (0..1).</summary>
     public void SetPushProgress(float t)
     {

@@ -25,11 +25,45 @@ public class PlayerGridMovement : MonoBehaviour
     private Vector3Int lastHeldDirection;
     private readonly List<Pushable> pushed = new List<Pushable>();   // chain being shoved during the current step
 
-    public Vector3Int CurrentCell => currentCell;
-    public bool IsMoving => stepProgress < 1f;
+    /// <summary>Undo action (Q), see <see cref="Undo"/>.</summary>
+    public const string UndoActionPath = "Player/Undo";
 
-    /// <summary>True while the current step is shoving at least one <see cref="Pushable"/>.</summary>
-    public bool IsPushing => IsMoving && pushed.Count > 0;
+    [Tooltip("How many steps can be undone (oldest are dropped).")]
+    [SerializeField, Min(1)] private int maxUndoSteps = 1000;
+
+    [Tooltip("Undo animation speed relative to a normal step (1 = same speed).")]
+    [SerializeField, Min(0.1f)] private float undoSpeedMultiplier = 1.5f;
+
+    // Undo animation in progress.
+    private float undoProgress = 1f;
+    private Vector3 undoFrom;
+    private Vector3 undoTo;
+    private Vector3Int undoEndFacing;
+    private Pushable[] undoObjects = new Pushable[0];
+
+    // One entry per step: where the player and the shoved chain were before it.
+    private struct UndoStep
+    {
+        public Vector3Int playerCell;
+        public Vector3Int facing;
+        public Pushable[] objects;
+        public Vector3Int[] cells;
+    }
+
+    private readonly List<UndoStep> undoSteps = new List<UndoStep>();
+    private InputAction undoAction;
+
+    /// <summary>Number of steps that can currently be undone.</summary>
+    public int UndoCount => undoSteps.Count;
+
+    public Vector3Int CurrentCell => currentCell;
+    public bool IsMoving => stepProgress < 1f || IsUndoing;
+
+    /// <summary>True while the current step (or the step being undone) moves at least one <see cref="Pushable"/>.</summary>
+    public bool IsPushing => (stepProgress < 1f && pushed.Count > 0) || (IsUndoing && undoObjects.Length > 0);
+
+    /// <summary>True while an undo is animating back to the previous cell.</summary>
+    public bool IsUndoing => undoProgress < 1f;
 
     /// <summary>Direction of the last step actually started (not changed by blocked or queued input). Starts facing up.</summary>
     public Vector3Int Facing { get; private set; } = Vector3Int.up;
@@ -67,6 +101,8 @@ public class PlayerGridMovement : MonoBehaviour
             return;
 
         FinishPush();
+        FinishUndoAnimation();
+        undoSteps.Clear();   // a teleport is not a step; older steps would no longer match
         currentCell = cell;
         targetCell = cell;
         stepProgress = 1f;
@@ -87,10 +123,96 @@ public class PlayerGridMovement : MonoBehaviour
         currentCell = grid.WorldToCell(transform.position);
         targetCell = currentCell;
         transform.position = CellCenter(currentCell);
+
+        undoAction = InputSystem.actions != null ? InputSystem.actions.FindAction(UndoActionPath) : null;
+        if (undoAction == null)
+            Debug.LogWarning($"PlayerGridMovement: action '{UndoActionPath}' not found; undo uses the Q key directly.", this);
+    }
+
+    /// <summary>
+    /// Reverts the last step: the player walks back to its previous cell (still facing the undone step's direction)
+    /// and every object it shoved slides back with it, with the walk / push animation. A step still in progress is
+    /// reversed from where it is. Logical cells change at once; only the motion is animated.
+    /// Returns false when there is nothing to undo.
+    /// </summary>
+    public bool Undo()
+    {
+        if (undoSteps.Count == 0)
+            return false;
+
+        FinishUndoAnimation();   // a previous undo still animating ends at its target first
+
+        UndoStep step = undoSteps[undoSteps.Count - 1];
+        undoSteps.RemoveAt(undoSteps.Count - 1);
+
+        pushed.Clear();
+        int count = 0;
+        for (int i = 0; i < step.objects.Length; i++)
+            if (step.objects[i] != null) count++;
+        undoObjects = new Pushable[count];
+        count = 0;
+        for (int i = 0; i < step.objects.Length; i++)
+        {
+            if (step.objects[i] == null) continue;
+            step.objects[i].BeginMoveTo(step.cells[i]);
+            undoObjects[count++] = step.objects[i];
+        }
+
+        // Face the direction of the undone step while moving back, then restore the facing from before it.
+        Vector3Int back = currentCell == step.playerCell ? targetCell - step.playerCell : currentCell - step.playerCell;
+        if (back != Vector3Int.zero) Facing = back;
+        undoEndFacing = step.facing;
+
+        undoFrom = transform.position;
+        undoTo = CellCenter(step.playerCell);
+        currentCell = step.playerCell;
+        targetCell = step.playerCell;
+        stepProgress = 1f;
+        undoProgress = 0f;
+        return true;
+    }
+
+    private void UpdateUndoAnimation()
+    {
+        undoProgress = Mathf.Min(1f, undoProgress + tilesPerSecond * undoSpeedMultiplier * Time.deltaTime);
+        transform.position = Vector3.Lerp(undoFrom, undoTo, undoProgress);
+        for (int i = 0; i < undoObjects.Length; i++)
+            if (undoObjects[i] != null) undoObjects[i].SetPushProgress(undoProgress);
+        if (undoProgress >= 1f)
+            FinishUndoAnimation();
+    }
+
+    private void FinishUndoAnimation()
+    {
+        if (undoObjects.Length == 0 && undoProgress >= 1f)
+            return;
+        undoProgress = 1f;
+        transform.position = undoTo;
+        for (int i = 0; i < undoObjects.Length; i++)
+            if (undoObjects[i] != null) undoObjects[i].SetPushProgress(1f);
+        undoObjects = new Pushable[0];
+        Facing = undoEndFacing;
+    }
+
+    private bool UndoPressed()
+    {
+        if (undoAction != null)
+            return undoAction.WasPressedThisFrame();
+        Keyboard kb = Keyboard.current;
+        return kb != null && kb.qKey.wasPressedThisFrame;
     }
 
     private void Update()
     {
+        if (UndoPressed() && Undo())
+            lastHeldDirection = Vector3Int.zero;   // do not walk straight back with a key still held
+
+        if (IsUndoing)
+        {
+            UpdateUndoAnimation();
+            return;   // no new steps until the undo has landed
+        }
+
         Vector3Int input = ReadDirection();
 
         if (!IsMoving && input != Vector3Int.zero && TryBeginStep(input))
@@ -141,6 +263,20 @@ public class PlayerGridMovement : MonoBehaviour
             return false;
         if (!Pushable.TryBeginChain(target, direction, pushed))
             return false;
+
+        // TryBeginChain already moved the chain one cell logically; remember where it was.
+        var step = new UndoStep
+        {
+            playerCell = currentCell,
+            facing = Facing,
+            objects = pushed.ToArray(),
+            cells = new Vector3Int[pushed.Count],
+        };
+        for (int i = 0; i < pushed.Count; i++)
+            step.cells[i] = pushed[i].Cell - direction;
+        undoSteps.Add(step);
+        if (undoSteps.Count > maxUndoSteps)
+            undoSteps.RemoveAt(0);
 
         targetCell = target;
         Facing = direction;   // turn only when the step really starts

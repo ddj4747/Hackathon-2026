@@ -20,7 +20,7 @@
 - Enable `stopsSignal` on a Pushable to obstruct wireless signal at its logical occupied cell, including during a push. See [Connection manager](connection-manager.md).
 
 ## Public interfaces and dependencies
-- `Pushable.GetAt(cell)`, `Pushable.TryBeginChain(startCell, direction, list)`, `Cell`, `SetPushProgress(t)` (animated by the player each frame); `Solid.IsAt(cell)`, `Solid.IsBlocked(grid, cell)` (solid objects plus wall/water terrain); `PushSettings.Instance.maxChainLength`.
+- `Pushable.GetAt(cell)`, `Pushable.TryBeginChain(startCell, direction, list)`, `Cell`, `TeleportToCell(cell)` (instant), `BeginMoveTo(cell)` (undo slide, animated by `SetPushProgress`), `SetPushProgress(t)` (animated by the player each frame); `Solid.IsAt(cell)`, `Solid.IsBlocked(grid, cell)` (solid objects plus wall/water terrain); `PushSettings.Instance.maxChainLength`.
 - Uses the assigned `Grid`, or the nearest parent Grid, falling back to a scene Grid when empty. Directional wire pieces and repeaters also use `Pushable`; see [Cables](cables.md) and [Repeater](repeater.md).
 
 ## Setup and verification
