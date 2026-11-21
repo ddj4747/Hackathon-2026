@@ -21,11 +21,11 @@ public sealed class SignalBeams : MonoBehaviour
     [Tooltip("How often the list of receivers in the scene is refreshed (seconds).")]
     [SerializeField, Min(0.1f)] private float receiverRefreshInterval = 1f;
 
-    [Tooltip("Pixel colour of Original signal links (default: powered Original wire highlight #A7F070).")]
-    [SerializeField] private Color originalColor = new Color32(0xA7, 0xF0, 0x70, 0xFF);
+    [Tooltip("Pixel colour of Original signal links (default #38B764, the active Original range overlay colour).")]
+    [SerializeField] private Color originalColor = new Color32(0x38, 0xB7, 0x64, 0xFF);
 
-    [Tooltip("Pixel colour of Red signal links (default: powered Red wire highlight #EF7D57).")]
-    [SerializeField] private Color redColor = new Color32(0xEF, 0x7D, 0x57, 0xFF);
+    [Tooltip("Pixel colour of Red signal links (default #B13E53, the active Red range overlay colour).")]
+    [SerializeField] private Color redColor = new Color32(0xB1, 0x3E, 0x53, 0xFF);
 
     private readonly Dictionary<PairKey, ConnectionParticles> beams = new Dictionary<PairKey, ConnectionParticles>();
     private readonly Dictionary<PairKey, (Component a, Component b, SignalType type)> wanted = new Dictionary<PairKey, (Component, Component, SignalType)>();

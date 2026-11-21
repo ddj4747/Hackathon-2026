@@ -1,7 +1,7 @@
 # Connection particles
 
 ## Status
-- 1 px particles flying between two endpoints, coloured by signal type when shown by `SignalBeams` (Original `originalColor` #A7F070, Red `redColor` #EF7D57; fields on `SignalBeams`; a standalone beam uses its own `color`, default white). `SignalBeams` on the `MapGrid` prefab shows them automatically for every wireless signal link in a level. Visual only; does not change signal propagation.
+- 1 px particles flying between two endpoints, coloured by signal type when shown by `SignalBeams` (Original `originalColor` #38B764, Red `redColor` #B13E53, the active range overlay colours; fields on `SignalBeams`; a standalone beam uses its own `color`, default white). `SignalBeams` on the `MapGrid` prefab shows them automatically for every wireless signal link in a level. Visual only; does not change signal propagation.
 
 ## Entry files
 - `Assets/Scripts/ConnectionParticles.cs`: one beam between two Transforms.
@@ -25,4 +25,4 @@
 - `ConnectionParticles`: verified via Unity MCP in Play mode, stepping manually: particles on the pixel grid, both directions, 1 px size, offsets within range, none inside the insets.
 - `SignalBeams`: compiles with no console errors; `MapGrid.prefab` diff checked (only the new component; editor-guide values written by `DualGridLayer.OnEnable` were reverted). Play-mode behaviour NOT yet verified (the user was working in the editor). Not visually checked.
 - Not yet added to the root `AGENTS.md` module index (user asked not to edit it for now).
-- Unity MCP Play-mode check in `SignalTypesTest`: the Original link's pixels are #A7F070 and the Red link's #EF7D57. Not visually checked.
+- Unity MCP Play-mode check in `SignalTypesTest`: the Original link's pixels are #38B764 and the Red link's #B13E53. Not visually checked.
