@@ -6,6 +6,7 @@
 - Rule from the user: never assemble one tile from pieces of others. A corner combination with no tile is left empty and reported.
 - The tilesets cover all 81 combinations (checked against the art; no duplicates). If art changes, context menu `Log missing tiles` on `Ground` lists any gaps.
 - The layer does not block movement; whether walls or water are solid is undecided.
+- Once terrain is painted, logical wall cells (including unpainted cells) block wireless signal. A completely empty layer does not block signal; see [Connection manager](../.agents/connection-manager.md).
 
 ## Entry files
 - `Assets/Scripts/DualGridLayer.cs`: the component (on the `Ground` Tilemap).

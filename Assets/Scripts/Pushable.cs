@@ -11,13 +11,20 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class Pushable : MonoBehaviour
 {
-    [Tooltip("Whether this object stops the signal (the connection range does not pass through it). Nothing reads this yet.")]
+    [Tooltip("Whether this object blocks signal on its cell and along its line of sight.")]
     public bool stopsSignal;
 
     [Tooltip("Unity Grid (e.g. the MapGrid prefab) that defines the cells. Found automatically if empty.")]
     [SerializeField] private Grid grid;
 
     private static readonly List<Pushable> All = new List<Pushable>();
+
+    internal static void CollectSignalBlockers(Grid targetGrid, HashSet<Vector3Int> cells)
+    {
+        foreach (var item in All)
+            if (item.stopsSignal && item.grid == targetGrid && item.gameObject.scene == targetGrid.gameObject.scene)
+                cells.Add(item.Cell);
+    }
 
     private Vector3 moveFrom;
     private Vector3 moveTo;

@@ -17,6 +17,7 @@
 - Chains: all pushables lined up in the pushed direction move together, one cell, at the player's speed. The chain is limited to `PushSettings.maxChainLength` objects (default 3, 0 = unlimited; edit `Resources/PushSettings.asset`). Over the limit, or if the cell after the chain is `Solid`, nothing moves and the player stays put.
 - `Solid` objects block the player and chains. Pushables themselves have no collider. Tilemap tiles, level exits and other colliders are not treated as solid; which things count as walls is still undecided (see root `AGENTS.md`). No `Solid` prefab exists yet.
 - Pulling and diagonal pushes are not implemented.
+- Enable `stopsSignal` on a Pushable to obstruct wireless signal at its logical occupied cell, including during a push. See [Connection manager](connection-manager.md).
 
 ## Public interfaces and dependencies
 - `Pushable.GetAt(cell)`, `Pushable.TryBeginChain(startCell, direction, list)`, `Cell`, `SetPushProgress(t)` (animated by the player each frame); `Solid.IsAt(cell)`; `PushSettings.Instance.maxChainLength`.
