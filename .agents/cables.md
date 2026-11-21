@@ -7,8 +7,8 @@
 ## Entry files
 
 - `Assets/Scripts/SignalCable.cs`, `Assets/Scripts/CableAdapter.cs`
-- `Assets/Prefabs/SignalCable.prefab`, `Assets/Resources/Wires.png`, `Assets/WireTiles/`
-- `Assets/Scripts/WireTile.cs`, `Assets/DirectionalWireTiles/` and `Assets/DirectionalWireTiles/Red/` contain the 11 directional tiles in both signal types, using the same sprites.
+- `Assets/Prefabs/SignalCable.prefab`, `Assets/Resources/Wires.png`, `Assets/Resources/RedWires.png`, `Assets/WireTiles/`
+- `Assets/Scripts/WireTile.cs`, `Assets/DirectionalWireTiles/` and `Assets/DirectionalWireTiles/Red/` contain the 11 directional tiles in both signal types.
 - `Assets/Scripts/WireNetwork.cs`, `Assets/Scripts/MovableWire.cs`, `Assets/Prefabs/MovableWire.prefab` and `Assets/Prefabs/WireTilemap.prefab` implement and demonstrate the movable tilemap network.
 - `Assets/TilePalettes/Wire Palette.prefab` and `Assets/TilePalettes/Signal Palette.prefab` include all 11 directional wire tiles in both types.
 - [Connection manager](connection-manager.md), [Map grid](map-grid.md)
@@ -36,7 +36,7 @@
 - `SampleScene` contains a `WireTilemap` under `MapGrid` with a modified sample layout.
 - Unity CLI verified compilation, strongest-signal propagation in both directions, source removal in a loop, link removal and prefab adapter enable/disable behavior. Visual placement remains a level-authoring step.
 - Unity CLI also verified propagation through the three example cables and removal when the test toggle is turned off.
-- Parent `WireTilemap` beneath the scene Grid and paint `DirectionalWireTiles` on it. Original and Red wire tiles can be painted on the same tilemap; their tile asset determines their type. For compatibility, setting `Signal Type` to Red on `WireNetwork` also treats original wire tiles on that map as Red. A tilemap without `WireNetwork` treats original tiles as Original. Red wire previews use a tint and runtime movable sprites use `Assets/Resources/RedSignal.shader`. The prefab contains four horizontal sample tiles; place an emitter or supplied repeater on the adjacent cell to the left or right. The Inspector's `Is Power Supplied` shows whether any tile is powered in Play mode.
+- Parent `WireTilemap` beneath the scene Grid and paint `DirectionalWireTiles` on it. Original and Red wire tiles can be painted on the same tilemap; their tile asset determines their type. For compatibility, setting `Signal Type` to Red on `WireNetwork` also treats original wire tiles on that map as Red. A tilemap without `WireNetwork` treats original tiles as Original. Red wire previews and movable sprites use matching sprites from `Assets/Resources/RedWires.png`. The Red artwork preserves the Original background and replaces `#257179` with `#5D275D`, `#38B764` with `#B13E53`, and `#A7F070` with `#EF7D57`. The prefab contains four horizontal sample tiles; place an emitter or supplied repeater on the adjacent cell to the left or right. The Inspector's `Is Power Supplied` shows whether any tile is powered in Play mode.
 - Select `Wire Palette` or `Signal Palette` in Unity's Tile Palette window and paint directional wires on a Tilemap beneath the level Grid. Existing painted directional wires also become movable in Play mode. A network is created automatically if the Grid has none.
 - Unity MCP previously verified repeater placement and direction, matching and mismatched neighboring tiles, power removal, and blue/green sprites.
 

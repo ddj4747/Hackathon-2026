@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13e2a8c530a68b468b54bf139a023f7, type: 3}
   m_Name: Red_Repeater_09
   m_EditorClassIdentifier: Assembly-CSharp::RepeaterTile
-  previewSprite: {fileID: 1137203023, guid: 1aa6542943f63084ab67a9d5924d6b14, type: 3}
-  previewColor: {r: 1, g: 0.45, b: 0.45, a: 1}
+  previewSprite: {fileID: 1137203023, guid: 6c480cdddea112b469e5758846f88a6c, type: 3}
+  previewColor: {r: 1, g: 1, b: 1, a: 1}
   repeaterPrefab: {fileID: 7066593364819412933, guid: d538da919edac2541a55cfdf3791c4d1, type: 3}

@@ -7,6 +7,7 @@
 ## Entry files
 
 - `Assets/Scripts/ConnectionManager.cs`, `Assets/Scripts/SignalType.cs`, `Assets/Scripts/ConnectionOverlay.cs`, `Assets/Resources/SignalRangeOverlay.shader`, `Assets/Prefabs/ConnectionOverlay.prefab`
+- `Assets/Scripts/SignalBeams.cs`, `Assets/Scripts/ConnectionParticles.cs`: wireless connection particle visuals on the Grid.
 - [Map grid](map-grid.md)
 
 ## Behavior and rules
@@ -15,6 +16,7 @@
 - Adding the same value twice creates two contributions. Removal matches one stored value exactly and reports whether it was found.
 - Cable-linked cells share the strongest directly contributed signal of the cable?s type throughout their connected component. Links do not themselves add contributions, so loops cannot sustain a signal after its source is removed. See [Cables](cables.md).
 - Signal sources activate same-type repeaters whose cells they reach. Active repeaters extend signal to their coverage; activation is recomputed from sources so repeater cycles cannot sustain themselves. See [Repeater](repeater.md) and [Signal emitter](signal-emitter.md).
+- Connection particles link a transmitting emitter or supplied repeater only to repeaters and receivers of the same signal type within its coverage. They are visual only and fade out after a link is lost.
 - Wireless coverage uses direct line of sight: walls, marked objects and jammer coverage block their cells and cast a shadow away from the source. A tile loses signal if any positive area lies in shadow; two blockers meeting at a corner also block a diagonal line. Signal updates when blockers move or terrain changes. Cables retain their existing separate connections.
 - Unloading a scene clears and drops its manager. Starting a new play session starts with fresh managers.
 - The overlay shows only the hovered enabled emitter, repeater or jammer's own range. An unsupplied repeater shows its potential coverage without transmitting signal. Nothing is shown off an object; the overlay does not affect signal propagation.

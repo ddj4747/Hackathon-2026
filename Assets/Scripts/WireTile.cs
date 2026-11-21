@@ -22,6 +22,7 @@ public sealed class WireTile : TileBase
     [SerializeField] private Sprite inactiveSprite;
     [SerializeField] private Sprite activeSprite;
     [SerializeField] private GameObject movablePrefab;
+    private static Dictionary<string, Sprite> redSprites;
 
     public SignalType Type => signalType;
     public SignalType TypeOn(WireNetwork network) => signalType == SignalType.Red ||
@@ -30,6 +31,19 @@ public sealed class WireTile : TileBase
     public Sprite InactiveSprite => inactiveSprite;
     public Sprite ActiveSprite => activeSprite;
     public GameObject MovablePrefab => movablePrefab;
+
+    public Sprite SpriteFor(bool powered, SignalType type)
+    {
+        var sprite = powered ? activeSprite : inactiveSprite;
+        if (type != SignalType.Red || sprite == null) return sprite;
+        if (redSprites == null)
+        {
+            redSprites = new Dictionary<string, Sprite>();
+            foreach (var candidate in Resources.LoadAll<Sprite>("RedWires"))
+                redSprites[candidate.name] = candidate;
+        }
+        return redSprites.TryGetValue(sprite.name, out var redSprite) ? redSprite : sprite;
+    }
 
     // Saved Tilemaps can contain cached tile data from before movable prefabs were assigned.
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
@@ -67,8 +81,8 @@ public sealed class WireTile : TileBase
     {
         var network = tilemap.GetComponent<WireNetwork>();
         tileData.sprite = Application.isPlaying && movablePrefab != null ? null :
-            (network != null && network.IsPowered(position) ? activeSprite : inactiveSprite);
-        tileData.color = TypeOn(network) == SignalType.Red ? new Color(1f, 0.55f, 0.55f, 1f) : Color.white;
+            SpriteFor(network != null && network.IsPowered(position), TypeOn(network));
+        tileData.color = Color.white;
         tileData.transform = Matrix4x4.identity;
         tileData.gameObject = movablePrefab;
         tileData.flags = TileFlags.LockAll | TileFlags.InstantiateGameObjectRuntimeOnly;

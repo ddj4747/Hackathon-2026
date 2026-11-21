@@ -4,7 +4,8 @@ using UnityEngine;
 /// <summary>
 /// Shows a <see cref="ConnectionParticles"/> beam for every wireless link on this Grid: from a transmitting source
 /// (an enabled <see cref="SignalEmitter"/> or a supplied <see cref="Repeater"/>) to each repeater or
-/// <see cref="SignalReceiver"/> whose cell is inside the source's coverage. One beam per pair (pixels fly both ways).
+/// <see cref="SignalReceiver"/> of the same signal type whose cell is inside the source's coverage.
+/// One beam per pair (pixels fly both ways).
 /// Read-only: it does not change signal propagation. Lost links stop emitting and are removed once their pixels land.
 /// Lives on the MapGrid prefab; cables are not shown.
 /// </summary>
@@ -66,16 +67,17 @@ public sealed class SignalBeams : MonoBehaviour
         foreach (var source in sources)
         {
             var from = (Component)source;
+            var sourceType = source is Repeater transmittingRepeater ? transmittingRepeater.Type : ((SignalEmitter)source).Type;
             var cells = source.RangeCells;
             if (cells == null || cells.Count == 0)
                 continue;
 
             foreach (var repeater in repeaters)
-                if (repeater != from && Covers(cells, repeater.transform))
+                if (repeater != from && repeater.Type == sourceType && Covers(cells, repeater.transform))
                     Want(from, repeater);
 
             foreach (var receiver in receivers)
-                if (receiver != null && receiver.isActiveAndEnabled && Covers(cells, receiver.transform))
+                if (receiver != null && receiver.isActiveAndEnabled && receiver.Type == sourceType && Covers(cells, receiver.transform))
                     Want(from, receiver);
         }
 
