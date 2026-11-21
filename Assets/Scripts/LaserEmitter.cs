@@ -168,7 +168,7 @@ public sealed class LaserEmitter : MonoBehaviour
                 applyShapeToPosition = false
             };
             if (i % 3 == 0)
-                particle.startColor = new Color(0.04f, 0.035f, 0.035f, 1f);
+                particle.startColor = new Color(0.25f, 0.25f, 0.25f, 1f);
             burst.Emit(particle, 1);
         }
         Destroy(burst.gameObject, 1f);
