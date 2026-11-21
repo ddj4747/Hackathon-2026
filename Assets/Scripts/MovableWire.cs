@@ -10,6 +10,7 @@ public sealed class MovableWire : MonoBehaviour
     public Pushable Pushable { get; private set; }
     public Grid Grid { get; private set; }
     private SpriteRenderer spriteRenderer;
+    public SignalType Type => Tile != null ? Tile.TypeOn(GetComponentInParent<WireNetwork>()) : SignalType.Original;
 
     public void Initialize(WireTile tile)
     {
@@ -42,8 +43,13 @@ public sealed class MovableWire : MonoBehaviour
     public void SetPowered(bool supplied)
     {
         if (spriteRenderer != null && Tile != null)
+        {
             spriteRenderer.sprite = supplied ? Tile.ActiveSprite : Tile.InactiveSprite;
+            SignalTypeVisual.Apply(spriteRenderer, Type);
+        }
     }
+
+    private void OnDisable() => SignalTypeVisual.Restore(spriteRenderer);
 
     public bool HasPort(Vector3Int gridStep)
     {

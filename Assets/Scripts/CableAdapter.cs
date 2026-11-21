@@ -7,6 +7,8 @@ public sealed class CableAdapter : MonoBehaviour
     [SerializeField, Tooltip("Debug signal for testing cables in Play mode.")]
     private bool testSignal;
 
+    [SerializeField] private SignalType signalType;
+    private SignalType registeredType;
     private ConnectionManager manager;
     private Vector3Int cell;
     private uint resetVersion;
@@ -22,14 +24,15 @@ public sealed class CableAdapter : MonoBehaviour
 
         var target = ConnectionManager.ForScene(gameObject.scene);
         var targetCell = grid.WorldToCell(transform.position);
-        if (manager == target && cell == targetCell && resetVersion == target.ResetVersion)
+        if (manager == target && cell == targetCell && resetVersion == target.ResetVersion && registeredType == signalType)
             return;
 
         RemoveTestSignal();
         manager = target;
         cell = targetCell;
         resetVersion = target.ResetVersion;
-        manager.AddSignal(cell, 1f);
+        registeredType = signalType;
+        manager.AddSignal(cell, 1f, registeredType);
     }
 
     private void OnDisable() => RemoveTestSignal();
@@ -37,7 +40,7 @@ public sealed class CableAdapter : MonoBehaviour
     private void RemoveTestSignal()
     {
         if (manager != null && resetVersion == manager.ResetVersion)
-            manager.RemoveSignal(cell, 1f);
+            manager.RemoveSignal(cell, 1f, registeredType);
         manager = null;
     }
 }

@@ -4,8 +4,12 @@ using UnityEngine.SceneManagement;
 
 // Detects wireless or wired signal and raises events when its supplied state changes.
 [DisallowMultipleComponent]
+[ExecuteAlways]
 public sealed class SignalReceiver : MonoBehaviour
 {
+    [SerializeField] private SignalType signalType;
+    public SignalType Type => signalType;
+
     [SerializeField] private UnityEvent onSignalReceived = new();
     [SerializeField] private UnityEvent onSignalLost = new();
 
@@ -21,6 +25,12 @@ public sealed class SignalReceiver : MonoBehaviour
 
     private void Update()
     {
+        SignalTypeVisual.Apply(GetComponent<SpriteRenderer>(), signalType);
+        if (Application.IsPlaying(gameObject)) UpdateSignal();
+    }
+
+    private void UpdateSignal()
+    {
         var scene = gameObject.scene;
         if (scene.isLoaded && scene != gridScene)
         {
@@ -31,7 +41,7 @@ public sealed class SignalReceiver : MonoBehaviour
         }
 
         var supplied = grid != null && scene.isLoaded &&
-            (ConnectionManager.ForScene(scene).HasSignal(transform.position, grid) || HasWireSignal(scene));
+            (ConnectionManager.ForScene(scene).HasSignal(transform.position, grid, signalType) || HasWireSignal(scene));
         if (supplied == IsSignalSupplied) return;
         IsSignalSupplied = supplied;
         if (supplied)
@@ -46,13 +56,17 @@ public sealed class SignalReceiver : MonoBehaviour
         }
     }
 
-    private void OnDisable() => IsSignalSupplied = false;
+    private void OnDisable()
+    {
+        IsSignalSupplied = false;
+        SignalTypeVisual.Restore(GetComponent<SpriteRenderer>());
+    }
 
     private bool HasWireSignal(Scene scene)
     {
         foreach (var root in scene.GetRootGameObjects())
             foreach (var network in root.GetComponentsInChildren<WireNetwork>())
-                if (network.SuppliesAdjacent(transform.position, grid)) return true;
+                if (network.SuppliesAdjacent(transform.position, grid, signalType)) return true;
         return false;
     }
 
