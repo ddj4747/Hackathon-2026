@@ -9,7 +9,8 @@
 
 ## Behavior and rules
 - The manager creates itself before the first scene and persists across scene changes. It plays the supplied music on a looping 2D source, and effects on a separate 2D source. Music continues across level selection, restart and return to menu.
-- Placeholder effects play for successful player steps, pushes and undo, valid level selection, restart and return to menu. Blocked movement and rejected actions are silent. The effects are synthesized placeholders that can be replaced with files of the same names.
+- Placeholder effects play for successful pushes and undo, valid level selection, restart and return to menu. Blocked movement and rejected actions are silent. The effects are synthesized placeholders that can be replaced with files of the same names.
+- Plain steps do not use the `Step` effect: footsteps come from `PlayerSfx` on the player prefab (evretro 8-bit footsteps, see [Player movement](player-movement.md)). `Step.wav` is currently unused.
 
 ## Public interfaces and dependencies
 - `SoundManager.Instance.Play(SoundManager.Effect)` plays an effect; `MusicVolume` and `EffectsVolume` independently set clamped 0–1 source volumes (defaults 0.4 and 0.7). A scene camera needs an AudioListener.

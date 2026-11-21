@@ -306,9 +306,9 @@ public class PlayerGridMovement : MonoBehaviour
 
         targetCell = target;
         Facing = direction;   // turn only when the step really starts
-        StepStarted?.Invoke(pushed.Count > 0);
-        if (SoundManager.Instance != null)
-            SoundManager.Instance.Play(pushed.Count > 0 ? SoundManager.Effect.Push : SoundManager.Effect.Step);
+        StepStarted?.Invoke(pushed.Count > 0);   // footsteps: PlayerSfx (evretro 8-bit footsteps)
+        if (pushed.Count > 0 && SoundManager.Instance != null)
+            SoundManager.Instance.Play(SoundManager.Effect.Push);
         return true;
     }
 
