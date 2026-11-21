@@ -54,7 +54,10 @@ MonoBehaviour:
   plateRenderer: {fileID: 2000000000000000006}
   numberLabel: {fileID: 2000000000000000010}
   normalColor: {r: 1, g: 1, b: 1, a: 1}
-  highlightColor: {r: 1, g: 0.85, b: 0.2, a: 1}
+  highlightColor: {r: 1, g: 1, b: 1, a: 1}
+  normalSprite: {fileID: 218180946297806521, guid: 568eaf4dcf70c2f4ea0f849213e153e0, type: 3}
+  highlightSprite: {fileID: 5468663843426710574, guid: 568eaf4dcf70c2f4ea0f849213e153e0, type: 3}
+  numberHighlightColor: {r: 0.3372549, g: 0.42352942, b: 0.5254902, a: 1}
 --- !u!1 &2000000000000000004
 GameObject:
   m_ObjectHideFlags: 0
@@ -136,7 +139,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 1
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 1b5f9750d41a8fa4d84bd67e1ed685d5, type: 3}
+  m_Sprite: {fileID: 218180946297806521, guid: 568eaf4dcf70c2f4ea0f849213e153e0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -250,4 +253,4 @@ TextMesh:
   m_Font: {fileID: 12800000, guid: 49daacc4414d98e42a19037ca54586c4, type: 3}
   m_Color:
     serializedVersion: 2
-    rgba: 4280816660
+    rgba: 4283907123

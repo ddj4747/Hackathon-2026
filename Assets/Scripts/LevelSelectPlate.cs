@@ -36,6 +36,14 @@ public class LevelSelectPlate : MonoBehaviour
     [SerializeField] private TextMesh numberLabel;
     [SerializeField] private Color normalColor = Color.white;
     [SerializeField] private Color highlightColor = new Color(1f, 0.85f, 0.2f, 1f);
+    [Tooltip("Plate background while not selected. Empty: the renderer's sprite is kept.")]
+    [SerializeField] private Sprite normalSprite;
+    [Tooltip("Plate background while the player stands on it. Empty: only the tint changes.")]
+    [SerializeField] private Sprite highlightSprite;
+    [Tooltip("Number colour while the player stands on the plate (the normal colour is the label's own).")]
+    [SerializeField] private Color numberHighlightColor = new Color32(0x56, 0x6C, 0x86, 0xFF);
+
+    private Color numberNormalColor;
 
     private Grid grid;
     private PlayerGridMovement player;
@@ -52,6 +60,8 @@ public class LevelSelectPlate : MonoBehaviour
 
     private void Awake()
     {
+        if (numberLabel != null)
+            numberNormalColor = numberLabel.color;
         ApplyLabel();
     }
 
@@ -125,10 +135,15 @@ public class LevelSelectPlate : MonoBehaviour
     private void SetVisual(bool highlighted)
     {
         IsHighlighted = highlighted;
+        if (numberLabel != null)
+            numberLabel.color = highlighted ? numberHighlightColor : numberNormalColor;
         if (plateRenderer == null)
             return;
 
         plateRenderer.color = highlighted ? highlightColor : normalColor;
+        Sprite sprite = highlighted ? highlightSprite : normalSprite;
+        if (sprite != null)
+            plateRenderer.sprite = sprite;
     }
 
     private void OnSelect(InputAction.CallbackContext context)

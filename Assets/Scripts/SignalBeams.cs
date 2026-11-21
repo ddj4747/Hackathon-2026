@@ -21,8 +21,14 @@ public sealed class SignalBeams : MonoBehaviour
     [Tooltip("How often the list of receivers in the scene is refreshed (seconds).")]
     [SerializeField, Min(0.1f)] private float receiverRefreshInterval = 1f;
 
+    [Tooltip("Pixel colour of Original signal links (default #38B764, the active Original range overlay colour).")]
+    [SerializeField] private Color originalColor = new Color32(0x38, 0xB7, 0x64, 0xFF);
+
+    [Tooltip("Pixel colour of Red signal links (default #B13E53, the active Red range overlay colour).")]
+    [SerializeField] private Color redColor = new Color32(0xB1, 0x3E, 0x53, 0xFF);
+
     private readonly Dictionary<PairKey, ConnectionParticles> beams = new Dictionary<PairKey, ConnectionParticles>();
-    private readonly Dictionary<PairKey, (Component a, Component b)> wanted = new Dictionary<PairKey, (Component, Component)>();
+    private readonly Dictionary<PairKey, (Component a, Component b, SignalType type)> wanted = new Dictionary<PairKey, (Component, Component, SignalType)>();
     private readonly List<PairKey> removeKeys = new List<PairKey>();
     private readonly List<ISignalRangeSource> sources = new List<ISignalRangeSource>();
     private readonly List<Repeater> repeaters = new List<Repeater>();
@@ -74,11 +80,11 @@ public sealed class SignalBeams : MonoBehaviour
 
             foreach (var repeater in repeaters)
                 if (repeater != from && repeater.Type == sourceType && Covers(cells, repeater.transform))
-                    Want(from, repeater);
+                    Want(from, repeater, sourceType);
 
             foreach (var receiver in receivers)
                 if (receiver != null && receiver.isActiveAndEnabled && receiver.Type == sourceType && Covers(cells, receiver.transform))
-                    Want(from, receiver);
+                    Want(from, receiver, sourceType);
         }
 
         // Fade out links that are gone.
@@ -104,6 +110,7 @@ public sealed class SignalBeams : MonoBehaviour
             beam.name = "SignalBeam " + pair.Value.a.name + " - " + pair.Value.b.name;
             beam.transform.localPosition = Vector3.zero;
             beam.SetEndpoints(pair.Value.a.transform, pair.Value.b.transform);
+            beam.Color = pair.Value.type == SignalType.Red ? redColor : originalColor;
             beams.Add(pair.Key, beam);
         }
     }
@@ -139,11 +146,11 @@ public sealed class SignalBeams : MonoBehaviour
         return false;
     }
 
-    private void Want(Component a, Component b)
+    private void Want(Component a, Component b, SignalType type)
     {
         var key = new PairKey(a, b);
         if (!wanted.ContainsKey(key))
-            wanted.Add(key, (a, b));
+            wanted.Add(key, (a, b, type));
     }
 
     /// <summary>Unordered pair of endpoints: (a, b) equals (b, a).</summary>
