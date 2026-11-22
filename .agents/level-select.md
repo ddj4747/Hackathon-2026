@@ -33,4 +33,4 @@
 - New level plate: drag `LevelPlate.prefab` into a scene with `MapGrid` and `Player`, set `Level Number`, assign `Scene Asset`, and add that scene to the build's scene list.
 - Unity preview-scene checks verified the plate assignments, cable sprites, completion-based unlocking and cable state changes. Selection through player input has not been tested in Play mode.
 - Unity CLI scene checks verified all ten plate labels and cells, existing assignments and prerequisites, and valid cable sprite references.
-- Unity MCP Play-mode check: with `Level-1` saved as beaten, plate 0 reports beaten, plate 1 is unlocked and `Cable 0 to 1` is powered.
+- Unity MCP Play-mode check: with `Level-1` marked as beaten, plate 0 reports beaten, plate 1 is unlocked and `Cable 0 to 1` is powered.

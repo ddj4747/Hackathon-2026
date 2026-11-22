@@ -45,7 +45,10 @@ public sealed class WireTile : TileBase
         return redSprites.TryGetValue(sprite.name, out var redSprite) ? redSprite : sprite;
     }
 
-    // Saved Tilemaps can contain cached tile data from before movable prefabs were assigned.
+    // Saved Tilemaps contain the tile data cached in the editor, including the edit-mode preview sprite.
+    // A player build uses that cache as is, so the preview of every wire / repeater / prefab tile stayed visible
+    // at its start cell next to the spawned movable object ("cloned" objects in builds). Refreshing those cells
+    // after the scene loads runs GetTileData again, which hides the preview while playing.
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void RegisterSceneRefresh()
     {
@@ -60,7 +63,11 @@ public sealed class WireTile : TileBase
             {
                 var cells = new List<Vector3Int>();
                 foreach (var cell in map.cellBounds.allPositionsWithin)
-                    if (map.GetTile(cell) is WireTile) cells.Add(cell);
+                {
+                    TileBase tile = map.GetTile(cell);
+                    if (tile is WireTile || ((tile is RepeaterTile || tile is PrefabTile) && map.GetSprite(cell) != null))
+                        cells.Add(cell);
+                }
                 foreach (var cell in cells) map.RefreshTile(cell);
             }
     }
