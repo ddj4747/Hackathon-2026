@@ -1168,6 +1168,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2000000000000000003, guid: fd83cd86717748afb7c456bb285d5d95, type: 3}
+      propertyPath: scenePath
+      value: Assets/Scenes/Levels/Level6.unity
+      objectReference: {fileID: 0}
+    - target: {fileID: 2000000000000000003, guid: fd83cd86717748afb7c456bb285d5d95, type: 3}
+      propertyPath: sceneAsset
+      value: 
+      objectReference: {fileID: 102900000, guid: a682ce02c54a47d47a867ab1a715eab9, type: 3}
+    - target: {fileID: 2000000000000000003, guid: fd83cd86717748afb7c456bb285d5d95, type: 3}
       propertyPath: levelNumber
       value: 7
       objectReference: {fileID: 0}
@@ -6347,7 +6355,7 @@ PrefabInstance:
     - target: {fileID: 2000000000000000003, guid: fd83cd86717748afb7c456bb285d5d95, type: 3}
       propertyPath: previousLevel
       value: 
-      objectReference: {fileID: 949680341}
+      objectReference: {fileID: 926150700}
     - target: {fileID: 2000000000000000006, guid: fd83cd86717748afb7c456bb285d5d95, type: 3}
       propertyPath: m_Color.b
       value: 1
